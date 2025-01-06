@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\HomeOwners.Application\HomeOwners.Application.csproj" />
+    <ProjectReference Include="..\HomeOwners.Lookups\HomeOwners.Lookups.csproj" />
   </ItemGroup>
 
 </Project>
