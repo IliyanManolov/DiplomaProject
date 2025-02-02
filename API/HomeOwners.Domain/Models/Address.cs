@@ -4,6 +4,10 @@ public class Address : DomainEntity
 {
     public string? StreetAddress { get; set; }
     public string? City { get; set; }
+
+    /// <summary>
+    /// Federation State or Municipality
+    /// </summary>
     public string? State { get; set; }
     public string? PostalCode { get; set; }
     public string? Country { get; set; }

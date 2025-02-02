@@ -20,6 +20,8 @@ public class DatabaseContext : DbContext
 
         modelBuilder.ApplyConfiguration(new PropertyMapping());
 
+        modelBuilder.ApplyConfiguration(new AddressMapping());
+
         base.OnModelCreating(modelBuilder);
     }
 }
