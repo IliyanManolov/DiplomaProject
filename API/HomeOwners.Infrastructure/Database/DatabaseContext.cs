@@ -18,6 +18,8 @@ public class DatabaseContext : DbContext
 
         modelBuilder.ApplyConfiguration(new CommunityMapping());
 
+        modelBuilder.ApplyConfiguration(new PropertyMapping());
+
         base.OnModelCreating(modelBuilder);
     }
 }
