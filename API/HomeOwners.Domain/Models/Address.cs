@@ -8,6 +8,12 @@ public class Address : DomainEntity
     public string? PostalCode { get; set; }
     public string? Country { get; set; }
 
+    public long? BuildingNumber { get; set; }
+
+    // In case of Apartment
+    public long? FloorNumber { get; set; }
+    public long? ApartmentNumber { get; set; }
+
     // Geolocation
     public double? Latitude { get; set; }
     public double? Longitude { get; set; }

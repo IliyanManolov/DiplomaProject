@@ -18,6 +18,7 @@ internal class CommunityMapping : IEntityTypeConfiguration<Community>
             .IsRequired()
             .ValueGeneratedOnAdd();
 
+        // TBD: Any point in persisting this?
         builder.Property(e => e.PropertiesCount)
             .HasColumnName("properties_count")
             .HasConversion<int>();
