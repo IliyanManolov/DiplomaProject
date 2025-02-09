@@ -21,4 +21,7 @@ public class ReferralCode : DomainEntity
     /// User that created the code
     /// </summary>
     public User Creator { get; set; }
+
+    public long? CommunityId { get; set; }
+    public Community Community { get; set; }
 }

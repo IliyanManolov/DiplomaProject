@@ -24,11 +24,15 @@ internal class ReferralCodeMapping : IEntityTypeConfiguration<ReferralCode>
 
         builder.HasOne(e => e.User)
             .WithOne(u => u.ReferalCode)
-            .HasForeignKey<ReferralCode>(c => c.UserId);
+            .HasForeignKey<ReferralCode>(code => code.UserId);
 
         builder.HasOne(e => e.Creator)
-            .WithMany(u => u.CreatedReferalCodes)
-            .HasForeignKey(c => c.CreatorId);
+            .WithMany(user => user.CreatedReferalCodes)
+            .HasForeignKey(code => code.CreatorId);
+
+        builder.HasOne(e => e.Community)
+            .WithMany(community => community.ReferralCodes)
+            .HasForeignKey(code => code.CommunityId);
 
         builder.AddBaseEntityTemporalMappings();
     }

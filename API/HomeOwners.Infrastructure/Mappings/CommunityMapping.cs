@@ -23,9 +23,13 @@ internal class CommunityMapping : IEntityTypeConfiguration<Community>
             .HasColumnName("properties_count")
             .HasConversion<int>();
 
-        builder.HasMany(c => c.Properties)
+        builder.HasMany(community => community.Properties)
             .WithOne(property => property.Community)
             .HasForeignKey(property => property.CommunityId);
+
+        builder.HasMany(community => community.ReferralCodes)
+            .WithOne(code => code.Community)
+            .HasForeignKey(code => code.CommunityId);
 
         builder.AddBaseEntityTemporalMappings();
     }
