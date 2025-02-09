@@ -57,6 +57,14 @@ internal class UserMapping : IEntityTypeConfiguration<User>
             .HasColumnName("is_deleted")
             .HasConversion<bool>();
 
+        builder.HasMany(e => e.CreatedReferalCodes)
+            .WithOne(c => c.Creator)
+            .HasForeignKey(c => c.CreatorId);
+
+        builder.HasOne(e => e.ReferalCode)
+            .WithOne(c => c.User)
+            .HasForeignKey<User>(b => b.ReferalCodeId);
+
         builder.AddBaseEntityTemporalMappings();
     }
 }
