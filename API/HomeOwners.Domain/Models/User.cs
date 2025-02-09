@@ -17,4 +17,7 @@ public class User : DomainEntity
     public Role Role { get; set; }
     public ISet<Property> OwnedProperties { get; set; } = new HashSet<Property>();
     public bool IsDeleted { get; set; }
+    public ISet<ReferralCode> CreatedReferalCodes { get; set; } = new HashSet<ReferralCode>();
+    public long? ReferalCodeId { get; set; }
+    public ReferralCode ReferalCode { get; set; }
 }

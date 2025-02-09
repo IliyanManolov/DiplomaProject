@@ -22,6 +22,8 @@ public class DatabaseContext : DbContext
 
         modelBuilder.ApplyConfiguration(new AddressMapping());
 
+        modelBuilder.ApplyConfiguration(new ReferralCodeMapping());
+
         base.OnModelCreating(modelBuilder);
     }
 }
