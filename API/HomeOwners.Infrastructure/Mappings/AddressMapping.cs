@@ -9,7 +9,7 @@ internal class AddressMapping : IEntityTypeConfiguration<Address>
 {
     public void Configure(EntityTypeBuilder<Address> builder)
     {
-        builder.ToTable("users", DataBase.Schema);
+        builder.ToTable("addresses", DataBase.Schema);
 
         builder.HasKey(e => e.Id);
 
