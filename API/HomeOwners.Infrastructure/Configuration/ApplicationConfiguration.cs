@@ -1,11 +1,13 @@
-﻿using HomeOwners.Infrastructure.Database;
+﻿using HomeOwners.Application.Abstractions.Repositories;
+using HomeOwners.Infrastructure.Database;
+using HomeOwners.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
-namespace HomeOwners.Infrastructure;
+namespace HomeOwners.Infrastructure.Configuration;
 
 public static class ApplicationConfiguration
 {
@@ -56,5 +58,14 @@ public static class ApplicationConfiguration
         }
 
         return app;
+    }
+
+    public static void AddRepositories(this IServiceCollection services)
+    {
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IAddressRepository, AddressRepository>();
+        services.AddScoped<ICommunityRepository, CommunityRepository>();
+        services.AddScoped<IPropertyRepository, PropertyRepository>();
+        services.AddScoped<IReferralCodeRepository, ReferralCodeRepository>();
     }
 }
