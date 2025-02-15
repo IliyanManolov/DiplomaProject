@@ -1,5 +1,6 @@
 using HomeOwners.Infrastructure.Configuration;
 using HomeOwners.Infrastructure.Database;
+using HomeOwners.Lib.Configuration.Configuration;
 using Microsoft.EntityFrameworkCore;
 
 internal class Program
@@ -8,21 +9,25 @@ internal class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        // Add services to the container.
+        builder.Configuration.UseHomeOwnersConfiguration();
 
-        builder.Services.AddControllers();
+        builder.Services.AddObservability(builder.Configuration);
+        builder.Host.UseHomeOwnersLogging();
+
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
         builder.Services.AddRepositories();
-
+        builder.Services.AddSecurityLayer();
 
         builder.Services.AddDatabase(builder.Configuration);
 
-        var context = builder.Services.BuildServiceProvider().GetRequiredService<DatabaseContext>();
-        context.Database.Migrate();
+        //var context = builder.Services.BuildServiceProvider().GetRequiredService<DatabaseContext>();
+        //context.Database.Migrate();
+        
 
+        builder.Services.AddControllers();
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.

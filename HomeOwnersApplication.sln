@@ -21,12 +21,16 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HomeOwners.Domain", "API\Ho
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HomeOwners.Lookups", "API\HomeOwners.Lookups\HomeOwners.Lookups.csproj", "{551D2498-F3B4-4CE0-A93D-338D756C17BA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HomeOwners.Web.API", "API\HomeOwners.Web.API\HomeOwners.Web.API.csproj", "{0434DDDE-11B8-4A00-B489-279683C11311}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HomeOwners.Web.API", "API\HomeOwners.Web.API\HomeOwners.Web.API.csproj", "{0434DDDE-11B8-4A00-B489-279683C11311}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2909516A-E412-46C4-9F70-7CFE63195631}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HomeOwners.Lib.Configuration", "lib\HomeOwners.Lib.Configuration\HomeOwners.Lib.Configuration.csproj", "{38379B18-B5CA-4C1D-B282-9878CA46A173}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HomeOwners.Lib.Observability", "lib\HomeOwners.Lib.Observability\HomeOwners.Lib.Observability.csproj", "{8793B362-165F-4A1A-94C3-5B14C32515CF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -54,6 +58,14 @@ Global
 		{0434DDDE-11B8-4A00-B489-279683C11311}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0434DDDE-11B8-4A00-B489-279683C11311}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0434DDDE-11B8-4A00-B489-279683C11311}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38379B18-B5CA-4C1D-B282-9878CA46A173}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38379B18-B5CA-4C1D-B282-9878CA46A173}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38379B18-B5CA-4C1D-B282-9878CA46A173}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38379B18-B5CA-4C1D-B282-9878CA46A173}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8793B362-165F-4A1A-94C3-5B14C32515CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8793B362-165F-4A1A-94C3-5B14C32515CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8793B362-165F-4A1A-94C3-5B14C32515CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8793B362-165F-4A1A-94C3-5B14C32515CF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -64,6 +76,8 @@ Global
 		{FED2989E-27E0-4EF0-A257-08C86DB7D200} = {190A2E49-A65C-4E58-AA16-4E494D52AC8B}
 		{551D2498-F3B4-4CE0-A93D-338D756C17BA} = {190A2E49-A65C-4E58-AA16-4E494D52AC8B}
 		{0434DDDE-11B8-4A00-B489-279683C11311} = {190A2E49-A65C-4E58-AA16-4E494D52AC8B}
+		{38379B18-B5CA-4C1D-B282-9878CA46A173} = {17B6D6E6-7216-4327-A39C-E7776B501A0C}
+		{8793B362-165F-4A1A-94C3-5B14C32515CF} = {17B6D6E6-7216-4327-A39C-E7776B501A0C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {73E14D52-F50F-4A7D-A719-73A1E85456E9}
