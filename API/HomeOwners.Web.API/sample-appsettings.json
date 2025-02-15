@@ -1,7 +1,0 @@
-{
-  "DatabaseSettings": {
-    "ConnectionString": "Server=***;Database=***;Trusted_Connection=True;TrustServerCertificate=true;",
-    "MigrationTable": "changelog",
-    "EnableMigrations": true
-  }
-}

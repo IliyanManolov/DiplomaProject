@@ -1,0 +1,20 @@
+{
+  "observability": {
+    "logging": {
+      "severity": "info",
+      "openSearchConfiguration": {
+        "batchTime": 10,
+        "batchSize": 60,
+        "index": "GIVE_ME_A_NAME",
+        "connectionUrl": "https://opensearch-node1:9200",
+        "password": "GIVE_ME_A_STRONG_PASSWORD",
+        "user": "admin"
+      }
+    }
+  },
+  "DatabaseSettings": {
+    "ConnectionString": "Server=***;Database=***;Trusted_Connection=True;TrustServerCertificate=true;",
+    "MigrationTable": "changelog",
+    "EnableMigrations": true
+  }
+}

@@ -21,6 +21,10 @@ namespace HomeOwners.Web.API.Controllers
         [HttpGet(Name = "GetWeatherForecast")]
         public IEnumerable<WeatherForecast> Get()
         {
+            _logger.LogInformation("B");
+            var test = "BLAH";
+
+            _logger.LogWarning("I wonder what this value is - {val}", test);
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {
                 Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),

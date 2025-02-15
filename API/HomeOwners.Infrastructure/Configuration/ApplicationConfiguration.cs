@@ -1,4 +1,6 @@
 ﻿using HomeOwners.Application.Abstractions.Repositories;
+using HomeOwners.Application.Abstractions.Services;
+using HomeOwners.Application.Services;
 using HomeOwners.Infrastructure.Database;
 using HomeOwners.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -67,5 +69,10 @@ public static class ApplicationConfiguration
         services.AddScoped<ICommunityRepository, CommunityRepository>();
         services.AddScoped<IPropertyRepository, PropertyRepository>();
         services.AddScoped<IReferralCodeRepository, ReferralCodeRepository>();
+    }
+
+    public static void AddSecurityLayer(this IServiceCollection services)
+    {
+        services.AddScoped<IPasswordService, PasswordService>();
     }
 }

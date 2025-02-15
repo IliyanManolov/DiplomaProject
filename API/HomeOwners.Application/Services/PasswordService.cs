@@ -8,10 +8,9 @@ public class PasswordService : IPasswordService
 {
     public string GetHash(string text)
     {
-        using var sh256 = SHA256.Create();
         var bytes = Encoding.UTF8.GetBytes(text);
 
-        var hashBytes = sh256.ComputeHash(bytes);
+        var hashBytes = SHA256.HashData(bytes);
         return BitConverter.ToString(hashBytes);
     }
 }
