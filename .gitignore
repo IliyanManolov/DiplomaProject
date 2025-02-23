@@ -1,5 +1,6 @@
 appsettings.json
 api-configuration*.json
+Config/*
 
 
 # Build results
