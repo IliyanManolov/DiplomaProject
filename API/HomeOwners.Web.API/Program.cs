@@ -37,6 +37,8 @@ internal class Program
             app.UseSwaggerUI();
         }
 
+        app.UseApplicationLogging();
+
         app.UseHttpsRedirection();
 
         app.UseAuthorization();

@@ -1,12 +1,18 @@
 ﻿using HomeOwners.Lib.Configuration.Lookups;
 using HomeOwners.Lib.Observability.Formatters;
+using HomeOwners.Lib.Observability.Middlewares;
 using HomeOwners.Lib.Observability.OpenSearch;
 using HomeOwners.Lib.Observability.Options;
 using HomeOwners.Lib.Observability.SerilogConfiguration;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Serilog;
+using Serilog.Context;
+using Serilog.Events;
 using Serilog.Formatting.Json;
 using Serilog.Sinks.PeriodicBatching;
 
@@ -19,6 +25,12 @@ public static class ObservabilityConfiguration
         var options = new ObservabilityOptions();
         services.Configure<ObservabilityOptions>(configuration.GetSection(ConfigurationSections.Observability));
         configuration.Bind(ConfigurationSections.Observability, options);
+    }
+
+    public static void UseApplicationLogging(this IApplicationBuilder app)
+    {
+        // Push domain-specific properties to the logs, ensure unhandled exceptions do not bubble up but are returned as an internal server error
+        app.UseMiddleware<ApplicationLoggingMiddleware>();
     }
 
     public static IHostBuilder UseHomeOwnersLogging(this IHostBuilder builder)
@@ -53,6 +65,12 @@ public static class ObservabilityConfiguration
                     Period = TimeSpan.FromSeconds(options.Logging.OpenSearchConfiguration.BatchTime)
                 };
 
+
+                // Silence normal diagnostig logs since we are using custom ones
+                loggerConfig
+                    .MinimumLevel.Override("Microsoft.AspNetCore.Hosting", LogEventLevel.Warning)
+                    .MinimumLevel.Override("Microsoft.AspNetCore.Mvc", LogEventLevel.Warning) 
+                    .MinimumLevel.Override("Microsoft.AspNetCore.Routing", LogEventLevel.Warning);
 
                 // TODO: extract to helper class
                 loggerConfig
