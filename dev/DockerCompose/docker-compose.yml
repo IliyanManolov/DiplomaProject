@@ -1,6 +1,21 @@
 services:
+
+  homeowners.proxy:
+    image: nginx
+    container_name: homeowners-dev-proxy
+    hostname: local-dev.homeowners.com
+    ports: 
+      - 443:443
+    depends_on:
+      homeowners.web.api:
+        condition: service_started
+    volumes:
+      - ./proxy-config:/etc/nginx/conf.d
+      - ./Certificates:/etc/nginx/cert
+
   homeowners.web.api:
     image: ${DOCKER_REGISTRY-}homeownerswebapi
+    container_name: homeowners-dev-api
     build:
       context: ./../../
       dockerfile: API/HomeOwners.Web.API/Dockerfile
@@ -8,3 +23,5 @@ services:
       - ./../../dev/DockerCompose/Config:/_config
     environment:
       - HomeOwnersConfigurationPath=/_config/api-configuration.json
+      - ASPNETCORE_URLS=http://+:8080
+      - ASPNETCORE_ENVIRONMENT=Development
