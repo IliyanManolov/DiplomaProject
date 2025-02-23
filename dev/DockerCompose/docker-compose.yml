@@ -1,0 +1,10 @@
+services:
+  homeowners.web.api:
+    image: ${DOCKER_REGISTRY-}homeownerswebapi
+    build:
+      context: ./../../
+      dockerfile: API/HomeOwners.Web.API/Dockerfile
+    volumes:
+      - ./../../dev/DockerCompose/Config:/_config
+    environment:
+      - HomeOwnersConfigurationPath=/_config/api-configuration.json

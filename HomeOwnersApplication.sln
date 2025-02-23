@@ -32,6 +32,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HomeOwners.Lib.Configuratio
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HomeOwners.Lib.Observability", "lib\HomeOwners.Lib.Observability\HomeOwners.Lib.Observability.csproj", "{8793B362-165F-4A1A-94C3-5B14C32515CF}"
 EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "dev\DockerCompose\docker-compose.dcproj", "{81DDED9D-158B-E303-5F62-77A2896D2A5A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -66,6 +68,10 @@ Global
 		{8793B362-165F-4A1A-94C3-5B14C32515CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8793B362-165F-4A1A-94C3-5B14C32515CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8793B362-165F-4A1A-94C3-5B14C32515CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -78,6 +84,7 @@ Global
 		{0434DDDE-11B8-4A00-B489-279683C11311} = {190A2E49-A65C-4E58-AA16-4E494D52AC8B}
 		{38379B18-B5CA-4C1D-B282-9878CA46A173} = {17B6D6E6-7216-4327-A39C-E7776B501A0C}
 		{8793B362-165F-4A1A-94C3-5B14C32515CF} = {17B6D6E6-7216-4327-A39C-E7776B501A0C}
+		{81DDED9D-158B-E303-5F62-77A2896D2A5A} = {94D0CAD7-3783-49AA-9826-7FB9E54A4FAB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {73E14D52-F50F-4A7D-A719-73A1E85456E9}
