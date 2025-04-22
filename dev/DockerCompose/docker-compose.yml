@@ -11,7 +11,7 @@ services:
         condition: service_started
     volumes:
       - ./proxy-config:/etc/nginx/conf.d
-      - ./Certificates:/etc/nginx/cert
+      # - ./Certificates:/etc/nginx/cert
 
   homeowners.web.api:
     image: ${DOCKER_REGISTRY-}homeownerswebapi
