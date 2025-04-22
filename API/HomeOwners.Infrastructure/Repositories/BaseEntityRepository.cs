@@ -23,6 +23,7 @@ internal abstract class BaseEntityRepository<TEntity> : IBaseEntityRepository<TE
 
     public async Task<TEntity> CreateAsync(TEntity entity)
     {
+        entity.CreateDate = DateTime.UtcNow;
         await _dbContext.Set<TEntity>().AddAsync(entity);
 
         await Save();
@@ -32,6 +33,7 @@ internal abstract class BaseEntityRepository<TEntity> : IBaseEntityRepository<TE
 
     public async Task<TEntity> UpdateAsync(TEntity entity)
     {
+        entity.UpdateDate = DateTime.UtcNow;
         _dbContext.Set<TEntity>()
             .Entry(entity).State = EntityState.Modified;
 
