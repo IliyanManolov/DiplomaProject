@@ -13,10 +13,10 @@ internal class AddressRepository : BaseEntityRepository<Address>, IAddressReposi
 
     }
 
-    public async Task<bool> ValidateAddress(string country, string city, string street, long? building, long? apartment)
+    public async Task<Address?> ValidateAddress(string country, string city, string street, long? building, long? apartment)
     {
         return await Query
-            .AnyAsync(x => (x.Country == country)
+            .FirstOrDefaultAsync(x => (x.Country == country)
                     && (x.City == city)
                     && (x.StreetAddress == street)
                     && (x.BuildingNumber == building)

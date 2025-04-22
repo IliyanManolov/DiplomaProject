@@ -5,6 +5,7 @@ using HomeOwners.Application.ValidationErrors;
 using HomeOwners.Application.ValidationErrors.Base;
 using HomeOwners.Domain.Models;
 using Microsoft.Extensions.Logging;
+using System.Text.Json;
 
 namespace HomeOwners.Application.Services;
 
@@ -88,12 +89,36 @@ public class AddressService : IAddressService
         }
 
         if (errors.Count == 0)
-            if (await _addressRepository.ValidateAddress(country: model.Country!, city: model.City!, street: model.StreetAddress!, building: model.BuildingNumber, apartment: model.Apartment))
+        {
+            var existingAddress = await _addressRepository.ValidateAddress(country: model.Country!, city: model.City!, street: model.StreetAddress!, building: model.BuildingNumber, apartment: model.Apartment);
+            if (existingAddress != null)
+            {
                 errors.Add(new IdentifierInUseValidationError("The address already exists"));
+                _logger.LogWarning("Attempting to create a new address and found a duplicate. New: {newAddress}. Existing: {existingAddress}", JsonSerializer.Serialize(model), SerializeAddress(existingAddress));
+            }
+        }
 
         if (errors.Any())
             throw new BaseAggregateValidationError(errors);
 
         return true;
+    }
+
+    private IDictionary<string, object> SerializeAddress(Address address)
+    {
+        var result = new Dictionary<string, object>();
+
+        result.Add("StreetAddress", address.StreetAddress);
+        result.Add("City", address.City);
+        result.Add("State", address.State);
+        result.Add("PostalCode", address.PostalCode);
+        result.Add("Country", address.Country);
+        result.Add("BuildingNum", address.BuildingNumber);
+        result.Add("Floor", address.FloorNumber);
+        result.Add("Apartment", address.ApartmentNumber);
+        result.Add("Latitude", address.Latitude);
+        result.Add("Longitude", address.Longitude);
+
+        return result;
     }
 }
