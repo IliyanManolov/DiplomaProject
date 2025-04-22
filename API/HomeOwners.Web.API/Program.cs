@@ -24,9 +24,6 @@ internal class Program
         builder.Services.AddSecurityLayer();
 
         builder.Services.AddDatabase(builder.Configuration);
-
-        //var context = builder.Services.BuildServiceProvider().GetRequiredService<DatabaseContext>();
-        //context.Database.Migrate();
         
 
         builder.Services.AddControllers();
@@ -51,6 +48,8 @@ internal class Program
         app.UseAuthorization();
 
         app.MapControllers();
+
+        app.UseMigrations();
 
         app.Run();
     }
