@@ -1,7 +1,9 @@
 using HomeOwners.Infrastructure.Configuration;
 using HomeOwners.Infrastructure.Database;
 using HomeOwners.Lib.Configuration.Configuration;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 
 internal class Program
 {
@@ -30,6 +32,8 @@ internal class Program
         builder.Services.AddControllers();
         var app = builder.Build();
 
+        app.UseProxyConfiguration(app.Environment, app.Configuration);
+
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
@@ -39,6 +43,9 @@ internal class Program
 
         app.UseApplicationLogging();
 
+        // Ensure that the URL in the logs is the same as that in the request (easier debugging)
+        app.UseMiddleware<RequestBasePathMiddleware>();
+
         app.UseHttpsRedirection();
 
         app.UseAuthorization();
@@ -46,5 +53,23 @@ internal class Program
         app.MapControllers();
 
         app.Run();
+    }
+}
+
+public class RequestBasePathMiddleware
+{
+    private readonly RequestDelegate _next;
+
+    public RequestBasePathMiddleware(RequestDelegate next)
+    {
+        _next = next;
+    }
+
+    public Task Invoke(HttpContext httpContext)
+    {
+        if (httpContext.Request.PathBase.ToString() == string.Empty)
+            httpContext.Request.PathBase = "/api";
+
+        return _next(httpContext);
     }
 }
