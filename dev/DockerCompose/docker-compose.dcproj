@@ -10,8 +10,7 @@
     <DockerServiceName>homeowners.web.api</DockerServiceName>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="Certificates\localcertificate.crt" />
-    <None Include="Certificates\localcertificate.key" />
+    <None Include=".gitignore" />
     <None Include="Config\api-configuration.json" />
     <None Include="docker-compose.override.yml">
       <DependentUpon>docker-compose.yml</DependentUpon>
