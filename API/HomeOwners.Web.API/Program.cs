@@ -43,6 +43,9 @@ internal class Program
 
         app.UseApplicationLogging();
 
+        // Ensure that the URL in the logs is the same as that in the request (easier debugging)
+        app.UseMiddleware<RequestBasePathMiddleware>();
+
         app.UseHttpsRedirection();
 
         app.UseAuthorization();
@@ -53,53 +56,20 @@ internal class Program
     }
 }
 
-// TODO: move this to a lib project since the UI will also use it
-public static class ProxyConfiguration
+public class RequestBasePathMiddleware
 {
-    public static void UseProxyConfiguration(this IApplicationBuilder app, IWebHostEnvironment environment, IConfiguration configuration)
+    private readonly RequestDelegate _next;
+
+    public RequestBasePathMiddleware(RequestDelegate next)
     {
-        var proxyAddressList = GetProxyServerAddresses(configuration);
-
-        if (proxyAddressList.Any())
-        {
-            var options = new ForwardedHeadersOptions
-            {
-                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost
-            };
-
-            // Use options' addresses if not development. Else just use all
-            if (!environment.IsDevelopment())
-            {
-                var proxiesList = proxyAddressList
-                    .Where(x => !string.IsNullOrEmpty(x))
-                    .Select(x => IPAddress.Parse(x.Trim()))
-                    .ToList();
-
-                foreach (var ip in proxiesList)
-                {
-                    options.KnownProxies.Add(ip);
-                }
-            }
-            else
-            {
-                options.KnownProxies.Clear();
-                options.KnownNetworks.Clear();
-            }
-
-            app.UseForwardedHeaders(options);
-        }
+        _next = next;
     }
 
-    private static IEnumerable<string> GetProxyServerAddresses(IConfiguration configuration)
+    public Task Invoke(HttpContext httpContext)
     {
+        if (httpContext.Request.PathBase.ToString() == string.Empty)
+            httpContext.Request.PathBase = "/api";
 
-        // TODO: get the options here
-        var addresses = new List<string>();
-
-        addresses.Add("127.0.0.1");
-
-
-        return addresses;
-        
+        return _next(httpContext);
     }
 }
