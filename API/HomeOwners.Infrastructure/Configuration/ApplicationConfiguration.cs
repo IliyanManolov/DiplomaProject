@@ -71,6 +71,13 @@ public static class ApplicationConfiguration
         services.AddScoped<IReferralCodeRepository, ReferralCodeRepository>();
     }
 
+    public static void AddServiceLayer(this IServiceCollection services)
+    {
+        services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IAuthenticationService, AuthenticationService>();
+        services.AddScoped<ICommunityService, CommunityService>();
+    }
+
     public static void AddSecurityLayer(this IServiceCollection services)
     {
         services.AddScoped<IPasswordService, PasswordService>();

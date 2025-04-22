@@ -21,6 +21,7 @@ internal class Program
         builder.Services.AddSwaggerGen();
 
         builder.Services.AddRepositories();
+        builder.Services.AddServiceLayer();
         builder.Services.AddSecurityLayer();
 
         builder.Services.AddDatabase(builder.Configuration);
