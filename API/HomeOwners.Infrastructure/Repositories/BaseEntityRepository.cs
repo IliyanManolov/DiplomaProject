@@ -30,6 +30,14 @@ internal abstract class BaseEntityRepository<TEntity> : IBaseEntityRepository<TE
 
         return entity;
     }
+    public async Task<IEnumerable<TEntity>> CreateBulkAsync(IEnumerable<TEntity> entities)
+    {
+        await _dbContext.Set<TEntity>().AddRangeAsync(entities);
+        
+        await Save();
+
+        return entities;
+    }
 
     public async Task<TEntity> UpdateAsync(TEntity entity)
     {
