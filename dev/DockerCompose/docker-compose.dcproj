@@ -10,12 +10,14 @@
     <DockerServiceName>homeowners.web.api</DockerServiceName>
   </PropertyGroup>
   <ItemGroup>
+    <None Include=".gitignore" />
     <None Include="Config\api-configuration.json" />
     <None Include="docker-compose.override.yml">
       <DependentUpon>docker-compose.yml</DependentUpon>
     </None>
     <None Include="docker-compose.yml" />
     <None Include=".dockerignore" />
+    <None Include="proxy-config\default.conf" />
     <None Include="Sample-Config\api-configuration.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
