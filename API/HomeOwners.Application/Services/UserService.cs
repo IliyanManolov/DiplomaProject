@@ -2,7 +2,6 @@
 using HomeOwners.Application.Abstractions.Services;
 using HomeOwners.Application.DTOs.User;
 using HomeOwners.Application.ValidationErrors;
-using HomeOwners.Application.ValidationErrors.Base;
 using HomeOwners.Domain.Enums;
 using HomeOwners.Domain.Models;
 using Microsoft.Extensions.Logging;
@@ -39,13 +38,13 @@ public class UserService : IUserService
             throw new InvalidPropertyValueValidationError("Username cannot cannot be an empty string or null");
 
         if (await _userRepository.IsExistingUsernameAsync(user.Username))
-            throw new UsernameInUseValidationError();
+            throw new IdentifierInUseValidationError("username");
 
         if (string.IsNullOrEmpty(user.Email))
             throw new InvalidPropertyValueValidationError("Email cannot cannot be an empty string or null");
 
         if (await _userRepository.IsExistingEmailAsync(user.Email))
-            throw new EmailInUseValidationError();
+            throw new IdentifierInUseValidationError("email");
 
         // Referal codes are passed as a string from the frontend in order to allow for potential future migrations to custom text
         if (string.IsNullOrEmpty(user.ReferalCode) || !Guid.TryParse(user.ReferalCode, out var codeGuid))
@@ -76,13 +75,50 @@ public class UserService : IUserService
         return dbUser.Id;
     }
 
-    public Task<UserShortDto> GetUserBasicsAsync(long? userId)
+    public async Task<UserShortDto> GetUserBasicsAsync(long? userId)
     {
-        throw new NotImplementedException();
+        var dbUser = await GetUser(userId);
+
+        return new UserShortDto()
+        {
+            Id = dbUser.Id,
+            FirstName = dbUser.FirstName,
+            LastName = dbUser.LastName,
+            UserName = dbUser.Username,
+        };
     }
 
-    public Task<UserDetailsDto> GetUserDetailsAsync(long? userId)
+    public async Task<UserDetailsDto> GetUserDetailsAsync(long? userId)
     {
-        throw new NotImplementedException();
+        var dbUser = await GetUser(userId);
+
+        return new UserDetailsDto()
+        {
+            Id = dbUser.Id,
+            FirstName = dbUser.FirstName,
+            LastName = dbUser.LastName,
+            UserName = dbUser.Username,
+            Email = dbUser.Email,
+            Role = dbUser.Role
+        };
+    }
+
+    private async Task<User> GetUser(long? userId)
+    {
+        if (userId == null)
+            throw new InvalidPropertyValueValidationError("Invalid userId");
+
+        var dbUser = await _userRepository.GetByIdAsync(userId);
+
+        if (dbUser == null)
+            throw new UserNotFoundValidationError();
+
+        if (dbUser.IsDeleted)
+        {
+            _logger.LogInformation("User with id '{userId}' was found but is deleted", userId);
+            throw new UserNotFoundValidationError();
+        }
+
+        return dbUser;
     }
 }
