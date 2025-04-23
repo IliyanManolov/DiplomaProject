@@ -3,6 +3,7 @@ using HomeOwners.Web.UI.Clients.Authentication;
 using HomeOwners.Web.UI.Configuration;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.DataProtection;
 using System.Net;
 
 internal class Program
@@ -27,7 +28,8 @@ internal class Program
         builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddCookie(settings =>
             {
-                settings.LoginPath = "/login";
+                settings.LoginPath = "/Home/Login";
+                settings.AccessDeniedPath = "/Home/Login";
                 settings.Cookie.IsEssential = true;
                 settings.Cookie.HttpOnly = false;
                 settings.SlidingExpiration = true;
@@ -44,6 +46,8 @@ internal class Program
             .Build();
         });
 
+        builder.Services.AddDataProtection()
+            .PersistKeysToFileSystem(new DirectoryInfo("/keys"));
 
         builder.Services.AddCors(options =>
         {

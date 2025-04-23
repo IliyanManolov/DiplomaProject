@@ -9,6 +9,7 @@ using System.Security.Claims;
 using Refit;
 using System.Net;
 using HomeOwners.Web.UI.ResponseModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HomeOwners.Web.UI.Controllers
 {
@@ -23,6 +24,7 @@ namespace HomeOwners.Web.UI.Controllers
             _authenticationClient = authenticationClient;
         }
 
+        [Microsoft.AspNetCore.Authorization.Authorize]
         public async Task<IActionResult> Index()
         {
             return View();

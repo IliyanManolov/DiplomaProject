@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -41,6 +42,18 @@ public static class ProxyConfiguration
             }
 
             app.UseForwardedHeaders(options);
+
+            if (environment.IsDevelopment())
+            {
+                // allow custom ports forwarding for local dev environments
+                app.Use(async (context, next) =>
+                {
+                    if (context.Request.Headers.TryGetValue("X-Forwarded-Port", out var portValueStr) && int.TryParse(portValueStr, out int portValue))
+                        context.Request.Host = new HostString(context.Request.Host.Host, portValue);
+
+                    await next.Invoke();
+                });
+            }
         }
     }
 

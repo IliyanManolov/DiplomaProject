@@ -35,6 +35,7 @@ services:
       dockerfile: Frontend/HomeOwners.Web.UI/Dockerfile
     volumes:
       - ./../../dev/DockerCompose/Config:/_config
+      - ./dev-keys:/keys
     environment:
       - HomeOwnersConfigurationPath=/_config/web-configuration.json
       - ASPNETCORE_URLS=http://+:8080
