@@ -21,6 +21,7 @@ services:
       dockerfile: API/HomeOwners.Web.API/Dockerfile
     volumes:
       - ./../../dev/DockerCompose/Config:/_config
+      - ./dev-keys:/keys
     environment:
       - HomeOwnersConfigurationPath=/_config/api-configuration.json
       - ASPNETCORE_URLS=http://+:8080

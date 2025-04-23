@@ -3,6 +3,7 @@ using HomeOwners.Infrastructure.Database;
 using HomeOwners.Lib.Configuration.Configuration;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
@@ -49,6 +50,9 @@ internal class Program
             .RequireAuthenticatedUser()
             .Build();
         });
+
+        builder.Services.AddDataProtection()
+            .PersistKeysToFileSystem(new DirectoryInfo("/keys"));
 
         builder.Services.AddCors(options =>
         {
