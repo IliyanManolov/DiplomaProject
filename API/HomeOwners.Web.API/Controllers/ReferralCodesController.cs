@@ -24,7 +24,7 @@ public class ReferralCodesController : ControllerBase
         _logger = loggerFactory.CreateLogger<ReferralCodesController>();
     }
 
-    [HttpPost("bulk")]
+    [HttpPost("bulk/")]
     [Authorize(Roles = "Administrator")]
     public async Task<IActionResult> CreateBulkAsync([FromBody] CreateReferralCodesDto model)
     {
