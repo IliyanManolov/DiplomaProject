@@ -1,0 +1,15 @@
+{
+  "observability": {
+    "logging": {
+      "severity": "info",
+      "openSearchConfiguration": {
+        "batchTime": 10,
+        "batchSize": 60,
+        "index": "",
+        "connectionUrl": "",
+        "password": "",
+        "user": "admin"
+      }
+    }
+  }
+}
