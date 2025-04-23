@@ -1,35 +1,38 @@
 using HomeOwners.Application.Abstractions.Services;
-using HomeOwners.Application.DTOs.Community;
+using HomeOwners.Application.DTOs.Property;
 using HomeOwners.Application.ValidationErrors.Authentication;
 using HomeOwners.Application.ValidationErrors.Base;
 using HomeOwners.Web.API.ResponseModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace HomeOwners.Web.API.Controllers;
 
 [ApiController]
-[Route("communities")]
-public class CommunitiesController : ControllerBase
+[Route("properties")]
+public class PropertiesController : ControllerBase
 {
     private readonly ICommunityService _communityService;
-    private readonly ILogger<CommunitiesController> _logger;
+    private readonly IPropertyService _propertiesService;
+    private readonly ILogger<PropertiesController> _logger;
 
-    public CommunitiesController(ICommunityService communitySerivce, ILoggerFactory loggerFactory)
+    public PropertiesController(IPropertyService propertiesService, ICommunityService communitySerivce, ILoggerFactory loggerFactory)
     {
         _communityService = communitySerivce;
-        _logger = loggerFactory.CreateLogger<CommunitiesController>();
+        _propertiesService = propertiesService;
+        _logger = loggerFactory.CreateLogger<PropertiesController>();
     }
 
 
     [HttpPost]
     [Authorize(Roles = "Administrator")]
-    public async Task<IActionResult> CreateCommunityAsync([FromBody] CreateCommunityDto model)
+    public async Task<IActionResult> CreatePropertyAsync([FromBody] CreatePropertyDto model)
     {
         try
         {
-            var communityId = await _communityService.CreateCommunityAsync(model);
+            var community = await _communityService.GetCommunityDetailsAsync(model.CommunityId);
+
+            var communityId = await _propertiesService.CreatePropertyAsync(model);
 
             return Ok(communityId);
         }
