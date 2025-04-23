@@ -22,6 +22,10 @@ internal class ReferralCodeMapping : IEntityTypeConfiguration<ReferralCode>
             .HasColumnName("is_used")
             .HasConversion<bool>();
 
+        builder.Property(e => e.Code)
+            .HasColumnName("code")
+            .HasColumnType("uniqueidentifier");
+
         builder.HasOne(e => e.User)
             .WithOne(u => u.ReferalCode)
             .HasForeignKey<ReferralCode>(code => code.UserId);

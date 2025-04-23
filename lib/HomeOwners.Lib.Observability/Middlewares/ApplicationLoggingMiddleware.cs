@@ -93,9 +93,9 @@ public class ApplicationLoggingMiddleware
 
     private class InternalServerErrorModel
     {
-        public string Status = "Error";
-        public string Message = "Internal Server Error";
-        public string TrackingId;
+        public string Status { get; set; } = "Error";
+        public string Message { get; set; } = "Internal Server Error";
+        public string TrackingId { get; set; }
 
         public InternalServerErrorModel(string TrackingId)
         {

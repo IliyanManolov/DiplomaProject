@@ -1,6 +1,8 @@
 using HomeOwners.Infrastructure.Configuration;
 using HomeOwners.Infrastructure.Database;
 using HomeOwners.Lib.Configuration.Configuration;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
@@ -21,15 +23,35 @@ internal class Program
         builder.Services.AddSwaggerGen();
 
         builder.Services.AddRepositories();
+        builder.Services.AddServiceLayer();
         builder.Services.AddSecurityLayer();
 
         builder.Services.AddDatabase(builder.Configuration);
-
-        //var context = builder.Services.BuildServiceProvider().GetRequiredService<DatabaseContext>();
-        //context.Database.Migrate();
         
-
         builder.Services.AddControllers();
+
+        builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            .AddCookie(settings =>
+            {
+                settings.LoginPath = "/login";
+                settings.Cookie.IsEssential = true;
+                settings.Cookie.HttpOnly = false;
+                settings.SlidingExpiration = true;
+                settings.ExpireTimeSpan = TimeSpan.FromHours(48);
+                settings.Cookie.Name = "HomeOwners_Cookie";
+                settings.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+            });
+
+        builder.Services.AddAuthorization(options =>
+        {
+            options.DefaultPolicy = new AuthorizationPolicyBuilder()
+            .AddAuthenticationSchemes(CookieAuthenticationDefaults.AuthenticationScheme)
+            .RequireAuthenticatedUser()
+            .Build();
+        });
+
+
+
         var app = builder.Build();
 
         app.UseProxyConfiguration(app.Environment, app.Configuration);
@@ -46,11 +68,15 @@ internal class Program
         // Ensure that the URL in the logs is the same as that in the request (easier debugging)
         app.UseMiddleware<RequestBasePathMiddleware>();
 
-        app.UseHttpsRedirection();
+        //app.UseHttpsRedirection();
+
+        app.UseAuthentication();
 
         app.UseAuthorization();
 
         app.MapControllers();
+
+        app.UseMigrations();
 
         app.Run();
     }
