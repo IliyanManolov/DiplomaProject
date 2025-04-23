@@ -50,6 +50,16 @@ internal class Program
             .Build();
         });
 
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("AllowLocalProxy",
+                policy => policy
+                    .WithOrigins("http://local-dev.homeowners.com:443")
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials()
+            );
+        });
 
 
         var app = builder.Build();
@@ -68,6 +78,7 @@ internal class Program
         // Ensure that the URL in the logs is the same as that in the request (easier debugging)
         app.UseMiddleware<RequestBasePathMiddleware>();
 
+        app.UseCors("AllowLocalProxy");
         //app.UseHttpsRedirection();
 
         app.UseAuthentication();

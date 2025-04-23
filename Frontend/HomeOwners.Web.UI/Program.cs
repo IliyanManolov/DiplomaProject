@@ -11,8 +11,18 @@ internal class Program
         builder.Services.AddObservability(builder.Configuration);
         builder.Host.UseHomeOwnersLogging();
 
-        // Add services to the container.
         builder.Services.AddControllersWithViews();
+
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("AllowLocalProxy",
+                policy => policy
+                    .WithOrigins("http://local-dev.homeowners.com:443")
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials()
+            );
+        });
 
         var app = builder.Build();
 
@@ -21,11 +31,18 @@ internal class Program
         {
             app.UseExceptionHandler("/Home/Error");
         }
+
+        app.UseApplicationLogging();
+
         app.UseStaticFiles();
+
+        app.UseCors("AllowLocalProxy");
 
         app.UseRouting();
 
         app.UseMiddleware<RequestBasePathMiddleware>();
+
+        app.UseAuthentication();
 
         app.UseAuthorization();
 
