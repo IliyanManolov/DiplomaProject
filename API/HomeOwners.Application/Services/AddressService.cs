@@ -3,6 +3,7 @@ using HomeOwners.Application.Abstractions.Services;
 using HomeOwners.Application.DTOs.Address;
 using HomeOwners.Application.ValidationErrors;
 using HomeOwners.Application.ValidationErrors.Base;
+using HomeOwners.Domain.Enums;
 using HomeOwners.Domain.Models;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
@@ -20,9 +21,9 @@ public class AddressService : IAddressService
         _logger = loggerFactory.CreateLogger<AddressService>();
     }
 
-    public async Task<long> CreateAddressAsync(CreateAddressDto model)
+    public async Task<long> CreateAddressAsync(CreateAddressDto model, PropertyType type)
     {
-        await ValidateAddressAsync(model);
+        await ValidateAddressAsync(model, type);
 
         var dbAddress = new Address()
         {
@@ -41,7 +42,7 @@ public class AddressService : IAddressService
         return dbAddress.Id!.Value;
     }
 
-    public async Task<bool> ValidateAddressAsync(CreateAddressDto model)
+    public async Task<bool> ValidateAddressAsync(CreateAddressDto model, PropertyType type)
     {
         var errors = new List<BaseValidationError>();
 
@@ -61,11 +62,11 @@ public class AddressService : IAddressService
             errors.Add(new InvalidPropertyValueValidationError("Address 'state' cannot be an empty string/null"));
 
         // XOR - only 1 property has a value
-        if ((model.Floor == null) ^ (model.Apartment == null))
-            errors.Add(new InvalidPropertyValueValidationError("Address 'floor' and 'apartment' must either both have values or NULL"));
-        // validate their values if both of them are TRUE
-        else if ((model.Floor != null) && (model.Apartment != null))
+        if (type == PropertyType.Apartment)
         {
+            if ((model.Floor == null) || (model.Apartment == null))
+                errors.Add(new InvalidPropertyValueValidationError("Address 'floor' and 'apartment' must both have values"));
+            
             if (model.Floor < 0)
                 errors.Add(new InvalidPropertyValueValidationError("Addres 'floor' cannot have a negative value"));
 

@@ -78,6 +78,7 @@ public static class ApplicationConfiguration
         services.AddScoped<ICommunityService, CommunityService>();
         services.AddScoped<IAddressService, AddressService>();
         services.AddScoped<IReferralCodeService, ReferralCodeService>();
+        services.AddScoped<IPropertyService, PropertyService>();
     }
 
     public static void AddSecurityLayer(this IServiceCollection services)
