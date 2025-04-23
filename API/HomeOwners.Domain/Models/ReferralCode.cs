@@ -2,7 +2,7 @@
 
 public class ReferralCode : DomainEntity
 {
-    public string Code { get; set; }
+    public Guid Code { get; set; }
     public bool IsUsed { get; set; } = false;
     /// <summary>
     /// ID of the user that was created with this code

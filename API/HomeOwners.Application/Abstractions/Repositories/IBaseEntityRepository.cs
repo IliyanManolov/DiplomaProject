@@ -12,6 +12,7 @@ public interface IBaseEntityRepository<TEntity>
 {
     public Task<TEntity?> GetByIdAsync(long? id);
     public Task<IEnumerable<TEntity>> GetAllAsync();
+    public Task<IEnumerable<TEntity>> CreateBulkAsync(IEnumerable<TEntity> entities);
     public Task<TEntity> CreateAsync(TEntity entity);
     public Task<TEntity> DeleteAsync(TEntity entity);
     public Task<TEntity> UpdateAsync(TEntity entity);
