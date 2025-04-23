@@ -1,6 +1,8 @@
 using HomeOwners.Lib.Configuration.Configuration;
 using HomeOwners.Web.UI.Clients.Authentication;
 using HomeOwners.Web.UI.Configuration;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using System.Net;
 
 internal class Program
@@ -21,6 +23,27 @@ internal class Program
         builder.Services.AddSingleton<CookieContainer>();
 
         builder.Services.RegisterCustomClient<IAuthenticationClient>("/api/");
+
+        builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            .AddCookie(settings =>
+            {
+                settings.LoginPath = "/login";
+                settings.Cookie.IsEssential = true;
+                settings.Cookie.HttpOnly = false;
+                settings.SlidingExpiration = true;
+                settings.ExpireTimeSpan = TimeSpan.FromHours(48);
+                settings.Cookie.Name = "HomeOwners_Cookie";
+                settings.Cookie.SecurePolicy = CookieSecurePolicy.None;
+            });
+
+        builder.Services.AddAuthorization(options =>
+        {
+            options.DefaultPolicy = new AuthorizationPolicyBuilder()
+            .AddAuthenticationSchemes(CookieAuthenticationDefaults.AuthenticationScheme)
+            .RequireAuthenticatedUser()
+            .Build();
+        });
+
 
         builder.Services.AddCors(options =>
         {

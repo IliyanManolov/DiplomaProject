@@ -49,6 +49,20 @@ namespace HomeOwners.Web.UI.Controllers
             try
             {
                 var user = await _authenticationClient.LoginAsync(new AuthenticateRequest() { Username = model.Username, Password = model.Password });
+
+                var claims = new List<Claim>()
+                {
+                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()!),
+                    new Claim(ClaimTypes.Name, user.UserName!),
+                    new Claim(ClaimTypes.Role, user.Role.ToString())
+                };
+
+                await HttpContext.SignInAsync(
+                    new ClaimsPrincipal(
+                        new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme)
+                    )
+                );
+
             }
             catch (ApiException ex)
             {
