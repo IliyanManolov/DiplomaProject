@@ -1,4 +1,7 @@
 using HomeOwners.Lib.Configuration.Configuration;
+using HomeOwners.Web.UI.Clients.Authentication;
+using HomeOwners.Web.UI.Configuration;
+using System.Net;
 
 internal class Program
 {
@@ -13,6 +16,12 @@ internal class Program
 
         builder.Services.AddControllersWithViews();
 
+        builder.Services.ConfigureBackendConnection(builder.Configuration);
+
+        builder.Services.AddSingleton<CookieContainer>();
+
+        builder.Services.RegisterCustomClient<IAuthenticationClient>("/api/");
+
         builder.Services.AddCors(options =>
         {
             options.AddPolicy("AllowLocalProxy",
@@ -25,6 +34,8 @@ internal class Program
         });
 
         var app = builder.Build();
+
+        app.UseProxyConfiguration(app.Environment, app.Configuration);
 
         // Configure the HTTP request pipeline.
         if (!app.Environment.IsDevelopment())

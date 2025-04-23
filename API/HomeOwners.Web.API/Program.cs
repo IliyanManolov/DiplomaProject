@@ -40,7 +40,7 @@ internal class Program
                 settings.SlidingExpiration = true;
                 settings.ExpireTimeSpan = TimeSpan.FromHours(48);
                 settings.Cookie.Name = "HomeOwners_Cookie";
-                settings.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                settings.Cookie.SecurePolicy = CookieSecurePolicy.None;
             });
 
         builder.Services.AddAuthorization(options =>

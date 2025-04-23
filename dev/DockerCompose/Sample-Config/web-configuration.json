@@ -11,5 +11,8 @@
         "user": "admin"
       }
     }
+  },
+  "backend": {
+    "address": "http://local-dev.homeowners.com:443"
   }
 }
