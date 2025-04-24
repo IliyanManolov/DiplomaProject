@@ -88,6 +88,28 @@ public class UserService : IUserService
         };
     }
 
+    public async Task<UserDetailsDto> GetUserByEmailAsync(string email)
+    {
+
+        if (string.IsNullOrEmpty(email))
+            throw new InvalidPropertyValueValidationError("Email cannot be an empty string/null");
+
+        var dbUser = await _userRepository.GetUserByEmail(email);
+
+        if (dbUser == null)
+            throw new UserNotFoundValidationError();
+
+        return new UserDetailsDto()
+        {
+            Id = dbUser.Id,
+            FirstName = dbUser.FirstName,
+            LastName = dbUser.LastName,
+            UserName = dbUser.Username,
+            Email = dbUser.Email,
+            Role = dbUser.Role
+        };
+    }
+
     public async Task<UserDetailsDto> GetUserDetailsAsync(long? userId)
     {
         var dbUser = await GetUser(userId);

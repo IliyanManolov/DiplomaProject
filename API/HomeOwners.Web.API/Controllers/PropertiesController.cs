@@ -14,12 +14,14 @@ public class PropertiesController : ControllerBase
 {
     private readonly ICommunityService _communityService;
     private readonly IPropertyService _propertiesService;
+    private readonly IUserService _userService;
     private readonly ILogger<PropertiesController> _logger;
 
-    public PropertiesController(IPropertyService propertiesService, ICommunityService communitySerivce, ILoggerFactory loggerFactory)
+    public PropertiesController(IPropertyService propertiesService, ICommunityService communitySerivce, IUserService userService, ILoggerFactory loggerFactory)
     {
         _communityService = communitySerivce;
         _propertiesService = propertiesService;
+        _userService = userService;
         _logger = loggerFactory.CreateLogger<PropertiesController>();
     }
 
@@ -31,6 +33,10 @@ public class PropertiesController : ControllerBase
         try
         {
             var community = await _communityService.GetCommunityDetailsAsync(model.CommunityId);
+
+            var user = await _userService.GetUserByEmailAsync(model.OwnerEmail);
+
+            model.OwnerId = user.Id;
 
             var communityId = await _propertiesService.CreatePropertyAsync(model);
 
