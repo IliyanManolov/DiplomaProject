@@ -26,16 +26,16 @@ public class AdminPanelController : Controller
     }
 
     [Authorize(Roles = "Administrator")]
-    public async Task<IActionResult> Index()
+    public IActionResult Index()
     {
-        var viewModel = new AdminPanelViewModel();
+        return View();
+    }
 
-        var availableCommunities = await _communityClient.GetAllCommunities(GetUserId());
 
-        viewModel.PropertyCreateModel = new CreatePropertyViewModel()
-        {
-            AvailableCommunities = availableCommunities.ToList(),
-        };
+    [Authorize(Roles = "Administrator")]
+    public IActionResult CreateCommunity()
+    {
+        var viewModel = new CreateCommunityViewModel();
 
         return View(viewModel);
     }
@@ -46,7 +46,7 @@ public class AdminPanelController : Controller
     {
         if (!ModelState.IsValid)
         {
-            return View("Index");
+            return View(model);
         }
 
         try
@@ -78,10 +78,24 @@ public class AdminPanelController : Controller
                     _logger.LogError(ex.Message);
                     break;
             }
-            return View("Index");
+            return View(model);
         }
 
-        return View("Index");
+        return RedirectToAction(nameof(AdminPanelController.Index));
+    }
+
+
+
+    [Authorize(Roles = "Administrator")]
+    public async Task<IActionResult> CreateProperty()
+    {
+        var viewModel = new CreatePropertyViewModel();
+
+        var availableCommunities = await _communityClient.GetAllCommunities(GetUserId());
+
+        viewModel.AvailableCommunities = availableCommunities.ToList();
+
+        return View(viewModel);
     }
 
     [HttpPost]
@@ -90,12 +104,7 @@ public class AdminPanelController : Controller
     {
         if (!ModelState.IsValid)
         {
-
-            //ModelState.AddModelError(string.Empty, "AAAAAAAAA");
-            return View(nameof(AdminPanelController.Index), new AdminPanelViewModel()
-            {
-                PropertyCreateModel = model,
-            });
+            return View(model);
         }
 
         try

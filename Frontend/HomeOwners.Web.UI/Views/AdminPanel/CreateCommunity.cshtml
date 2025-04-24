@@ -1,0 +1,21 @@
+﻿@model CreateCommunityViewModel
+
+@{
+    ViewData["Title"] = "Create Community";
+}
+<div>
+    <h2> Create a new Community</h2>
+
+    <div class="form-outline mb-4 border">
+        <form asp-controller="AdminPanel" asp-action="CreateCommunity" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn-primary">Create Community</button>
+        </form>
+
+    </div>
+</div>

@@ -6,6 +6,7 @@
 @{
     <h1>Initial Administrator Panel</h1>
 
-    <partial name="_CreateCommunity" model="@Model.CommunityCreateModel"></partial>
-    <partial name="_CreateProperty" model="@Model.PropertyCreateModel"></partial>
+    <a class="nav-link rounded bg-light shadow-sm text-dark mt-4" asp-area="" asp-controller="AdminPanel" asp-action="CreateCommunity">Create Community</a>
+
+    <a class="nav-link rounded bg-light shadow-sm text-dark mt-4" asp-area="" asp-controller="AdminPanel" asp-action="CreateProperty">Create Property</a>
 }
