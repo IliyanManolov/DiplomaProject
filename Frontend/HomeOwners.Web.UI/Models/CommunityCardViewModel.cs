@@ -1,6 +1,6 @@
 namespace HomeOwners.Web.UI.Models;
 
-public class CommunityViewModel
+public class CommunityCardViewModel
 {
     public long Id { get; set; }
     public string Name { get; set; }

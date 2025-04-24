@@ -31,7 +31,7 @@ public class HomeController : Controller
     {
         var communities = await _communityClient.GetAllCommunities(GetUserId());
 
-        var viewModel = communities.Select(x => new CommunityViewModel()
+        var viewModel = communities.Select(x => new CommunityCardViewModel()
         {
             Id = x.Id,
             Name = x.Name,
