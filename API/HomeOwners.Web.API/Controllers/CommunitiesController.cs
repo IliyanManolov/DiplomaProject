@@ -13,11 +13,13 @@ namespace HomeOwners.Web.API.Controllers;
 [Route("communities")]
 public class CommunitiesController : ControllerBase
 {
+    private readonly IUserService _userSerivce;
     private readonly ICommunityService _communityService;
     private readonly ILogger<CommunitiesController> _logger;
 
-    public CommunitiesController(ICommunityService communitySerivce, ILoggerFactory loggerFactory)
+    public CommunitiesController(ICommunityService communitySerivce, IUserService userService, ILoggerFactory loggerFactory)
     {
+        _userSerivce = userService;
         _communityService = communitySerivce;
         _logger = loggerFactory.CreateLogger<CommunitiesController>();
     }
@@ -32,6 +34,33 @@ public class CommunitiesController : ControllerBase
             var communityId = await _communityService.CreateCommunityAsync(model);
 
             return Ok(communityId);
+        }
+        catch (BaseValidationError err)
+        {
+            return GetBadRequestResponse(err);
+        }
+        catch (BaseAggregateValidationError err)
+        {
+            return GetBadRequestResponse(err);
+        }
+        catch (BaseAuthenticationError err)
+        {
+            _logger.LogInformation("Returning 404 due to auth error. Message - {errorMessage}", err.Message);
+            return NotFound(new NotFoundResponseModel(HttpContext.TraceIdentifier));
+        }
+    }
+
+    [HttpGet("{userId}")]
+    public async Task<IActionResult> GetCommunitiesAsync(long userId)
+    {
+        try
+        {
+            var user = await _userSerivce.GetUserDetailsAsync(userId);
+
+            if (user.Role is Domain.Enums.Role.Administrator)
+                return Ok(await _communityService.GetAllCommunities());
+            else
+                return Ok(await _communityService.GetAllForUser(user.Id!.Value));
         }
         catch (BaseValidationError err)
         {
