@@ -1,21 +1,9 @@
-using HomeOwners.Web.UI.Clients.Community.Responses;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace HomeOwners.Web.UI.Models;
+namespace HomeOwners.Web.UI.Clients.Property.Requests;
 
-public class CreatePropertyViewModel
+public class CreateAddressRequest
 {
-    [Required]
-    public long SelectedCommunity { get; set; }
-    public List<CommunityDetailsResponse>? AvailableCommunities { get; set; }
-    [Required]
-    public string OwnerEmail { get; set; }
-    [Required]
-    public PropertyType Type { get; set; }
-    [Required]
-    public int? Occupants { get; set; }
-
     [Required]
     public string? StreetAddress { get; set; }
     [Required]

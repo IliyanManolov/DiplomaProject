@@ -1,6 +1,8 @@
 ﻿using HomeOwners.Web.UI.Clients.Community;
 using HomeOwners.Web.UI.Clients.Community.Requests;
 using HomeOwners.Web.UI.Clients.Community.Responses;
+using HomeOwners.Web.UI.Clients.Property;
+using HomeOwners.Web.UI.Clients.Property.Requests;
 using HomeOwners.Web.UI.Models;
 using HomeOwners.Web.UI.ResponseModels;
 using Microsoft.AspNetCore.Authorization;
@@ -16,12 +18,13 @@ namespace HomeOwners.Web.UI.Controllers;
 public class AdminPanelController : Controller
 {
     private readonly ICommunityClient _communityClient;
+    private readonly IPropertyClient _propertyClient;
     private readonly ILogger<AdminPanelController> _logger;
-    //private SelectList _availableCommunities = new SelectList(Enumerable.Empty<CommunityDetailsResponse>());
 
-    public AdminPanelController(ICommunityClient communityClient, ILoggerFactory loggerFactory)
+    public AdminPanelController(ICommunityClient communityClient, IPropertyClient propertyClient, ILoggerFactory loggerFactory)
     {
         _communityClient = communityClient;
+        _propertyClient = propertyClient;
         _logger = loggerFactory.CreateLogger<AdminPanelController>();
     }
 
@@ -109,10 +112,30 @@ public class AdminPanelController : Controller
 
         try
         {
-            //var id = await _communityClient.CreateCommunityAsync(new CreateCommunityRequest()
-            //{
-            //    Name = model.Name,
-            //});
+            var address = new CreateAddressRequest()
+            {
+                Apartment = model.Apartment,
+                StreetAddress = model.StreetAddress,
+                BuildingNumber = model.BuildingNumber,
+                City = model.City,
+                Country = model.Country,
+                Floor = model.Floor,
+                Latitude = model.Latitude,
+                Longitude = model.Longitude,
+                PostalCode = model.PostalCode,
+                State = model.State
+            };
+
+            var request = new CreatePropertyRequest()
+            {
+                Address = address,
+                CommunityId = model.SelectedCommunity,
+                Occupants = model.Occupants,
+                OwnerEmail = model.OwnerEmail,
+                Type = model.Type,
+            };
+
+            var id = await _propertyClient.CreatePropertyAsync(request);
         }
         catch (Refit.ApiException ex)
         {
@@ -133,10 +156,11 @@ public class AdminPanelController : Controller
                     break;
 
                 default:
+                    ModelState.AddModelError(string.Empty, "Unexpected error occured");
                     _logger.LogError(ex.Message);
                     break;
             }
-            return RedirectToAction(nameof(AdminPanelController.Index));
+            return View(model);
         }
 
         return RedirectToAction(nameof(AdminPanelController.Index));

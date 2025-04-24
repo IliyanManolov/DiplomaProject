@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
+using System.Text.Json.Serialization;
+using System.Text.Json;
 
 internal class Program
 {
@@ -29,7 +31,11 @@ internal class Program
 
         builder.Services.AddDatabase(builder.Configuration);
         
-        builder.Services.AddControllers();
+        builder.Services.AddControllers()
+            .AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
+            }); ;
 
         //builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
         //    .AddCookie(settings =>

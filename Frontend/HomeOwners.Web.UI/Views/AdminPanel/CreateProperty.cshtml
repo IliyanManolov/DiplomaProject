@@ -30,9 +30,84 @@
             </div>
 
             <div data-mdb-input-init class="form-outline mb-4">
-                <h1>HELLO</h1>
+                <input asp-for="OwnerEmail" type="text" id="form3Example3" class="form-control form-control-lg"
+                       placeholder="Enter Owner email" />
+                <span asp-validation-for="OwnerEmail" class="text-danger"></span>
             </div>
 
+            <div data-mdb-input-init class="form-outline mb-4">
+                <input asp-for="Occupants" type="text" id="form3Example3" class="form-control form-control-lg"
+                       placeholder="Enter Number of Occupants" />
+                <span asp-validation-for="Occupants" class="text-danger"></span>
+            </div>
+
+            <div data-mdb-input-init class="form-outline mb-4">
+                <input asp-for="StreetAddress" type="text" id="form3Example3" class="form-control form-control-lg"
+                       placeholder="Enter Street" />
+                <span asp-validation-for="StreetAddress" class="text-danger"></span>
+            </div>
+
+            <div data-mdb-input-init class="form-outline mb-4">
+                <input asp-for="City" type="text" id="form3Example3" class="form-control form-control-lg"
+                       placeholder="Enter City" />
+                <span asp-validation-for="City" class="text-danger"></span>
+            </div>
+
+
+            <div data-mdb-input-init class="form-outline mb-4">
+                <select asp-for="Type" asp-items="Html.GetEnumSelectList<PropertyType>()"
+                        class="form-select form-select-lg">
+                    <option value="">Select property type</option>
+                </select>
+            </div>
+
+            <div data-mdb-input-init class="form-outline mb-4">
+                <input asp-for="State" type="text" id="form3Example3" class="form-control form-control-lg"
+                       placeholder="Enter State/Municipality" />
+                <span asp-validation-for="State" class="text-danger"></span>
+            </div>
+
+            <div data-mdb-input-init class="form-outline mb-4">
+                <input asp-for="PostalCode" type="text" id="form3Example3" class="form-control form-control-lg"
+                       placeholder="Enter Postal Code" />
+                <span asp-validation-for="PostalCode" class="text-danger"></span>
+            </div>
+
+            <div data-mdb-input-init class="form-outline mb-4">
+                <input asp-for="Country" type="text" id="form3Example3" class="form-control form-control-lg"
+                       placeholder="Enter Country" />
+                <span asp-validation-for="Country" class="text-danger"></span>
+            </div>
+
+            <div data-mdb-input-init class="form-outline mb-4">
+                <input asp-for="BuildingNumber" type="text" id="form3Example3" class="form-control form-control-lg"
+                       placeholder="Enter Building number" />
+                <span asp-validation-for="BuildingNumber" class="text-danger"></span>
+            </div>
+
+            <div data-mdb-input-init class="form-outline mb-4">
+                <input asp-for="Floor" type="text" id="form3Example3" class="form-control form-control-lg"
+                       placeholder="Enter Floor (only applicable for apartment)" />
+                <span asp-validation-for="Floor" class="text-danger"></span>
+            </div>
+
+            <div data-mdb-input-init class="form-outline mb-4">
+                <input asp-for="Apartment" type="text" id="form3Example3" class="form-control form-control-lg"
+                       placeholder="Enter Apartment number (only applicable for apartment)" />
+                <span asp-validation-for="Apartment" class="text-danger"></span>
+            </div>
+
+            <div data-mdb-input-init class="form-outline mb-4">
+                <input asp-for="Latitude" type="text" id="form3Example3" class="form-control form-control-lg"
+                       placeholder="Enter Latitude (Optional)" />
+                <span asp-validation-for="Latitude" class="text-danger"></span>
+            </div>
+
+            <div data-mdb-input-init class="form-outline mb-4">
+                <input asp-for="Longitude" type="text" id="form3Example3" class="form-control form-control-lg"
+                       placeholder="Enter Longitude (Optional)" />
+                <span asp-validation-for="Longitude" class="text-danger"></span>
+            </div>
 
             <div class="text-center text-lg-start mt-4 pt-2 d-flex justify-content-center">
                 <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-lg"

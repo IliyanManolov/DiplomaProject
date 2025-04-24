@@ -1,11 +1,14 @@
 using HomeOwners.Lib.Configuration.Configuration;
 using HomeOwners.Web.UI.Clients.Authentication;
 using HomeOwners.Web.UI.Clients.Community;
+using HomeOwners.Web.UI.Clients.Property;
 using HomeOwners.Web.UI.Configuration;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using System.Net;
+using System.Text.Json.Serialization;
+using System.Text.Json;
 
 internal class Program
 {
@@ -18,7 +21,11 @@ internal class Program
         builder.Services.AddObservability(builder.Configuration);
         builder.Host.UseHomeOwnersLogging();
 
-        builder.Services.AddControllersWithViews();
+        builder.Services.AddControllersWithViews()
+            .AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
+            });
 
         builder.Services.ConfigureBackendConnection(builder.Configuration);
 
@@ -26,6 +33,7 @@ internal class Program
 
         builder.Services.RegisterCustomClient<IAuthenticationClient>("/api/");
         builder.Services.RegisterCustomClient<ICommunityClient>("/api/");
+        builder.Services.RegisterCustomClient<IPropertyClient>("/api/");
 
         builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddCookie(settings =>
