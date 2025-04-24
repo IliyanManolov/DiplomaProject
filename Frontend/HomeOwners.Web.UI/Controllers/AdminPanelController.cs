@@ -90,7 +90,12 @@ public class AdminPanelController : Controller
     {
         if (!ModelState.IsValid)
         {
-            return View("Index");
+
+            //ModelState.AddModelError(string.Empty, "AAAAAAAAA");
+            return View(nameof(AdminPanelController.Index), new AdminPanelViewModel()
+            {
+                PropertyCreateModel = model,
+            });
         }
 
         try
@@ -122,10 +127,10 @@ public class AdminPanelController : Controller
                     _logger.LogError(ex.Message);
                     break;
             }
-            return View("Index");
+            return RedirectToAction(nameof(AdminPanelController.Index));
         }
 
-        return View("Index");
+        return RedirectToAction(nameof(AdminPanelController.Index));
     }
 
 

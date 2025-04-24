@@ -1,25 +1,33 @@
 ﻿@model CreatePropertyViewModel
 
-<div class="form-outline mb-4">
+<div class="form-outline mb-4 border mt-4">
     <form asp-controller="AdminPanel" asp-action="CreateProperty">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
         <div data-mdb-input-init class="form-outline mb-4">
+
             <label asp-for="SelectedCommunity" class="form-label">Select Community</label>
             <select asp-for="SelectedCommunity" asp-items="Model.AvailableCommunities.Select(c => new SelectListItem { Text = c.Name, Value = c.Id.ToString() })" class="form-control form-control-lg">
-
-
                 <option value="">-- Choose Community --</option>
             </select>
+
             <span asp-validation-for="SelectedCommunity" class="text-danger"></span>
 
             @* TEMPORARY Really workaround way of keeping the data to avoid fetching it Every.Single.Time.*@
             @for (var i = 0; i < Model.AvailableCommunities.Count; i++)
             {
-                <input type="hidden" name="AvailableCommunitiesRaw[@i].Id" value="@Model.AvailableCommunities[i].Id" />
-                <input type="hidden" name="AvailableCommunitiesRaw[@i].Name" value="@Model.AvailableCommunities[i].Name" />
+                <input type="hidden" name="AvailableCommunities[@i].Id" value="@Model.AvailableCommunities[i].Id" />
+                <input type="hidden" name="AvailableCommunities[@i].Name" value="@Model.AvailableCommunities[i].Name" />
             }
 
+        </div>
+
+        <div data-mdb-input-init class="form-outline mb-4">
+            <h1>HELLO</h1>
+        </div>
+
+
+        <div class="text-center text-lg-start mt-4 pt-2 d-flex justify-content-center">
             <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-lg"
                     style="padding-left: 2.5rem; padding-right: 2.5rem;">
                 Create Property
