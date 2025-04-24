@@ -24,6 +24,8 @@ public class DatabaseContext : DbContext
 
         modelBuilder.ApplyConfiguration(new ReferralCodeMapping());
 
+        modelBuilder.ApplyConfiguration(new CommunityMessageMapping());
+
         base.OnModelCreating(modelBuilder);
     }
 }
