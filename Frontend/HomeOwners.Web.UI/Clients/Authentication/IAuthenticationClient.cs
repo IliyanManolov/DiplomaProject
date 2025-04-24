@@ -8,7 +8,4 @@ public interface IAuthenticationClient
 {
     [Post("/login")]
     public Task<UserDetailsResponse> LoginAsync(AuthenticateRequest requestDto);
-
-    [Get("/communities")]
-    public Task<string> Test();
 }

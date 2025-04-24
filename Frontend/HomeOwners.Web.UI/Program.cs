@@ -1,5 +1,6 @@
 using HomeOwners.Lib.Configuration.Configuration;
 using HomeOwners.Web.UI.Clients.Authentication;
+using HomeOwners.Web.UI.Clients.Community;
 using HomeOwners.Web.UI.Configuration;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -24,6 +25,7 @@ internal class Program
         builder.Services.AddSingleton<CookieContainer>();
 
         builder.Services.RegisterCustomClient<IAuthenticationClient>("/api/");
+        builder.Services.RegisterCustomClient<ICommunityClient>("/api/");
 
         builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddCookie(settings =>
