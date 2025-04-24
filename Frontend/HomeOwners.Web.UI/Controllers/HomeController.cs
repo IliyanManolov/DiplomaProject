@@ -30,7 +30,15 @@ public class HomeController : Controller
     public async Task<IActionResult> Index()
     {
         var communities = await _communityClient.GetAllCommunities(GetUserId());
-        return View();
+
+        var viewModel = communities.Select(x => new CommunityViewModel()
+        {
+            Id = x.Id,
+            Name = x.Name,
+            PropertiesCount = x.PropertiesCount
+        }).ToList();
+
+        return View(viewModel);
     }
 
     public IActionResult Privacy()
