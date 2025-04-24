@@ -9,12 +9,14 @@ namespace HomeOwners.Application.Services;
 
 public class PropertyService : IPropertyService
 {
+    private readonly ICommunityRepository _communityRepository;
     private readonly IAddressService _addressService;
     private readonly IPropertyRepository _propertyRepository;
     private readonly ILogger<PropertyService> _logger;
 
-    public PropertyService(IAddressService addressService, IPropertyRepository propertyRepository, ILoggerFactory loggerFactory)
+    public PropertyService(IAddressService addressService, IPropertyRepository propertyRepository, ICommunityRepository communityRepository, ILoggerFactory loggerFactory)
     {
+        _communityRepository = communityRepository;
         _addressService = addressService;
         _propertyRepository = propertyRepository;
         _logger = loggerFactory.CreateLogger<PropertyService>();
@@ -44,6 +46,13 @@ public class PropertyService : IPropertyService
         };
 
         await _propertyRepository.CreateAsync(dbProperty);
+
+        var dbCommunity = await _communityRepository.GetByIdAsync(model.CommunityId);
+
+        dbCommunity!.PropertiesCount = dbCommunity.PropertiesCount + 1;
+
+        await _communityRepository.UpdateAsync(dbCommunity);
+
 
         return dbProperty.Id!.Value;
     }

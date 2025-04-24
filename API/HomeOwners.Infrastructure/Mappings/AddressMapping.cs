@@ -62,8 +62,7 @@ internal class AddressMapping : IEntityTypeConfiguration<Address>
 
         builder.HasOne(a => a.Property)
          .WithOne(property => property.Address)
-         .HasForeignKey<Address>(address => address.PropertyId)
-         .IsRequired();
+         .HasForeignKey<Address>(address => address.PropertyId);
 
         builder.AddBaseEntityTemporalMappings();
     }
