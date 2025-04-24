@@ -50,18 +50,18 @@ public class AuthenticationController : ControllerBase
         {
             var details = await _authenticationService.AuthenticateAsync(model.Username, model.Password);
 
-            var claims = new List<Claim>()
-            {
-                new Claim(ClaimTypes.NameIdentifier, details.Id.ToString()!),
-                new Claim(ClaimTypes.Name, details.UserName!),
-                new Claim(ClaimTypes.Role, details.Role.ToString())
-            };
+            //var claims = new List<Claim>()
+            //{
+            //    new Claim(ClaimTypes.NameIdentifier, details.Id.ToString()!),
+            //    new Claim(ClaimTypes.Name, details.UserName!),
+            //    new Claim(ClaimTypes.Role, details.Role.ToString())
+            //};
 
-            await HttpContext.SignInAsync(
-                new ClaimsPrincipal(
-                    new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme)
-                )
-            );
+            //await HttpContext.SignInAsync(
+            //    new ClaimsPrincipal(
+            //        new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme)
+            //    )
+            //);
 
             return Ok(details);
         }

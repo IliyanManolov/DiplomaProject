@@ -25,7 +25,7 @@ public class PropertiesController : ControllerBase
 
 
     [HttpPost]
-    [Authorize(Roles = "Administrator")]
+    //[Authorize(Roles = "Administrator")]
     public async Task<IActionResult> CreatePropertyAsync([FromBody] CreatePropertyDto model)
     {
         try

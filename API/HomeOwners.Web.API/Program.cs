@@ -31,28 +31,29 @@ internal class Program
         
         builder.Services.AddControllers();
 
-        builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-            .AddCookie(settings =>
-            {
-                settings.LoginPath = "/login";
-                settings.Cookie.IsEssential = true;
-                settings.Cookie.HttpOnly = false;
-                settings.SlidingExpiration = true;
-                settings.ExpireTimeSpan = TimeSpan.FromHours(48);
-                settings.Cookie.Name = "HomeOwners_Cookie";
-                settings.Cookie.SecurePolicy = CookieSecurePolicy.None;
-            });
+        //builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+        //    .AddCookie(settings =>
+        //    {
+        //        settings.LoginPath = "/login";
+        //        settings.Cookie.IsEssential = true;
+        //        settings.Cookie.HttpOnly = false;
+        //        settings.SlidingExpiration = true;
+        //        settings.ExpireTimeSpan = TimeSpan.FromHours(48);
+        //        settings.Cookie.Name = "HomeOwners_Cookie";
+        //        settings.Cookie.SecurePolicy = CookieSecurePolicy.None;
+        //    });
 
-        builder.Services.AddAuthorization(options =>
-        {
-            options.DefaultPolicy = new AuthorizationPolicyBuilder()
-            .AddAuthenticationSchemes(CookieAuthenticationDefaults.AuthenticationScheme)
-            .RequireAuthenticatedUser()
-            .Build();
-        });
+        //builder.Services.AddAuthorization(options =>
+        //{
+        //    options.DefaultPolicy = new AuthorizationPolicyBuilder()
+        //    .AddAuthenticationSchemes(CookieAuthenticationDefaults.AuthenticationScheme)
+        //    .RequireAuthenticatedUser()
+        //    .Build();
+        //});
 
-        builder.Services.AddDataProtection()
-            .PersistKeysToFileSystem(new DirectoryInfo("/keys"));
+        //builder.Services.AddDataProtection()
+        //    .PersistKeysToFileSystem(new DirectoryInfo("/keys"))
+        //    .SetApplicationName("HomeOwnersApp");
 
         builder.Services.AddCors(options =>
         {
@@ -83,6 +84,7 @@ internal class Program
         app.UseMiddleware<RequestBasePathMiddleware>();
 
         app.UseCors("AllowLocalProxy");
+
         //app.UseHttpsRedirection();
 
         app.UseAuthentication();

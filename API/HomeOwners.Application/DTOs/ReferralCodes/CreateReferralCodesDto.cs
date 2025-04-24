@@ -10,4 +10,5 @@ public class CreateReferralCodesDto
 {
     public int Count { get; set; }
     public int CommunityId { get; set; }
+    public long? CreatorId { get; set; }
 }
