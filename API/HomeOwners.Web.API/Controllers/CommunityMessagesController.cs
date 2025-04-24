@@ -1,5 +1,5 @@
 using HomeOwners.Application.Abstractions.Services;
-using HomeOwners.Application.DTOs.ReferralCodes;
+using HomeOwners.Application.DTOs.CommunityMessages;
 using HomeOwners.Application.ValidationErrors.Authentication;
 using HomeOwners.Application.ValidationErrors.Base;
 using HomeOwners.Domain.Enums;
@@ -9,25 +9,24 @@ using Microsoft.AspNetCore.Mvc;
 namespace HomeOwners.Web.API.Controllers;
 
 [ApiController]
-[Route("referralcodes")]
-public class ReferralCodesController : ControllerBase
+[Route("communityMessages")]
+public class CommunityMessagesController : ControllerBase
 {
     private readonly ICommunityService _communityService;
-    private readonly IReferralCodeService _referralCodeService;
     private readonly IUserService _userService;
-    private readonly ILogger<ReferralCodesController> _logger;
+    private readonly ICommunityMessagesService _messagesSerivce;
+    private readonly ILogger<CommunityMessagesController> _logger;
 
-    public ReferralCodesController(IReferralCodeService codeService, ICommunityService communitySerivce, IUserService userService, ILoggerFactory loggerFactory)
+    public CommunityMessagesController(ICommunityService communitySerivce, ICommunityMessagesService messagesService, IUserService userService, ILoggerFactory loggerFactory)
     {
         _communityService = communitySerivce;
-        _referralCodeService = codeService;
         _userService = userService;
-        _logger = loggerFactory.CreateLogger<ReferralCodesController>();
+        _messagesSerivce = messagesService;
+        _logger = loggerFactory.CreateLogger<CommunityMessagesController>();
     }
 
-    [HttpPost("bulk/")]
-    //[Authorize(Roles = "Administrator")]
-    public async Task<IActionResult> CreateBulkAsync([FromBody] CreateReferralCodesDto model)
+    [HttpPost]
+    public async Task<IActionResult> CreateMessageAsync([FromBody] CreateCommunityMessageDto model)
     {
         try
         {
@@ -42,8 +41,34 @@ public class ReferralCodesController : ControllerBase
             // Will throw if not found
             var community = await _communityService.GetCommunityDetailsAsync(model.CommunityId);
 
-            var codes = await _referralCodeService.CreateBulk(model, user.Id!.Value);
-            return Ok(codes);
+            var messageId = await _messagesSerivce.CreateMessageAsync(model);
+            return Ok(messageId);
+        }
+        catch (BaseValidationError err)
+        {
+            return GetBadRequestResponse(err);
+        }
+        catch (BaseAggregateValidationError err)
+        {
+            return GetBadRequestResponse(err);
+        }
+        catch (BaseAuthenticationError err)
+        {
+            _logger.LogInformation("Returning 404 due to auth error. Message - {errorMessage}", err.Message);
+            return NotFound(new NotFoundResponseModel(HttpContext.TraceIdentifier));
+        }
+    }
+
+    [HttpGet("{communityId}")]
+    public async Task<IActionResult> GetForCommunityAsync(long communityId)
+    {
+        try
+        {
+            var community = await _communityService.GetCommunityDetailsAsync(communityId);
+
+            var messages = await _messagesSerivce.GetForCommunityAsync(communityId);
+
+            return Ok(messages);
         }
         catch (BaseValidationError err)
         {
@@ -73,14 +98,4 @@ public class ReferralCodesController : ControllerBase
         model.AddError(error);
         return BadRequest(model);
     }
-
-    //private long GetUserId()
-    //{
-    //    var idClaim = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
-
-    //    if (idClaim == null)
-    //        throw new ArgumentException("Failed to get IdClaim from within Authorize-only endpoint");
-
-    //    return long.Parse(idClaim.Value);
-    //}
 }
