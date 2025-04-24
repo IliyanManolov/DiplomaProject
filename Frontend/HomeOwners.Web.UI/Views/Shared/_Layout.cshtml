@@ -19,13 +19,19 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        <li class="nav-item me-3">
+                            <a class="nav-link rounded bg-light shadow-sm text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         @* Comment out since everything requires user to be logged in regardless *@
                         @* <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Login">Login</a>
                         </li> *@
+                        @if (User.Identity is not null && User.Identity.IsAuthenticated && User.IsInRole("Administrator"))
+                        {
+                            <li class="nav-item me-3">
+                                <a class="nav-link rounded bg-light shadow-sm text-danger" asp-area="" asp-controller="AdminPanel" asp-action="Index">Administrator Panel</a>
+                            </li>
+                        }
                     </ul>
                 </div>
             </div>
