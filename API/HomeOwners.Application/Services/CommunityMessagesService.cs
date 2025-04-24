@@ -6,11 +6,11 @@ namespace HomeOwners.Application.Services;
 
 public class CommunityMessagesService : ICommunityMessagesService
 {
-    private readonly ICommunityMessagesService _messagesRepository;
+    private readonly ICommunityMessagesRepository _messagesRepository;
     private readonly ICommunityRepository _communityRepository;
     private readonly ILogger<CommunityMessagesService> _logger;
 
-    public CommunityMessagesService(ICommunityMessagesService messagesRepository, ICommunityRepository communityRepository, ILoggerFactory loggerFactory)
+    public CommunityMessagesService(ICommunityMessagesRepository messagesRepository, ICommunityRepository communityRepository, ILoggerFactory loggerFactory)
     {
         _messagesRepository = messagesRepository;
         _communityRepository = communityRepository;
