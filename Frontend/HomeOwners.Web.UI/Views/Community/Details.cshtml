@@ -1,0 +1,10 @@
+﻿@model CommunityDetailsViewModel;
+
+<div class="dashboard-container" style="display: flex; justify-content: center; align-items: flex-start; gap: 50px; padding: 30px;">
+    <div class="message-feed" style="width: 500px;">
+        <partial name="_MessagesDisplay" model="@Model.CommunityMessageViewModels"></partial>
+    </div>
+    <div class="card-column" style="display: flex; flex-direction: column; gap: 20px;">
+        <partial name="_PropertiesShortDisplay" model="@Model.PropertiesViewModels"></partial>
+    </div>
+</div>

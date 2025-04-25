@@ -39,6 +39,7 @@ public class PropertyService : IPropertyService
         {
             AddressId = dbAddressId,
             CommunityId = model.CommunityId,
+            OwnerId = model.OwnerId,
             Occupants = model.Occupants.Value,
             Type = model.Type,
             Dues = 0,
@@ -55,5 +56,33 @@ public class PropertyService : IPropertyService
 
 
         return dbProperty.Id!.Value;
+    }
+
+    public async Task<IEnumerable<PropertyShortDto>> GetAllForCommunityAsync(long communityId)
+    {
+        var dbProperties = await _propertyRepository.GetAllCommunityPropertiesByCommunityIdAsync(communityId);
+        
+        return dbProperties.Select(x => new PropertyShortDto()
+        {
+            Dues = x.Dues,
+            MonthlyDue = x.MonthlyDues,
+            OwnerEmail = x.Owner!.Email!,
+            PropertyType = x.Type,
+            Tenants = x.Occupants
+        });
+    }
+
+    public async Task<IEnumerable<PropertyShortDto>> GetAllForUserInCommunityAsync(long communityId, long userId)
+    {
+        var dbProperties = await _propertyRepository.GetAllCommunityPropertiesByUserIdAsync(userId: userId, communityId: communityId);
+
+        return dbProperties.Select(x => new PropertyShortDto()
+        {
+            Dues = x.Dues,
+            MonthlyDue = x.MonthlyDues,
+            OwnerEmail = x.Owner!.Email!,
+            PropertyType = x.Type,
+            Tenants = x.Occupants
+        });
     }
 }

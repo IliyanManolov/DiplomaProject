@@ -1,0 +1,11 @@
+﻿@model IEnumerable<CommunityMessageViewModel>
+
+<div>
+    @foreach (var msg in Model)
+    {
+        <div class="border-bottom border-secondary-subtle py-2">
+            <p><strong>@msg.CreatorUserName</strong> <span style="color: gray;">@msg.CreateTimeStamp.ToString("yyyy-MM-dd HH:mm")</span></p>
+            <p>@msg.Message</p>
+        </div>
+    }
+</div>
