@@ -2,10 +2,14 @@
 
 @foreach (var card in Model)
 {
-    <div class="bg-white border rounded-2 p-3 border-secondary-subtle">
+    <div class="bg-white border rounded-2 p-3 border-secondary-subtle" style="max-width: 10vw; word-wrap: break-word;">
         <p><strong>Property Type:</strong> @card.PropertyType.ToString()</p>
         <p><strong>Occupants:</strong> @card.Tenants</p>
         <p><strong>Total Dues:</strong> @card.Dues.ToString()</p>
         <p><strong>Monthly Dues:</strong> @card.MonthlyDue.ToString()</p>
+        @if (User.IsInRole("Administrator"))
+        {
+            <p><strong>Property Contact email:</strong> @card.OwnerEmail</p>
+        }
     </div>
 }
