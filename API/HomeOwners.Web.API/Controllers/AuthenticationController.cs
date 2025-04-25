@@ -80,6 +80,23 @@ public class AuthenticationController : ControllerBase
         }
     }
 
+    [HttpPatch("changepassword/")]
+    public async Task<IActionResult> ChangePasswordAsync([FromBody] ChangePasswordDto model)
+    {
+        try
+        {
+            var userId = await _userService.ChangePassword(model);
+            return Ok(userId);
+        }
+        catch (BaseValidationError err)
+        {
+            return GetBadRequestResponse(err);
+        }
+        catch (BaseAggregateValidationError err)
+        {
+            return GetBadRequestResponse(err);
+        }
+    }
     private IActionResult GetBadRequestResponse(BaseValidationError error)
     {
         var model = new BadRequestResponseModel(HttpContext.TraceIdentifier);

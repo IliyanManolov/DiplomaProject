@@ -176,6 +176,67 @@ public class HomeController : Controller
     }
 
 
+    [Authorize]
+    public IActionResult ChangePassword()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    [Authorize]
+    public async Task<IActionResult> ChangePassword(RegisterViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        try
+        {
+            var request = new RegisterRequest()
+            {
+                Email = model.Email,
+                Username = model.Username,
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                Password = model.Password,
+                ConfirmPassword = model.ConfirmPassword,
+                ReferralCode = model.ReferalCode
+            };
+
+            var user = await _authenticationClient.RegisterAsync(request);
+
+        }
+        catch (Refit.ApiException ex)
+        {
+            switch (ex.StatusCode)
+            {
+                case HttpStatusCode.BadRequest:
+                    var errorResponse = await ex.GetContentAsAsync<BadRequestResponseModel>();
+
+                    foreach (var item in errorResponse.ValidationErrors)
+                    {
+                        ModelState.AddModelError(string.Empty, item.Message);
+                    }
+
+                    break;
+
+                case HttpStatusCode.NotFound:
+                    ModelState.AddModelError(string.Empty, "Invalid username or password");
+                    break;
+
+                default:
+                    _logger.LogError(ex.Message);
+                    break;
+            }
+            return View(model);
+        }
+
+
+        return RedirectToAction(nameof(HomeController.Index));
+    }
+
+
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {

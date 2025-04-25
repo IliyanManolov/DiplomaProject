@@ -2,6 +2,7 @@
 using HomeOwners.Application.Abstractions.Services;
 using HomeOwners.Application.DTOs.User;
 using HomeOwners.Application.ValidationErrors;
+using HomeOwners.Application.ValidationErrors.Authentication;
 using HomeOwners.Domain.Enums;
 using HomeOwners.Domain.Models;
 using Microsoft.Extensions.Logging;
@@ -24,6 +25,40 @@ public class UserService : IUserService
         _referralCodeRepository = referalCodeRepository;
         _passwordService = passwordService;
         _logger = loggerFactory.CreateLogger<UserService>();
+    }
+
+    public async Task<UserDetailsDto> ChangePassword(ChangePasswordDto model)
+    {
+        if (string.IsNullOrEmpty(model.Password))
+            throw new InvalidPropertyValueValidationError("Password cannot cannot be an empty string or null");
+
+        if (string.IsNullOrEmpty(model.ConfirmPassword))
+            throw new InvalidPropertyValueValidationError("ConfirmPassword cannot cannot be an empty string or null");
+
+        if (model.Password != model.ConfirmPassword)
+            throw new PasswordsMissmatchValidationError();
+
+        if (model.UserId == null)
+            throw new UserAuthenticationValidationError("User id received is null");
+
+        var dbUser = await _userRepository.GetByIdAsync(model.UserId);
+
+        if (dbUser == null || dbUser.IsDeleted == true)
+            throw new UserAuthenticationValidationError($"User does not exist or is deleted. Exists - {dbUser != null}");
+
+        dbUser.Password = _passwordService.GetHash(model.Password);
+
+        await _userRepository.UpdateAsync(dbUser);
+
+        return new UserDetailsDto()
+        {
+            Id = dbUser.Id,
+            FirstName = dbUser.FirstName,
+            LastName = dbUser.LastName,
+            UserName = dbUser.Username,
+            Email = dbUser.Email,
+            Role = dbUser.Role
+        };
     }
 
     public async Task<long?> CreateUserAsync(CreateUserDto user, Role role = Role.HomeOwner)
