@@ -2,7 +2,7 @@
 
 @foreach (var card in Model)
 {
-    <div class="bg-white border rounded-2 p-3 border-secondary-subtle" style="max-width: 10vw; word-wrap: break-word;">
+    <div class="bg-white border rounded-2 p-3 border-secondary-subtle w-100" style="word-wrap: break-word;">
         <p><strong>Property Type:</strong> @card.PropertyType.ToString()</p>
         <p><strong>Occupants:</strong> @card.Tenants</p>
         <p><strong>Total Dues:</strong> @card.Dues.ToString()</p>
