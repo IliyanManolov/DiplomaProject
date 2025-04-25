@@ -3,6 +3,8 @@ using HomeOwners.Web.UI.Clients.Community.Requests;
 using HomeOwners.Web.UI.Clients.Community.Responses;
 using HomeOwners.Web.UI.Clients.Property;
 using HomeOwners.Web.UI.Clients.Property.Requests;
+using HomeOwners.Web.UI.Clients.ReferralCode;
+using HomeOwners.Web.UI.Clients.ReferralCode.Requests;
 using HomeOwners.Web.UI.Models;
 using HomeOwners.Web.UI.ResponseModels;
 using Microsoft.AspNetCore.Authorization;
@@ -19,12 +21,14 @@ public class AdminPanelController : Controller
 {
     private readonly ICommunityClient _communityClient;
     private readonly IPropertyClient _propertyClient;
+    private readonly IReferralCodeClient _referralCodeClient;
     private readonly ILogger<AdminPanelController> _logger;
 
-    public AdminPanelController(ICommunityClient communityClient, IPropertyClient propertyClient, ILoggerFactory loggerFactory)
+    public AdminPanelController(ICommunityClient communityClient, IPropertyClient propertyClient, IReferralCodeClient codeClient, ILoggerFactory loggerFactory)
     {
         _communityClient = communityClient;
         _propertyClient = propertyClient;
+        _referralCodeClient = codeClient;
         _logger = loggerFactory.CreateLogger<AdminPanelController>();
     }
 
@@ -164,6 +168,74 @@ public class AdminPanelController : Controller
         }
 
         return RedirectToAction(nameof(AdminPanelController.Index));
+    }
+
+
+    [Authorize(Roles = "Administrator")]
+    public async Task<IActionResult> CreateReferalCodes()
+    {
+        var viewModel = new CreateReferalCodesViewModel();
+
+        var availableCommunities = await _communityClient.GetAllCommunities(GetUserId());
+
+        viewModel.AvailableCommunities = availableCommunities.ToList();
+
+        return View(viewModel);
+    }
+
+    [HttpPost]
+    [Authorize(Roles = "Administrator")]
+    public async Task<IActionResult> CreateReferalCodes(CreateReferalCodesViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        try
+        {
+
+            var request = new CreateBulkReferalCodeRequest()
+            {
+                CommunityId = model.SelectedCommunity,
+                Count = model.NumberOfCodes,
+                CreatorId = GetUserId()
+            };
+
+            var codes = await _referralCodeClient.CreateBulk(request);
+
+            foreach (var code in codes)
+            {
+                model.ReturnedCodes.Add($"{HttpContext.Request.Scheme}//{HttpContext.Request.Host}{HttpContext.Request.PathBase}/Home/Register/{code}");
+            }
+        }
+        catch (Refit.ApiException ex)
+        {
+            switch (ex.StatusCode)
+            {
+                case HttpStatusCode.BadRequest:
+                    var errorResponse = await ex.GetContentAsAsync<BadRequestResponseModel>();
+
+                    foreach (var item in errorResponse.ValidationErrors)
+                    {
+                        ModelState.AddModelError(string.Empty, item.Message);
+                    }
+
+                    break;
+
+                case HttpStatusCode.NotFound:
+                    ModelState.AddModelError(string.Empty, "Unauthorized");
+                    break;
+
+                default:
+                    ModelState.AddModelError(string.Empty, "Unexpected error occured");
+                    _logger.LogError(ex.Message);
+                    break;
+            }
+            return View(model);
+        }
+
+        return View(model);
     }
 
 

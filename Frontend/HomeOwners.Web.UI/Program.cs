@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.DataProtection;
 using System.Net;
 using System.Text.Json.Serialization;
 using System.Text.Json;
+using HomeOwners.Web.UI.Clients.ReferralCode;
 
 internal class Program
 {
@@ -34,6 +35,8 @@ internal class Program
         builder.Services.RegisterCustomClient<IAuthenticationClient>("/api/");
         builder.Services.RegisterCustomClient<ICommunityClient>("/api/");
         builder.Services.RegisterCustomClient<IPropertyClient>("/api/");
+        builder.Services.RegisterCustomClient<IReferralCodeClient>("/api/");
+
 
         builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddCookie(settings =>
