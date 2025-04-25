@@ -8,4 +8,7 @@ public interface IAuthenticationClient
 {
     [Post("/login")]
     public Task<UserDetailsResponse> LoginAsync(AuthenticateRequest requestDto);
+
+    [Post("/register")]
+    public Task<long> RegisterAsync(RegisterRequest requestModel);
 }

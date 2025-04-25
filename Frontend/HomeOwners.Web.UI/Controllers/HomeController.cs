@@ -132,7 +132,18 @@ public class HomeController : Controller
 
         try
         {
-            var user = await _authenticationClient.LoginAsync(new AuthenticateRequest() { Username = model.Username, Password = model.Password });
+            var request = new RegisterRequest()
+            {
+                Email = model.Email,
+                Username = model.Username,
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                Password = model.Password,
+                ConfirmPassword = model.ConfirmPassword,
+                ReferralCode = model.ReferalCode
+            };
+
+            var user = await _authenticationClient.RegisterAsync(request);
 
         }
         catch (Refit.ApiException ex)

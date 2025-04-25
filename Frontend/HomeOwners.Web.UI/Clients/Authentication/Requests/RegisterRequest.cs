@@ -1,18 +1,19 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace HomeOwners.Application.DTOs.User;
+namespace HomeOwners.Web.UI.Clients.Authentication.Requests;
 
-public class CreateUserDto
+public class RegisterRequest
 {
-    //[Required]
+    [Required]
     public string? Username { get; set; }
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
-    //[Required]
+    [Required]
+    [EmailAddress]
     public string? Email { get; set; }
-    //[Required]
+    [Required]
     public string? Password { get; set; }
-    //[Required]
+    [Required]
     public string? ConfirmPassword { get; set; }
     public string? ReferralCode { get; set; }
 }

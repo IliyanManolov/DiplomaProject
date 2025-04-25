@@ -12,14 +12,17 @@ public class UserService : IUserService
 {
     private readonly IUserRepository _userRepository;
     private readonly IReferralCodeRepository _referralCodeRepository;
+    private readonly IPasswordService _passwordService;
     private readonly ILogger<UserService> _logger;
 
     public UserService(IUserRepository userRepository,
                         IReferralCodeRepository referalCodeRepository,
+                        IPasswordService passwordService,
                         ILoggerFactory loggerFactory)
     {
         _userRepository = userRepository;
         _referralCodeRepository = referalCodeRepository;
+        _passwordService = passwordService;
         _logger = loggerFactory.CreateLogger<UserService>();
     }
 
@@ -47,7 +50,7 @@ public class UserService : IUserService
             throw new IdentifierInUseValidationError("email");
 
         // Referal codes are passed as a string from the frontend in order to allow for potential future migrations to custom text
-        if (string.IsNullOrEmpty(user.ReferalCode) || !Guid.TryParse(user.ReferalCode, out var codeGuid))
+        if (string.IsNullOrEmpty(user.ReferralCode) || !Guid.TryParse(user.ReferralCode, out var codeGuid))
             throw new InvalidPropertyValueValidationError("Invalid referal code");
 
         var code = await _referralCodeRepository.GetByCodeAsync(codeGuid);
@@ -63,6 +66,7 @@ public class UserService : IUserService
             IsDeleted = false,
             Username = user.Username,
             Role = role,
+            Password = _passwordService.GetHash(user.Password),
             ReferalCodeId = code.Id
         };
 
