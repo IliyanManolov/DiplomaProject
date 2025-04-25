@@ -11,4 +11,6 @@ public interface IAuthenticationClient
 
     [Post("/register")]
     public Task<long> RegisterAsync(RegisterRequest requestModel);
+    [Patch("/changepassword")]
+    public Task<UserDetailsResponse> ChangePasswordAsync(ChangePasswordRequest requestModel);
 }

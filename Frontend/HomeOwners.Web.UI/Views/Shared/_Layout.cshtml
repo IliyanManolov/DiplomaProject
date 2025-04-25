@@ -26,6 +26,12 @@
                         @* <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Login">Login</a>
                         </li> *@
+                        @if (User.Identity is not null && User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item me-3">
+                                <a class="nav-link rounded bg-light shadow-sm text-dark" asp-area="" asp-controller="Home" asp-action="ChangePassword">Change password</a>
+                            </li>
+                        }
                         @if (User.Identity is not null && User.Identity.IsAuthenticated && User.IsInRole("Administrator"))
                         {
                             <li class="nav-item me-3">

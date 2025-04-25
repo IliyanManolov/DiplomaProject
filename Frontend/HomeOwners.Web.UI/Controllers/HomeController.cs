@@ -184,7 +184,7 @@ public class HomeController : Controller
 
     [HttpPost]
     [Authorize]
-    public async Task<IActionResult> ChangePassword(RegisterViewModel model)
+    public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
     {
         if (!ModelState.IsValid)
         {
@@ -193,18 +193,14 @@ public class HomeController : Controller
 
         try
         {
-            var request = new RegisterRequest()
+            var request = new ChangePasswordRequest()
             {
-                Email = model.Email,
-                Username = model.Username,
-                FirstName = model.FirstName,
-                LastName = model.LastName,
                 Password = model.Password,
                 ConfirmPassword = model.ConfirmPassword,
-                ReferralCode = model.ReferalCode
+                UserId = GetUserId()
             };
 
-            var user = await _authenticationClient.RegisterAsync(request);
+            var user = await _authenticationClient.ChangePasswordAsync(request);
 
         }
         catch (Refit.ApiException ex)
