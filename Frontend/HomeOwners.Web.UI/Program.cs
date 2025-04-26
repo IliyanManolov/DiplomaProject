@@ -32,10 +32,10 @@ internal class Program
 
         builder.Services.AddSingleton<CookieContainer>();
 
-        builder.Services.RegisterCustomClient<IAuthenticationClient>("/api/");
-        builder.Services.RegisterCustomClient<ICommunityClient>("/api/");
-        builder.Services.RegisterCustomClient<IPropertyClient>("/api/");
-        builder.Services.RegisterCustomClient<IReferralCodeClient>("/api/");
+        builder.Services.RegisterCustomClient<IAuthenticationClient>("/");
+        builder.Services.RegisterCustomClient<ICommunityClient>("/");
+        builder.Services.RegisterCustomClient<IPropertyClient>("/");
+        builder.Services.RegisterCustomClient<IReferralCodeClient>("/");
 
 
         builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
