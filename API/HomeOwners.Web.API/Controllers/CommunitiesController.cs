@@ -15,12 +15,14 @@ public class CommunitiesController : ControllerBase
 {
     private readonly IUserService _userSerivce;
     private readonly ICommunityService _communityService;
+    private readonly IDuesCalculationService _calculationService;
     private readonly ILogger<CommunitiesController> _logger;
 
-    public CommunitiesController(ICommunityService communitySerivce, IUserService userService, ILoggerFactory loggerFactory)
+    public CommunitiesController(ICommunityService communitySerivce, IUserService userService, IDuesCalculationService calculationService, ILoggerFactory loggerFactory)
     {
         _userSerivce = userService;
         _communityService = communitySerivce;
+        _calculationService = calculationService;
         _logger = loggerFactory.CreateLogger<CommunitiesController>();
     }
 
@@ -76,6 +78,36 @@ public class CommunitiesController : ControllerBase
             return NotFound(new NotFoundResponseModel(HttpContext.TraceIdentifier));
         }
     }
+
+    [HttpPost("dues/")]
+    public async Task<IActionResult> UpdateDuesAsync([FromBody] CalculateDuesDto dto)
+    {
+        try
+        {
+            var user = await _userSerivce.GetUserDetailsAsync(dto.UserId);
+
+            if (user.Role is Domain.Enums.Role.Administrator)
+                return Ok(await _calculationService.Calculate());
+            else
+                throw new UserAuthenticationValidationError("User is not administrator");
+        }
+        catch (BaseValidationError err)
+        {
+            _logger.LogInformation("Returning 404 due to auth error. Message - {errorMessage}", err.Message);
+            return NotFound(new NotFoundResponseModel(HttpContext.TraceIdentifier));
+        }
+        catch (BaseAggregateValidationError err)
+        {
+            _logger.LogInformation("Returning 404 due to auth error. Message - {errorMessage}", err.Message);
+            return NotFound(new NotFoundResponseModel(HttpContext.TraceIdentifier));
+        }
+        catch (BaseAuthenticationError err)
+        {
+            _logger.LogInformation("Returning 404 due to auth error. Message - {errorMessage}", err.Message);
+            return NotFound(new NotFoundResponseModel(HttpContext.TraceIdentifier));
+        }
+    }
+
 
     private IActionResult GetBadRequestResponse(BaseValidationError error)
     {

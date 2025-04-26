@@ -26,6 +26,8 @@ public class DatabaseContext : DbContext
 
         modelBuilder.ApplyConfiguration(new CommunityMessageMapping());
 
+        modelBuilder.ApplyConfiguration(new DuesCalculationMapping());
+
         base.OnModelCreating(modelBuilder);
     }
 }

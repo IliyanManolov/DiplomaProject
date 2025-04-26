@@ -16,4 +16,5 @@ public interface IBaseEntityRepository<TEntity>
     public Task<TEntity> CreateAsync(TEntity entity);
     public Task<TEntity> DeleteAsync(TEntity entity);
     public Task<TEntity> UpdateAsync(TEntity entity);
+    public Task<IEnumerable<TEntity>> UpdateBulkAsync(IEnumerable<TEntity> entities);
 }
