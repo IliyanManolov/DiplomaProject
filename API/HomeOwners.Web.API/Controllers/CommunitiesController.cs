@@ -62,7 +62,20 @@ public class CommunitiesController : ControllerBase
             if (user.Role is Domain.Enums.Role.Administrator)
                 return Ok(await _communityService.GetAllCommunities());
             else
-                return Ok(await _communityService.GetAllForUser(user.Id!.Value));
+            {
+                var result = await _communityService.GetAllForUser(user.Id!.Value);
+
+                var referralCommunityId = await _userSerivce.GetUserReferralCommunity(userId);
+
+                if (!result.Any(x => x.Id == referralCommunityId))
+                {
+                    var final = result.ToList();
+                    final.Add(await _communityService.GetCommunityDetailsAsync(referralCommunityId));
+                    return Ok(final);
+                }
+                
+                return Ok(result);
+            }
         }
         catch (BaseValidationError err)
         {

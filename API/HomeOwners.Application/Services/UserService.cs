@@ -127,6 +127,13 @@ public class UserService : IUserService
         };
     }
 
+    public async Task<long> GetUserReferralCommunity(long userId)
+    {
+        var dbUser = await GetUser(userId);
+
+        return dbUser.ReferalCode.CommunityId!.Value;
+    }
+
     public async Task<UserDetailsDto> GetUserByEmailAsync(string email)
     {
 

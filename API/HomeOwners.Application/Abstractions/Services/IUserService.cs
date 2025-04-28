@@ -10,4 +10,5 @@ public interface IUserService
     public Task<UserShortDto> GetUserBasicsAsync(long? userId);
     public Task<UserDetailsDto> GetUserByEmailAsync(string email);
     public Task<UserDetailsDto> ChangePassword(ChangePasswordDto model);
+    public Task<long> GetUserReferralCommunity(long userId);
 }
