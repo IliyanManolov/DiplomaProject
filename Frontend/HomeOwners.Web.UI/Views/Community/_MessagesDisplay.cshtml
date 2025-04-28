@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<CommunityMessageViewModel>
 
 <div>
-	<h3>Message board</h3>
+	<h3 class="text-center">Message board</h3>
 	@foreach (var msg in Model.OrderByDescending(x => x.CreateTimeStamp))
 	{
 		<div class="border-bottom border-secondary-subtle py-2">

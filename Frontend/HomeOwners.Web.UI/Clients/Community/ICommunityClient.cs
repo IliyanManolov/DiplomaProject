@@ -14,6 +14,10 @@ public interface ICommunityClient
 
     [Get("/communityMessages/{communityId}")]
     public Task<IEnumerable<CommunityMessagesDetailsResponse>> GetMessagesAsync(long communityId);
+
+    [Get("/communityMeetings/{communityId}")]
+    public Task<IEnumerable<CommunityMeetingDetailsResponse>> GetMeetingsAsync(long communityId);
+
     [Post("/properties/get")]
     public Task<IEnumerable<PropertyShortResponse>> GetCommunityPropertiesAsync(GetPropertyRequest requestModel); 
 }

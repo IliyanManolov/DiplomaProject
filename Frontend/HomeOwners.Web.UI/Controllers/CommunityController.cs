@@ -45,6 +45,8 @@ public class CommunityController : Controller
 
             var messages = await _communityClient.GetMessagesAsync(id!.Value);
 
+            var meetings = await _communityClient.GetMeetingsAsync(id!.Value);
+
             var viewModel = new CommunityDetailsViewModel()
             {
                 CommunityMessageViewModels = messages.Select(x => new CommunityMessageViewModel()
@@ -61,6 +63,14 @@ public class CommunityController : Controller
                     OwnerEmail = x.OwnerEmail,
                     PropertyType = x.PropertyType,
                     Tenants = x.Tenants,
+                }).ToList(),
+                CommunityMeetingViewModels = meetings.Select(x => new CommunityMeetingViewModel()
+                {
+                    CreateTimeStamp = x.CreateTimeStamp,
+                    LastUpdateTimeStamp = x.LastUpdateTimeStamp,
+                    CreatorUserName = x.CreatorUserName,
+                    MeetingTime = x.MeetingTime,
+                    Reason = x.Reason,
                 }).ToList()
             };
 
