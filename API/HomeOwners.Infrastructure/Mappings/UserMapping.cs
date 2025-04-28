@@ -65,6 +65,10 @@ internal class UserMapping : IEntityTypeConfiguration<User>
             .WithOne(t => t.Creator)
             .HasForeignKey(t => t.CreatorId);
 
+        builder.HasMany(e => e.CreatedMeetings)
+            .WithOne(t => t.Creator)
+            .HasForeignKey(t => t.CreatorId);
+
         builder.HasOne(e => e.ReferalCode)
             .WithOne(c => c.User)
             .HasForeignKey<User>(b => b.ReferalCodeId);

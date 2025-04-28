@@ -71,6 +71,7 @@ public static class ApplicationConfiguration
         services.AddScoped<IReferralCodeRepository, ReferralCodeRepository>();
         services.AddScoped<ICommunityMessagesRepository, CommunityMessagesRepository>();
         services.AddScoped<IDuesCalculationRepository, DuesCalculationRepository>();
+        services.AddScoped<ICommunityMeetingRepository, CommunityMeetingRepository>();
     }
 
     public static void AddServiceLayer(this IServiceCollection services)
@@ -83,6 +84,7 @@ public static class ApplicationConfiguration
         services.AddScoped<IPropertyService, PropertyService>();
         services.AddScoped<ICommunityMessagesService, CommunityMessagesService>();
         services.AddScoped<IDuesCalculationService, DuesCalculationService>();
+        services.AddScoped<ICommunityMeetingService, CommunityMeetingService>();
     }
 
     public static void AddSecurityLayer(this IServiceCollection services)

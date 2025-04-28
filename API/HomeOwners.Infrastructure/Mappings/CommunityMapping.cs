@@ -35,6 +35,11 @@ internal class CommunityMapping : IEntityTypeConfiguration<Community>
             .WithOne(m => m.Community)
             .HasForeignKey(p => p.CommunityId);
 
+        builder.HasMany(c => c.Meetings)
+            .WithOne(m => m.Community)
+            .HasForeignKey(p => p.CommunityId);
+
+
         builder.AddBaseEntityTemporalMappings();
     }
 }
