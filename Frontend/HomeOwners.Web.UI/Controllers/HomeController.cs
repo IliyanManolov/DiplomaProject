@@ -106,6 +106,14 @@ public class HomeController : Controller
         return RedirectToAction(nameof(HomeController.Index));
     }
 
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Logout()
+    {
+        await HttpContext.SignOutAsync();
+        return RedirectToAction("Login", "Home");
+    }
+
 
     [HttpGet]
     [Route("Home/Register/{referralCode}")]
