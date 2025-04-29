@@ -7,7 +7,7 @@
 
         @if (User.IsInRole("Administrator"))
         {
-            <a href="@Url.Action("CreateMessage", "Community", new { id = Model.CommunityId})" class="btn btn-outline-primary">
+            <a href="@Url.Action("CreateMeeting", "Community", new { id = Model.CommunityId})" class="btn btn-outline-primary">
                 Create Meeting
             </a>
         }
