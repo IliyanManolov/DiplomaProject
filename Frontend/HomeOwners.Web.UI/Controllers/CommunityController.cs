@@ -31,7 +31,7 @@ public class CommunityController : Controller
 
     [Authorize]
     [Route("Community/Details/{id}")]
-    public async Task<IActionResult> Details([FromRoute]long? id)
+    public async Task<IActionResult> Details([FromRoute] long? id)
     {
         try
         {
@@ -140,7 +140,7 @@ public class CommunityController : Controller
 
             _logger.LogInformation("Successfully created meeting. Returned id - {meetingId}", response);
         }
-        catch(Refit.ApiException ex)
+        catch (Refit.ApiException ex)
         {
             switch (ex.StatusCode)
             {
@@ -164,7 +164,7 @@ public class CommunityController : Controller
             }
         }
 
-        return View(model);
+        return RedirectToAction("Details", "Community", new { id = model.CommunityId });
     }
 
 
@@ -172,7 +172,7 @@ public class CommunityController : Controller
     [Route("Community/Message/{id}")]
     public IActionResult CreateMessage([FromRoute] long? id)
     {
-        var viewModel = new CreateMeetingViewModel()
+        var viewModel = new CreateCommunityMessageViewModel()
         {
             CommunityId = id
         };
@@ -226,7 +226,7 @@ public class CommunityController : Controller
             }
         }
 
-        return View(model);
+        return RedirectToAction("Details", "Community", new { id = model.CommunityId });
     }
 
     private long GetUserId()
