@@ -206,7 +206,7 @@ public class AdminPanelController : Controller
 
             foreach (var code in codes)
             {
-                model.ReturnedCodes.Add($"{HttpContext.Request.Scheme}//{HttpContext.Request.Host}{HttpContext.Request.PathBase}/Home/Register/{code}");
+                model.ReturnedCodes.Add($"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}{HttpContext.Request.PathBase}/Home/Register/{code}");
             }
         }
         catch (Refit.ApiException ex)

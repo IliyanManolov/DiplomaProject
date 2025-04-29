@@ -3,58 +3,62 @@
 @{
     ViewData["Title"] = "Create Referral Codes";
 }
-<div>
-    <h2>Create a new Property</h2>
 
-    <div class="form-outline mb-4 border">
-        <form asp-controller="AdminPanel" asp-action="CreateReferalCodes">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<div class="container mt-5">
+    <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-header bg-primary text-white rounded-top-4">
+            <h3 class="mb-0"><i class="bi bi-key"></i> Create Referral Codes</h3>
+        </div>
+        <div class="card-body p-4">
+            <form asp-controller="AdminPanel" asp-action="CreateReferalCodes">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-            <div data-mdb-input-init class="form-outline mb-4">
+                <div class="mb-3">
+                    <label asp-for="SelectedCommunity" class="form-label fw-bold">Select Community</label>
+                    <select asp-for="SelectedCommunity"
+                            asp-items="Model.AvailableCommunities.Select(c => new SelectListItem { Text = c.Name, Value = c.Id.ToString() })"
+                            class="form-select">
+                        <option value="">-- Choose Community --</option>
+                    </select>
+                    <span asp-validation-for="SelectedCommunity" class="text-danger"></span>
 
-                <label asp-for="SelectedCommunity" class="form-label">Select Community</label>
-                <select asp-for="SelectedCommunity" asp-items="Model.AvailableCommunities.Select(c => new SelectListItem { Text = c.Name, Value = c.Id.ToString() })" class="form-control form-control-lg">
-                    <option value="">-- Choose Community --</option>
-                </select>
+                    <!-- TEMPORARY Really workaround way of keeping the data to avoid fetching it Every.Single.Time. -->
+                    @for (var i = 0; i < Model.AvailableCommunities.Count; i++)
+                    {
+                        <input type="hidden" name="AvailableCommunities[@i].Id" value="@Model.AvailableCommunities[i].Id" />
+                        <input type="hidden" name="AvailableCommunities[@i].Name" value="@Model.AvailableCommunities[i].Name" />
+                    }
+                </div>
 
-                <span asp-validation-for="SelectedCommunity" class="text-danger"></span>
+                <div class="mb-3">
+                    <label asp-for="NumberOfCodes" class="form-label fw-bold">Number of Codes</label>
+                    <input asp-for="NumberOfCodes" type="number" class="form-control shadow-sm" placeholder="Enter number of codes" />
+                    <span asp-validation-for="NumberOfCodes" class="text-danger"></span>
+                </div>
 
-                @* TEMPORARY Really workaround way of keeping the data to avoid fetching it Every.Single.Time.*@
-                @for (var i = 0; i < Model.AvailableCommunities.Count; i++)
-                {
-                    <input type="hidden" name="AvailableCommunities[@i].Id" value="@Model.AvailableCommunities[i].Id" />
-                    <input type="hidden" name="AvailableCommunities[@i].Name" value="@Model.AvailableCommunities[i].Name" />
-                }
-
-            </div>
-
-            <div data-mdb-input-init class="form-outline mb-4">
-                <input asp-for="NumberOfCodes" type="number" id="form3Example3" class="form-control form-control-lg"
-                       placeholder="Enter Number of Codes" />
-                <span asp-validation-for="NumberOfCodes" class="text-danger"></span>
-            </div>
-
-
-            <div class="text-center text-lg-start mt-4 pt-2 d-flex justify-content-center">
-                <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-lg"
-                        style="padding-left: 2.5rem; padding-right: 2.5rem;">
-                    Create Codes
-                </button>
-            </div>
-
-        </form>
+                <div class="d-flex justify-content-end mt-4">
+                    <button type="submit" class="btn btn-success px-4">
+                        <i class="bi bi-plus-circle"></i> Create Codes
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 
     @if (Model.ReturnedCodes.Any())
     {
-        <div class="mt-4">
-            <h4>Generated Referral Codes:</h4>
-            <ul class="list-group">
-                @foreach (var code in Model.ReturnedCodes)
-                {
-                    <li class="list-group-item">@code</li>
-                }
-            </ul>
+        <div class="card mt-5 shadow-sm border-0 rounded-4">
+            <div class="card-header bg-success text-white rounded-top-4">
+                <h5 class="mb-0"><i class="bi bi-list-check"></i> Generated Referral Codes</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    @foreach (var code in Model.ReturnedCodes)
+                    {
+                        <li class="list-group-item">@code</li>
+                    }
+                </ul>
+            </div>
         </div>
     }
 </div>
