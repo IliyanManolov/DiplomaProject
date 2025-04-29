@@ -34,10 +34,17 @@ internal class PropertyRepository : BaseEntityRepository<Property>, IPropertyRep
 
     public async Task<IEnumerable<Property>> GetAllCommunityPropertiesByUserIdAsync(long? userId, long? communityId)
     {
-
         return await Query
+            .Include(x => x.Owner)
             .Where(x => x.OwnerId!.Value.CompareTo(userId) == 0 && x.CommunityId == communityId)
             .ToListAsync();
     }
 
+    public async Task<IEnumerable<Property>> GetAllCommunityPropertiesByCommunityIdAsync(long? communityId)
+    {
+        return await Query
+            .Include(x => x.Owner)
+            .Where(x => x.CommunityId == communityId)
+            .ToListAsync();
+    }
 }

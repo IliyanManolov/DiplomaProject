@@ -3,9 +3,12 @@ using HomeOwners.Infrastructure.Database;
 using HomeOwners.Lib.Configuration.Configuration;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
+using System.Text.Json.Serialization;
+using System.Text.Json;
 
 internal class Program
 {
@@ -28,45 +31,65 @@ internal class Program
 
         builder.Services.AddDatabase(builder.Configuration);
         
-        builder.Services.AddControllers();
-
-        builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-            .AddCookie(settings =>
+        builder.Services.AddControllers()
+            .AddJsonOptions(options =>
             {
-                settings.LoginPath = "/login";
-                settings.Cookie.IsEssential = true;
-                settings.Cookie.HttpOnly = false;
-                settings.SlidingExpiration = true;
-                settings.ExpireTimeSpan = TimeSpan.FromHours(48);
-                settings.Cookie.Name = "HomeOwners_Cookie";
-                settings.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-            });
+                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
+            }); ;
 
-        builder.Services.AddAuthorization(options =>
+        //builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+        //    .AddCookie(settings =>
+        //    {
+        //        settings.LoginPath = "/login";
+        //        settings.Cookie.IsEssential = true;
+        //        settings.Cookie.HttpOnly = false;
+        //        settings.SlidingExpiration = true;
+        //        settings.ExpireTimeSpan = TimeSpan.FromHours(48);
+        //        settings.Cookie.Name = "HomeOwners_Cookie";
+        //        settings.Cookie.SecurePolicy = CookieSecurePolicy.None;
+        //    });
+
+        //builder.Services.AddAuthorization(options =>
+        //{
+        //    options.DefaultPolicy = new AuthorizationPolicyBuilder()
+        //    .AddAuthenticationSchemes(CookieAuthenticationDefaults.AuthenticationScheme)
+        //    .RequireAuthenticatedUser()
+        //    .Build();
+        //});
+
+        //builder.Services.AddDataProtection()
+        //    .PersistKeysToFileSystem(new DirectoryInfo("/keys"))
+        //    .SetApplicationName("HomeOwnersApp");
+
+        builder.Services.AddCors(options =>
         {
-            options.DefaultPolicy = new AuthorizationPolicyBuilder()
-            .AddAuthenticationSchemes(CookieAuthenticationDefaults.AuthenticationScheme)
-            .RequireAuthenticatedUser()
-            .Build();
+            options.AddPolicy("AllowLocalProxy",
+                policy => policy
+                    .WithOrigins("http://local-dev.homeowners.com:443")
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials()
+            );
         });
-
 
 
         var app = builder.Build();
 
         app.UseProxyConfiguration(app.Environment, app.Configuration);
 
-        // Configure the HTTP request pipeline.
-        if (app.Environment.IsDevelopment())
-        {
-            app.UseSwagger();
-            app.UseSwaggerUI();
-        }
+        //// Configure the HTTP request pipeline.
+        //if (app.Environment.IsDevelopment())
+        //{
+        //    app.UseSwagger();
+        //    app.UseSwaggerUI();
+        //}
 
         app.UseApplicationLogging();
 
         // Ensure that the URL in the logs is the same as that in the request (easier debugging)
         app.UseMiddleware<RequestBasePathMiddleware>();
+
+        app.UseCors("AllowLocalProxy");
 
         //app.UseHttpsRedirection();
 

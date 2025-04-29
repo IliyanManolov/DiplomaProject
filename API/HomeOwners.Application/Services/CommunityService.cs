@@ -38,6 +38,30 @@ public class CommunityService : ICommunityService
         return dbCommunity.Id!.Value;
     }
 
+    public async Task<IEnumerable<CommunityDetailsDto>> GetAllCommunities()
+    {
+        var dbCommunityList = await _communityRepository.GetAllAsync();
+
+        return dbCommunityList.Select(x => new CommunityDetailsDto()
+        {
+            Id = x.Id!.Value,
+            Name = x.Name!,
+            PropertiesCount = x.PropertiesCount
+        });
+    }
+
+    public async Task<IEnumerable<CommunityDetailsDto>> GetAllForUser(long userId)
+    {
+        var dbCommunityList = await _communityRepository.GetAllForUserAsync(userId);
+
+        return dbCommunityList.Select(x => new CommunityDetailsDto()
+        {
+            Id = x.Id!.Value,
+            Name = x.Name!,
+            PropertiesCount = x.PropertiesCount
+        });
+    }
+
     public async Task<CommunityDetailsDto> GetCommunityDetailsAsync(long? id)
     {
         if (id == null)

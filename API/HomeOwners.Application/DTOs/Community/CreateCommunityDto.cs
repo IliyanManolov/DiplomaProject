@@ -10,3 +10,8 @@ public class CreateCommunityDto
 {
     public string? Name { get; set; }
 }
+
+public class CalculateDuesDto
+{
+    public long? UserId { get; set; }
+}

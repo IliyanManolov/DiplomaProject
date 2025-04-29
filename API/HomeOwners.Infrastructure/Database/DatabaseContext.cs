@@ -24,6 +24,12 @@ public class DatabaseContext : DbContext
 
         modelBuilder.ApplyConfiguration(new ReferralCodeMapping());
 
+        modelBuilder.ApplyConfiguration(new CommunityMessageMapping());
+
+        modelBuilder.ApplyConfiguration(new CommunityMeetingMapping());
+
+        modelBuilder.ApplyConfiguration(new DuesCalculationMapping());
+
         base.OnModelCreating(modelBuilder);
     }
 }

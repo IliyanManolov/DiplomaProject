@@ -49,6 +49,18 @@ internal abstract class BaseEntityRepository<TEntity> : IBaseEntityRepository<TE
         return entity;
     }
 
+    public async Task<IEnumerable<TEntity>> UpdateBulkAsync(IEnumerable<TEntity> entities)
+    {
+        foreach (var entity in entities)
+        {
+            entity.UpdateDate = DateTime.UtcNow;
+            _dbContext.Set<TEntity>().Entry(entity).State = EntityState.Modified;
+        }
+
+        await Save();
+        return entities;
+    }
+
     public async Task<TEntity> DeleteAsync(TEntity entity)
     {
         _dbContext.Set<TEntity>().Remove(entity);

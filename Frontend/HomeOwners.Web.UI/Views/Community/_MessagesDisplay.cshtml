@@ -1,0 +1,28 @@
+﻿@model IEnumerable<CommunityMessageViewModel>
+
+<div>
+    @if (!Model.Any())
+    {
+        <div class="alert alert-warning text-center" role="alert">
+            No messages have been found for the community
+        </div>
+    }
+    else
+    {
+        @foreach (var msg in Model.OrderByDescending(x => x.CreateTimeStamp))
+        {
+            <div class="border-bottom border-secondary-subtle py-2">
+                <p>
+                    <strong>@msg.CreatorUserName</strong> <span style="color: gray;">@msg.CreateTimeStamp.ToString("yyyy-MM-dd HH:mm")</span>
+                    @if (msg.LastUpdateTimeStamp != null)
+                    {
+                        <span class="text-secondary fst-italic ms-2" title="@msg.LastUpdateTimeStamp.Value.ToString("yyyy-MM-dd HH:mm")">
+                            Edited
+                        </span>
+                    }
+                </p>
+                <p>@msg.Message</p>
+            </div>
+        }
+    }
+</div>

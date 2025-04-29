@@ -68,7 +68,7 @@ public class AddressService : IAddressService
                 errors.Add(new InvalidPropertyValueValidationError("Address 'floor' and 'apartment' must both have values"));
             
             if (model.Floor < 0)
-                errors.Add(new InvalidPropertyValueValidationError("Addres 'floor' cannot have a negative value"));
+                errors.Add(new InvalidPropertyValueValidationError("Address 'floor' cannot have a negative value"));
 
             if (model.Apartment < 0)
                 errors.Add(new InvalidPropertyValueValidationError("Address 'apartment' cannot have a negative value"));
@@ -81,12 +81,12 @@ public class AddressService : IAddressService
         else if ((model.Latitude != null) && (model.Longitude != null))
         {
             // Longitude values are between -180 West and 180 degress East
-            if (model.Longitude < -180 && model.Longitude > 180)
-                errors.Add(new InvalidPropertyValueValidationError("Address 'longitude' cannot have a negative value"));
+            if (model.Longitude < -180 || model.Longitude > 180)
+                errors.Add(new InvalidPropertyValueValidationError("Address 'longitude' is outside permitted values"));
 
             // Lattitude values are between -90 South and 90 North
-            if (model.Latitude < -90 && model.Latitude > 90)
-                errors.Add(new InvalidPropertyValueValidationError("Address 'latitude' cannot have a negative value"));
+            if (model.Latitude < -90 || model.Latitude > 90)
+                errors.Add(new InvalidPropertyValueValidationError("Address 'latitude' is outside permitted values"));
         }
 
         if (errors.Count == 0)

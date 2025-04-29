@@ -76,7 +76,6 @@ namespace HomeOwners.Infrastructure.Migrations
                         .HasColumnName("postal_code");
 
                     b.Property<long?>("PropertyId")
-                        .IsRequired()
                         .HasColumnType("bigint");
 
                     b.Property<string>("State")
@@ -96,7 +95,8 @@ namespace HomeOwners.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("PropertyId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[PropertyId] IS NOT NULL");
 
                     b.ToTable("addresses", "homeowners");
                 });
@@ -128,6 +128,106 @@ namespace HomeOwners.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("communities", "homeowners");
+                });
+
+            modelBuilder.Entity("HomeOwners.Domain.Models.CommunityMeeting", b =>
+                {
+                    b.Property<long?>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long?>("Id"));
+
+                    b.Property<long?>("CommunityId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("CreateDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("create_date");
+
+                    b.Property<long?>("CreatorId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("MeetingReason")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("reason");
+
+                    b.Property<DateTime>("MeetingTime")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("meeting_date");
+
+                    b.Property<DateTime?>("UpdateDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("update_date");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CommunityId");
+
+                    b.HasIndex("CreatorId");
+
+                    b.ToTable("community_meetings", "homeowners");
+                });
+
+            modelBuilder.Entity("HomeOwners.Domain.Models.CommunityMessage", b =>
+                {
+                    b.Property<long?>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long?>("Id"));
+
+                    b.Property<long?>("CommunityId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("CreateDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("create_date");
+
+                    b.Property<long?>("CreatorId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("message");
+
+                    b.Property<DateTime?>("UpdateDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("update_date");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CommunityId");
+
+                    b.HasIndex("CreatorId");
+
+                    b.ToTable("community_messages", "homeowners");
+                });
+
+            modelBuilder.Entity("HomeOwners.Domain.Models.DuesCalculation", b =>
+                {
+                    b.Property<long?>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long?>("Id"));
+
+                    b.Property<DateTime?>("CreateDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("create_date");
+
+                    b.Property<DateTime?>("UpdateDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("update_date");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("dues_calculations", "homeowners");
                 });
 
             modelBuilder.Entity("HomeOwners.Domain.Models.Property", b =>
@@ -298,11 +398,39 @@ namespace HomeOwners.Infrastructure.Migrations
                 {
                     b.HasOne("HomeOwners.Domain.Models.Property", "Property")
                         .WithOne("Address")
-                        .HasForeignKey("HomeOwners.Domain.Models.Address", "PropertyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("HomeOwners.Domain.Models.Address", "PropertyId");
 
                     b.Navigation("Property");
+                });
+
+            modelBuilder.Entity("HomeOwners.Domain.Models.CommunityMeeting", b =>
+                {
+                    b.HasOne("HomeOwners.Domain.Models.Community", "Community")
+                        .WithMany("Meetings")
+                        .HasForeignKey("CommunityId");
+
+                    b.HasOne("HomeOwners.Domain.Models.User", "Creator")
+                        .WithMany("CreatedMeetings")
+                        .HasForeignKey("CreatorId");
+
+                    b.Navigation("Community");
+
+                    b.Navigation("Creator");
+                });
+
+            modelBuilder.Entity("HomeOwners.Domain.Models.CommunityMessage", b =>
+                {
+                    b.HasOne("HomeOwners.Domain.Models.Community", "Community")
+                        .WithMany("Messages")
+                        .HasForeignKey("CommunityId");
+
+                    b.HasOne("HomeOwners.Domain.Models.User", "Creator")
+                        .WithMany("CreatedMessages")
+                        .HasForeignKey("CreatorId");
+
+                    b.Navigation("Community");
+
+                    b.Navigation("Creator");
                 });
 
             modelBuilder.Entity("HomeOwners.Domain.Models.Property", b =>
@@ -343,6 +471,10 @@ namespace HomeOwners.Infrastructure.Migrations
 
             modelBuilder.Entity("HomeOwners.Domain.Models.Community", b =>
                 {
+                    b.Navigation("Meetings");
+
+                    b.Navigation("Messages");
+
                     b.Navigation("Properties");
 
                     b.Navigation("ReferralCodes");
@@ -356,6 +488,10 @@ namespace HomeOwners.Infrastructure.Migrations
 
             modelBuilder.Entity("HomeOwners.Domain.Models.User", b =>
                 {
+                    b.Navigation("CreatedMeetings");
+
+                    b.Navigation("CreatedMessages");
+
                     b.Navigation("CreatedReferalCodes");
 
                     b.Navigation("OwnedProperties");

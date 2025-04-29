@@ -14,23 +14,29 @@ public class PropertiesController : ControllerBase
 {
     private readonly ICommunityService _communityService;
     private readonly IPropertyService _propertiesService;
+    private readonly IUserService _userService;
     private readonly ILogger<PropertiesController> _logger;
 
-    public PropertiesController(IPropertyService propertiesService, ICommunityService communitySerivce, ILoggerFactory loggerFactory)
+    public PropertiesController(IPropertyService propertiesService, ICommunityService communitySerivce, IUserService userService, ILoggerFactory loggerFactory)
     {
         _communityService = communitySerivce;
         _propertiesService = propertiesService;
+        _userService = userService;
         _logger = loggerFactory.CreateLogger<PropertiesController>();
     }
 
 
     [HttpPost]
-    [Authorize(Roles = "Administrator")]
+    //[Authorize(Roles = "Administrator")]
     public async Task<IActionResult> CreatePropertyAsync([FromBody] CreatePropertyDto model)
     {
         try
         {
             var community = await _communityService.GetCommunityDetailsAsync(model.CommunityId);
+
+            var user = await _userService.GetUserByEmailAsync(model.OwnerEmail);
+
+            model.OwnerId = user.Id;
 
             var communityId = await _propertiesService.CreatePropertyAsync(model);
 
@@ -50,6 +56,48 @@ public class PropertiesController : ControllerBase
             return NotFound(new NotFoundResponseModel(HttpContext.TraceIdentifier));
         }
     }
+
+    [HttpPost("get/")]
+    public async Task<IActionResult> GetPropertiesAsync([FromBody] GetPropertyShortDto model)
+    {
+        try
+        {
+            var community = await _communityService.GetCommunityDetailsAsync(model.CommunityId);
+
+            var user = await _userService.GetUserDetailsAsync(model.UserId);
+
+            IEnumerable<PropertyShortDto> result;
+
+            if (user.Role is Domain.Enums.Role.Administrator)
+                result = await _propertiesService.GetAllForCommunityAsync(community.Id);
+            else
+                result = await _propertiesService.GetAllForUserInCommunityAsync(community.Id, user.Id!.Value);
+
+            if (result.ToList().Count == 0)
+            {
+                if (user.Role is Domain.Enums.Role.Administrator)
+                    return Ok(result);
+                else
+                    throw new UserAuthenticationValidationError("User does not have any properties in the requested community");
+            }
+
+            return Ok(result);
+        }
+        catch (BaseValidationError err)
+        {
+            return GetBadRequestResponse(err);
+        }
+        catch (BaseAggregateValidationError err)
+        {
+            return GetBadRequestResponse(err);
+        }
+        catch (BaseAuthenticationError err)
+        {
+            _logger.LogInformation("Returning 404 due to auth error. Message - {errorMessage}", err.Message);
+            return NotFound(new NotFoundResponseModel(HttpContext.TraceIdentifier));
+        }
+    }
+
 
     private IActionResult GetBadRequestResponse(BaseValidationError error)
     {

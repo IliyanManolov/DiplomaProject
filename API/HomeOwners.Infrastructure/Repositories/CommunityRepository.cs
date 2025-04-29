@@ -12,6 +12,14 @@ internal class CommunityRepository : BaseEntityRepository<Community>, ICommunity
 
     }
 
+    public async Task<IEnumerable<Community>> GetAllForUserAsync(long userId)
+    {
+        return await Query
+            .Where(x => x.Properties
+                .Any(p => p.OwnerId  == userId))
+            .ToListAsync();
+    }
+
     public async Task<Community?> GetByNameAsync(string name)
     {
         return await Query
