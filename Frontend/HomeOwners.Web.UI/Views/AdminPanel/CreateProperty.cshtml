@@ -4,119 +4,121 @@
     ViewData["Title"] = "Create Property";
 }
 
-<div>
-    <h2>Create a new Property</h2>
+<div class="container mt-5">
+    <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-header bg-primary text-white rounded-top-4">
+            <h3 class="mb-0"> Create Community Property</h3>
+        </div>
+        <div class="card-body p-4">
+            <form asp-controller="AdminPanel" asp-action="CreateProperty">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-    <div class="form-outline mb-4 border">
-        <form asp-controller="AdminPanel" asp-action="CreateProperty">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div data-mdb-input-init class="form-outline mb-4">
 
-            <div data-mdb-input-init class="form-outline mb-4">
+                    <label asp-for="SelectedCommunity" class="form-label">Select Community</label>
+                    <select asp-for="SelectedCommunity" asp-items="Model.AvailableCommunities.Select(c => new SelectListItem { Text = c.Name, Value = c.Id.ToString() })" class="form-control form-control-lg">
+                        <option value="">-- Choose Community --</option>
+                    </select>
 
-                <label asp-for="SelectedCommunity" class="form-label">Select Community</label>
-                <select asp-for="SelectedCommunity" asp-items="Model.AvailableCommunities.Select(c => new SelectListItem { Text = c.Name, Value = c.Id.ToString() })" class="form-control form-control-lg">
-                    <option value="">-- Choose Community --</option>
-                </select>
+                    <span asp-validation-for="SelectedCommunity" class="text-danger"></span>
 
-                <span asp-validation-for="SelectedCommunity" class="text-danger"></span>
+                    @* TEMPORARY Really workaround way of keeping the data to avoid fetching it Every.Single.Time.*@
+                    @for (var i = 0; i < Model.AvailableCommunities.Count; i++)
+                    {
+                        <input type="hidden" name="AvailableCommunities[@i].Id" value="@Model.AvailableCommunities[i].Id" />
+                        <input type="hidden" name="AvailableCommunities[@i].Name" value="@Model.AvailableCommunities[i].Name" />
+                    }
 
-                @* TEMPORARY Really workaround way of keeping the data to avoid fetching it Every.Single.Time.*@
-                @for (var i = 0; i < Model.AvailableCommunities.Count; i++)
-                {
-                    <input type="hidden" name="AvailableCommunities[@i].Id" value="@Model.AvailableCommunities[i].Id" />
-                    <input type="hidden" name="AvailableCommunities[@i].Name" value="@Model.AvailableCommunities[i].Name" />
-                }
+                </div>
 
-            </div>
+                <div data-mdb-input-init class="form-outline mb-4">
+                    <input asp-for="OwnerEmail" type="text" id="form3Example3" class="form-control form-control-lg"
+                           placeholder="Enter Owner email" />
+                    <span asp-validation-for="OwnerEmail" class="text-danger"></span>
+                </div>
 
-            <div data-mdb-input-init class="form-outline mb-4">
-                <input asp-for="OwnerEmail" type="text" id="form3Example3" class="form-control form-control-lg"
-                       placeholder="Enter Owner email" />
-                <span asp-validation-for="OwnerEmail" class="text-danger"></span>
-            </div>
+                <div data-mdb-input-init class="form-outline mb-4">
+                    <input asp-for="Occupants" type="text" id="form3Example3" class="form-control form-control-lg"
+                           placeholder="Enter Number of Occupants" />
+                    <span asp-validation-for="Occupants" class="text-danger"></span>
+                </div>
 
-            <div data-mdb-input-init class="form-outline mb-4">
-                <input asp-for="Occupants" type="text" id="form3Example3" class="form-control form-control-lg"
-                       placeholder="Enter Number of Occupants" />
-                <span asp-validation-for="Occupants" class="text-danger"></span>
-            </div>
+                <div data-mdb-input-init class="form-outline mb-4">
+                    <input asp-for="StreetAddress" type="text" id="form3Example3" class="form-control form-control-lg"
+                           placeholder="Enter Street" />
+                    <span asp-validation-for="StreetAddress" class="text-danger"></span>
+                </div>
 
-            <div data-mdb-input-init class="form-outline mb-4">
-                <input asp-for="StreetAddress" type="text" id="form3Example3" class="form-control form-control-lg"
-                       placeholder="Enter Street" />
-                <span asp-validation-for="StreetAddress" class="text-danger"></span>
-            </div>
-
-            <div data-mdb-input-init class="form-outline mb-4">
-                <input asp-for="City" type="text" id="form3Example3" class="form-control form-control-lg"
-                       placeholder="Enter City" />
-                <span asp-validation-for="City" class="text-danger"></span>
-            </div>
+                <div data-mdb-input-init class="form-outline mb-4">
+                    <input asp-for="City" type="text" id="form3Example3" class="form-control form-control-lg"
+                           placeholder="Enter City" />
+                    <span asp-validation-for="City" class="text-danger"></span>
+                </div>
 
 
-            <div data-mdb-input-init class="form-outline mb-4">
-                <select asp-for="Type" asp-items="Html.GetEnumSelectList<PropertyType>()"
-                        class="form-select form-select-lg">
-                    <option value="">Select property type</option>
-                </select>
-            </div>
+                <div data-mdb-input-init class="form-outline mb-4">
+                    <select asp-for="Type" asp-items="Html.GetEnumSelectList<PropertyType>()"
+                            class="form-select form-select-lg">
+                        <option value="">Select property type</option>
+                    </select>
+                </div>
 
-            <div data-mdb-input-init class="form-outline mb-4">
-                <input asp-for="State" type="text" id="form3Example3" class="form-control form-control-lg"
-                       placeholder="Enter State/Municipality" />
-                <span asp-validation-for="State" class="text-danger"></span>
-            </div>
+                <div data-mdb-input-init class="form-outline mb-4">
+                    <input asp-for="State" type="text" id="form3Example3" class="form-control form-control-lg"
+                           placeholder="Enter State/Municipality" />
+                    <span asp-validation-for="State" class="text-danger"></span>
+                </div>
 
-            <div data-mdb-input-init class="form-outline mb-4">
-                <input asp-for="PostalCode" type="text" id="form3Example3" class="form-control form-control-lg"
-                       placeholder="Enter Postal Code" />
-                <span asp-validation-for="PostalCode" class="text-danger"></span>
-            </div>
+                <div data-mdb-input-init class="form-outline mb-4">
+                    <input asp-for="PostalCode" type="text" id="form3Example3" class="form-control form-control-lg"
+                           placeholder="Enter Postal Code" />
+                    <span asp-validation-for="PostalCode" class="text-danger"></span>
+                </div>
 
-            <div data-mdb-input-init class="form-outline mb-4">
-                <input asp-for="Country" type="text" id="form3Example3" class="form-control form-control-lg"
-                       placeholder="Enter Country" />
-                <span asp-validation-for="Country" class="text-danger"></span>
-            </div>
+                <div data-mdb-input-init class="form-outline mb-4">
+                    <input asp-for="Country" type="text" id="form3Example3" class="form-control form-control-lg"
+                           placeholder="Enter Country" />
+                    <span asp-validation-for="Country" class="text-danger"></span>
+                </div>
 
-            <div data-mdb-input-init class="form-outline mb-4">
-                <input asp-for="BuildingNumber" type="text" id="form3Example3" class="form-control form-control-lg"
-                       placeholder="Enter Building number" />
-                <span asp-validation-for="BuildingNumber" class="text-danger"></span>
-            </div>
+                <div data-mdb-input-init class="form-outline mb-4">
+                    <input asp-for="BuildingNumber" type="text" id="form3Example3" class="form-control form-control-lg"
+                           placeholder="Enter Building number" />
+                    <span asp-validation-for="BuildingNumber" class="text-danger"></span>
+                </div>
 
-            <div data-mdb-input-init class="form-outline mb-4">
-                <input asp-for="Floor" type="text" id="form3Example3" class="form-control form-control-lg"
-                       placeholder="Enter Floor (only applicable for apartment)" />
-                <span asp-validation-for="Floor" class="text-danger"></span>
-            </div>
+                <div data-mdb-input-init class="form-outline mb-4">
+                    <input asp-for="Floor" type="text" id="form3Example3" class="form-control form-control-lg"
+                           placeholder="Enter Floor (only applicable for apartment)" />
+                    <span asp-validation-for="Floor" class="text-danger"></span>
+                </div>
 
-            <div data-mdb-input-init class="form-outline mb-4">
-                <input asp-for="Apartment" type="text" id="form3Example3" class="form-control form-control-lg"
-                       placeholder="Enter Apartment number (only applicable for apartment)" />
-                <span asp-validation-for="Apartment" class="text-danger"></span>
-            </div>
+                <div data-mdb-input-init class="form-outline mb-4">
+                    <input asp-for="Apartment" type="text" id="form3Example3" class="form-control form-control-lg"
+                           placeholder="Enter Apartment number (only applicable for apartment)" />
+                    <span asp-validation-for="Apartment" class="text-danger"></span>
+                </div>
 
-            <div data-mdb-input-init class="form-outline mb-4">
-                <input asp-for="Latitude" type="text" id="form3Example3" class="form-control form-control-lg"
-                       placeholder="Enter Latitude (Optional)" />
-                <span asp-validation-for="Latitude" class="text-danger"></span>
-            </div>
+                <div data-mdb-input-init class="form-outline mb-4">
+                    <input asp-for="Latitude" type="text" id="form3Example3" class="form-control form-control-lg"
+                           placeholder="Enter Latitude (Optional)" />
+                    <span asp-validation-for="Latitude" class="text-danger"></span>
+                </div>
 
-            <div data-mdb-input-init class="form-outline mb-4">
-                <input asp-for="Longitude" type="text" id="form3Example3" class="form-control form-control-lg"
-                       placeholder="Enter Longitude (Optional)" />
-                <span asp-validation-for="Longitude" class="text-danger"></span>
-            </div>
+                <div data-mdb-input-init class="form-outline mb-4">
+                    <input asp-for="Longitude" type="text" id="form3Example3" class="form-control form-control-lg"
+                           placeholder="Enter Longitude (Optional)" />
+                    <span asp-validation-for="Longitude" class="text-danger"></span>
+                </div>
 
-            <div class="text-center text-lg-start mt-4 pt-2 d-flex justify-content-center">
-                <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-lg"
-                        style="padding-left: 2.5rem; padding-right: 2.5rem;">
-                    Create Property
-                </button>
-            </div>
+                <div class="d-flex justify-content-between mt-4">
+                    <a class="nav-link rounded bg-light shadow-sm text-dark mt-4" asp-area="" asp-controller="AdminPanel" asp-action="Index">Back to Admin Panel</a>
 
-        </form>
+                    <button type="submit" class="btn btn-success">
+                        Create
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
-
