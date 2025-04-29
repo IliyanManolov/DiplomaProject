@@ -6,4 +6,5 @@ public interface ICommunityRepository : IBaseEntityRepository<Community>
 {
     public Task<Community?> GetByNameAsync(string name);
     public Task<bool> IsExistingNameAsync(string name);
+    public Task<IEnumerable<Community>> GetAllForUserAsync(long userId);
 } 

@@ -1,6 +1,7 @@
 ﻿using HomeOwners.Application.Abstractions.Repositories;
 using HomeOwners.Application.Abstractions.Services;
 using HomeOwners.Application.DTOs.ReferralCodes;
+using HomeOwners.Application.ValidationErrors;
 using HomeOwners.Domain.Models;
 using Microsoft.Extensions.Logging;
 
@@ -19,6 +20,10 @@ public class ReferralCodeService : IReferralCodeService
 
     public async Task<ISet<string>> CreateBulk(CreateReferralCodesDto model, long creatorId)
     {
+
+        if (model.Count <= 0)
+            throw new InvalidPropertyValueValidationError("Invalid referral code count value");
+
         var records = new List<ReferralCode>(model.Count);
 
         for (int i = 0; i < model.Count; i++)

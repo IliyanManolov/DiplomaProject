@@ -11,6 +11,8 @@ namespace HomeOwners.Application.DTOs.Property;
 public class CreatePropertyDto
 {
     public long? OwnerId { get; set; }
+
+    public string OwnerEmail { get; set; }
     public PropertyType Type { get; set; }
     public int? Occupants { get; set; }
     public CreateAddressDto Address { get; set; }

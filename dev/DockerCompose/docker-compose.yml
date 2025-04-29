@@ -21,7 +21,22 @@ services:
       dockerfile: API/HomeOwners.Web.API/Dockerfile
     volumes:
       - ./../../dev/DockerCompose/Config:/_config
+      - ./dev-keys:/keys
     environment:
       - HomeOwnersConfigurationPath=/_config/api-configuration.json
+      - ASPNETCORE_URLS=http://+:8080
+      - ASPNETCORE_ENVIRONMENT=Development
+ 
+  homeowners.web.ui:
+    image: ${DOCKER_REGISTRY-}homeownerswebui
+    container_name: homeowners-dev-ui
+    build:
+      context: ./../../
+      dockerfile: Frontend/HomeOwners.Web.UI/Dockerfile
+    volumes:
+      - ./../../dev/DockerCompose/Config:/_config
+      - ./dev-keys:/keys
+    environment:
+      - HomeOwnersConfigurationPath=/_config/web-configuration.json
       - ASPNETCORE_URLS=http://+:8080
       - ASPNETCORE_ENVIRONMENT=Development

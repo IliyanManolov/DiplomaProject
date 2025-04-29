@@ -3,3 +3,5 @@ api-configuration*.json
 Config/*
 Certificates/
 Certificates/*
+dev-keys/
+dev-keys/*

@@ -50,18 +50,18 @@ public class AuthenticationController : ControllerBase
         {
             var details = await _authenticationService.AuthenticateAsync(model.Username, model.Password);
 
-            var claims = new List<Claim>()
-            {
-                new Claim(ClaimTypes.NameIdentifier, details.Id.ToString()!),
-                new Claim(ClaimTypes.Name, details.UserName!),
-                new Claim(ClaimTypes.Role, details.Role.ToString())
-            };
+            //var claims = new List<Claim>()
+            //{
+            //    new Claim(ClaimTypes.NameIdentifier, details.Id.ToString()!),
+            //    new Claim(ClaimTypes.Name, details.UserName!),
+            //    new Claim(ClaimTypes.Role, details.Role.ToString())
+            //};
 
-            await HttpContext.SignInAsync(
-                new ClaimsPrincipal(
-                    new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme)
-                )
-            );
+            //await HttpContext.SignInAsync(
+            //    new ClaimsPrincipal(
+            //        new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme)
+            //    )
+            //);
 
             return Ok(details);
         }
@@ -80,6 +80,23 @@ public class AuthenticationController : ControllerBase
         }
     }
 
+    [HttpPatch("changepassword/")]
+    public async Task<IActionResult> ChangePasswordAsync([FromBody] ChangePasswordDto model)
+    {
+        try
+        {
+            var userId = await _userService.ChangePassword(model);
+            return Ok(userId);
+        }
+        catch (BaseValidationError err)
+        {
+            return GetBadRequestResponse(err);
+        }
+        catch (BaseAggregateValidationError err)
+        {
+            return GetBadRequestResponse(err);
+        }
+    }
     private IActionResult GetBadRequestResponse(BaseValidationError error)
     {
         var model = new BadRequestResponseModel(HttpContext.TraceIdentifier);

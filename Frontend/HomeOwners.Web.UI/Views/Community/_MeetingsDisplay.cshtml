@@ -1,0 +1,30 @@
+﻿@model IEnumerable<CommunityMeetingViewModel>
+
+<div>
+	@if (!Model.Any())
+	{
+		<div class="alert alert-warning text-center" role="alert">
+			No meetings have been found for the community
+		</div>
+	}
+	else
+	{
+		@foreach (var meeting in Model.OrderByDescending(x => x.MeetingTime))
+		{
+			<div class="bg-white border rounded-2 p-3 border-secondary-subtle w-100">
+				<p>
+					<strong>@meeting.CreatorUserName</strong> <span style="color: gray;">@meeting.CreateTimeStamp.ToString("yyyy-MM-dd HH:mm")</span>
+					@if (meeting.LastUpdateTimeStamp != null)
+					{
+						<span class="text-secondary fst-italic ms-2" title="@meeting.LastUpdateTimeStamp.Value.ToString("yyyy-MM-dd HH:mm")">
+							Edited
+						</span>
+					}
+				</p>
+
+				<p><strong>Meeting reason:</strong> @meeting.Reason</p>
+				<p><strong>Meeting time (UTC):</strong> @meeting.MeetingTime.ToString("MMMM dd, yyyy 'at' HH:mm")</p>
+			</div>
+		}
+	}
+</div>

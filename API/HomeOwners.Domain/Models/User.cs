@@ -18,6 +18,8 @@ public class User : DomainEntity
     public ISet<Property> OwnedProperties { get; set; } = new HashSet<Property>();
     public bool IsDeleted { get; set; } = false;
     public ISet<ReferralCode> CreatedReferalCodes { get; set; } = new HashSet<ReferralCode>();
+    public ISet<CommunityMessage> CreatedMessages { get; set; } = new HashSet<CommunityMessage>();
+    public ISet<CommunityMeeting> CreatedMeetings { get; set; } = new HashSet<CommunityMeeting>();
     public long? ReferalCodeId { get; set; }
     public ReferralCode ReferalCode { get; set; }
 }

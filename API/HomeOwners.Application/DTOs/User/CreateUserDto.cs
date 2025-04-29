@@ -14,5 +14,5 @@ public class CreateUserDto
     public string? Password { get; set; }
     //[Required]
     public string? ConfirmPassword { get; set; }
-    public string? ReferalCode { get; set; }
+    public string? ReferralCode { get; set; }
 }
