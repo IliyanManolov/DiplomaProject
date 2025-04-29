@@ -1,0 +1,75 @@
+﻿using HomeOwners.Application.Abstractions.Services;
+using HomeOwners.Domain.Enums;
+using HomeOwners.Domain.Models;
+using HomeOwners.Infrastructure.Configuration;
+using HomeOwners.Infrastructure.Database;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace API.Tests.Fixtures;
+
+public static class TestsDiHelper
+{
+    public static IServiceCollection GetServices()
+    {
+        var services = new ServiceCollection();
+
+        services.AddDbContext<DatabaseContext>(options =>
+        {
+            options.UseInMemoryDatabase("ModuleTestsDatabase");
+        });
+
+        services.AddLogging();
+
+        services.AddRepositories();
+        services.AddServiceLayer();
+        services.AddSecurityLayer();
+
+        return services;
+    }
+
+    public static void SeedTestData(this DatabaseContext context, IPasswordService passwordService)
+    {
+        var referralCodes = new Dictionary<string, ReferralCode>
+        {
+            {
+                "01",
+                new ReferralCode()
+                {
+                    CreateDate = DateTime.Now,
+                    Code = Guid.NewGuid(),
+                    IsUsed = true,
+                    UserId = 2,
+                    CreatorId = 1,
+                    CommunityId = 1,
+                    Id = 1,
+                }
+            }
+        };
+
+        var users = new Dictionary<string, User>
+        {
+            {
+                "admin",
+                new User()
+                {
+                    Id = 1,
+                    CreateDate = DateTime.Now,
+                    Email = "admin@homeowners.com",
+                    FirstName = "Test",
+                    LastName = "Admin",
+                    IsDeleted = false,
+                    Role = Role.Administrator,
+                    Username = "LocalAdmin",
+                    Password = passwordService.GetHash("password")
+                } 
+            }
+        };
+
+
+        context.ReferralCodes.AddRange(referralCodes.Values);
+        context.Users.AddRange(users.Values);
+
+        context.SaveChanges();
+    }
+}

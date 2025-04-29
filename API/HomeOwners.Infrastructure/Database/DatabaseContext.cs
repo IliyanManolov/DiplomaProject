@@ -1,10 +1,22 @@
-﻿using HomeOwners.Infrastructure.Mappings;
+﻿using HomeOwners.Domain.Models;
+using HomeOwners.Infrastructure.Mappings;
 using Microsoft.EntityFrameworkCore;
 
 namespace HomeOwners.Infrastructure.Database;
 
 public class DatabaseContext : DbContext
 {
+
+    public DbSet<User> Users { get; set; }
+    public DbSet<Community> Communities { get; set; }
+    public DbSet<Property> Properties { get; set; }
+    public DbSet<Address> Addresses { get; set; }
+    public DbSet<ReferralCode> ReferralCodes { get; set; }
+    public DbSet<CommunityMessage> CommunityMessages { get; set; }
+    public DbSet<CommunityMeeting> CommunityMeetings { get; set; }
+    public DbSet<DuesCalculation> DueCalculations { get; set; }
+
+
     public DatabaseContext(DbContextOptions dbContextOptions)
         : base(dbContextOptions)
     {
