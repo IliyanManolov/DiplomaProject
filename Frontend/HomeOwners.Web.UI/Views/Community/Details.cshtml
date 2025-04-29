@@ -3,6 +3,14 @@
 <div class="dashboard-container d-flex justify-content-center align-items-start gap-5 p-4">
 
     <div class="card-column d-flex flex-column gap-4" style="max-height: 80vh; width:30vw; overflow-y: auto;">
+        <h3 class="text-center">Community Meetings</h3>
+
+        @if (User.IsInRole("Administrator"))
+        {
+            <a href="@Url.Action("CreateMessage", "Community", new { id = Model.CommunityId})" class="btn btn-outline-primary">
+                Create Meeting
+            </a>
+        }
         <partial name="_MeetingsDisplay" model="@Model.CommunityMeetingViewModels"></partial>
     </div>
 

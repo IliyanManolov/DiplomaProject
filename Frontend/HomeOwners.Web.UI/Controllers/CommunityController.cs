@@ -71,7 +71,8 @@ public class CommunityController : Controller
                     CreatorUserName = x.CreatorUserName,
                     MeetingTime = x.MeetingTime,
                     Reason = x.Reason,
-                }).ToList()
+                }).ToList(),
+                CommunityId = id.Value
             };
 
             return View(viewModel);
@@ -103,6 +104,68 @@ public class CommunityController : Controller
         }
     }
 
+
+    [Authorize(Roles = "Administrator")]
+    [Route("Community/Message/{id}")]
+    public IActionResult CreateMessage([FromRoute] long? id)
+    {
+        var viewModel = new CreateMeetingViewModel()
+        {
+            CommunityId = id
+        };
+
+        return View(viewModel);
+    }
+
+    [Authorize(Roles = "Administrator")]
+    [HttpPost("Community/Message/{id}")]
+    public async Task<IActionResult> CreateMessage(CreateMeetingViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        try
+        {
+            var request = new CreateMeetingRequest()
+            {
+                CommunityId = model.CommunityId,
+                CreatorId = GetUserId(),
+                MeetingTime = model.MeetingTime,
+                Reason = model.Reason,
+            };
+
+            var response = await _communityClient.CreateMeetingAsync(request);
+
+            _logger.LogInformation("Successfully created meeting. Returned id - {meetingId}", response);
+        }
+        catch(Refit.ApiException ex)
+        {
+            switch (ex.StatusCode)
+            {
+                case HttpStatusCode.BadRequest:
+                    var errorResponse = await ex.GetContentAsAsync<BadRequestResponseModel>();
+
+                    foreach (var item in errorResponse.ValidationErrors)
+                    {
+                        ModelState.AddModelError(string.Empty, item.Message);
+                    }
+
+                    break;
+
+                case HttpStatusCode.NotFound:
+                    _logger.LogWarning("Not found response received. Response content - {content}", ex.Content);
+                    break;
+
+                default:
+                    _logger.LogError(ex.Message);
+                    break;
+            }
+        }
+
+        return View(model);
+    }
 
     private long GetUserId()
     {

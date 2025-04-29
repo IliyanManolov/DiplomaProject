@@ -1,8 +1,6 @@
 ﻿@model IEnumerable<CommunityMeetingViewModel>
 
 <div>
-	<h3 class="text-center">Community Meetings</h3>
-
 	@if (!Model.Any())
 	{
 		<div class="alert alert-warning text-center" role="alert">
@@ -25,7 +23,7 @@
 				</p>
 
 				<p><strong>Meeting reason:</strong> @meeting.Reason</p>
-				<p><strong>Meeting time (UTC)</strong>@meeting.MeetingTime.ToString("MMMM dd, yyyy 'at' HH:mm")</p>
+				<p><strong>Meeting time (UTC):</strong> @meeting.MeetingTime.ToString("MMMM dd, yyyy 'at' HH:mm")</p>
 			</div>
 		}
 	}

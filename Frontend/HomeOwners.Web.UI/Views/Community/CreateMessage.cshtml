@@ -1,0 +1,37 @@
+﻿@model HomeOwners.Web.UI.Models.CreateMeetingViewModel
+
+@{
+    ViewData["Title"] = "CreateCommunityMeeting";
+}
+
+<h1>Create Community Meeting</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-controller="Community" asp-action="CreateMessage">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" name="CommunityId" value="@Model.CommunityId" />
+            <div class="form-group">
+                <label asp-for="Reason" class="control-label"></label>
+                <input asp-for="Reason" class="form-control" />
+                <span asp-validation-for="Reason" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MeetingTime" class="control-label"></label>
+                <input asp-for="MeetingTime" class="form-control" />
+                <span asp-validation-for="MeetingTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    @* <a asp-action="Index" >Back to Community</a> *@
+    <a href="@Url.Action("Details", "Community", new { id = Model.CommunityId})" class="btn btn-outline-primary">
+        Back to Community
+    </a>
+</div>
