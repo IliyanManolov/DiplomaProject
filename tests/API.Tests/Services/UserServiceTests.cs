@@ -4,6 +4,7 @@ using HomeOwners.Application.DTOs.User;
 using HomeOwners.Application.ValidationErrors;
 using HomeOwners.Application.ValidationErrors.Base;
 using HomeOwners.Domain.Enums;
+using Humanizer;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace API.Tests.Services;
@@ -14,6 +15,7 @@ public class UserServiceTests
     private readonly InMemoryFixture _fixture;
     private readonly IUserService _service;
     private const long _adminId = 1;
+    private const string _adminEmail = "admin@homeowners.com";
 
     public UserServiceTests(InMemoryFixture fixture)
     {
@@ -199,5 +201,29 @@ public class UserServiceTests
         var ex = await Assert.ThrowsAsync(validationErrorType, async () => await _service.CreateUserAsync(dto));
 
         Assert.Contains(messageContains, ex.Message, StringComparison.InvariantCultureIgnoreCase);
+    }
+
+    [Theory]
+    [InlineData("", typeof(InvalidPropertyValueValidationError))]
+    [InlineData("invalidemail@homeowners.com", typeof(UserNotFoundValidationError))]
+    public async Task ShouldFailToGetByEmail(string email, Type validationErrorType)
+    {
+        var ex = await Assert.ThrowsAsync(validationErrorType, async () => await _service.GetUserByEmailAsync(email));
+
+        Assert.False(string.IsNullOrEmpty(ex.Message), "Empty error message received");
+    }
+
+    [Fact]
+    public async Task ShouldGetUserByEmail()
+    {
+        var response = await _service.GetUserByEmailAsync(_adminEmail);
+
+        Assert.NotNull(response);
+        Assert.Equal(_adminId, response.Id);
+        Assert.Equal("LocalAdmin", response.UserName);
+        Assert.Equal("Test", response.FirstName);
+        Assert.Equal("Admin", response.LastName);
+        Assert.Equal(Role.Administrator, response.Role);
+        Assert.Equal(_adminEmail, response.Email);
     }
 }
