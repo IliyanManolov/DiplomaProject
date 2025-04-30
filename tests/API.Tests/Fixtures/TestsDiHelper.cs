@@ -173,7 +173,7 @@ public static class TestsDiHelper
                     LastName = "BasicLastName01",
                     IsDeleted = false,
                     ReferalCodeId = 5,
-                    Role = Role.Administrator,
+                    Role = Role.HomeOwner,
                     Username = "BasicUser01",
                     Password = passwordService.GetHash("password")
                 }
