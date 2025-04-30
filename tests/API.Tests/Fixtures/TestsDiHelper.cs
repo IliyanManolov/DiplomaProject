@@ -5,6 +5,7 @@ using HomeOwners.Infrastructure.Configuration;
 using HomeOwners.Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Identity.Client;
 
 namespace API.Tests.Fixtures;
 
@@ -179,9 +180,32 @@ public static class TestsDiHelper
             }
         };
 
+        var communities = new Dictionary<string, Community>()
+        {
+            {
+                "Basic01",
+                new Community()
+                {
+                    Id = 1,
+                    Name = "Basic01",
+                    PropertiesCount = 0
+                }
+            },
+            {
+                "Basic02",
+                new Community()
+                {
+                    Id = 2,
+                    Name = "Basic02",
+                    PropertiesCount = 0
+                }
+            }
+        };
+
 
         context.ReferralCodes.AddRange(referralCodes.Values);
         context.Users.AddRange(users.Values);
+        context.Communities.AddRange(communities.Values);
 
         context.SaveChanges();
     }
