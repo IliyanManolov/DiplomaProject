@@ -3,6 +3,7 @@ using HomeOwners.Application.Abstractions.Repositories;
 using HomeOwners.Application.Abstractions.Services;
 using HomeOwners.Application.DTOs.User;
 using HomeOwners.Application.ValidationErrors;
+using HomeOwners.Application.ValidationErrors.Authentication;
 using HomeOwners.Application.ValidationErrors.Base;
 using HomeOwners.Domain.Enums;
 using Humanizer;
@@ -15,6 +16,7 @@ public class UserServiceTests
 {
     private readonly InMemoryFixture _fixture;
     private readonly IUserService _service;
+    private readonly IUserRepository _userRepository;
     private readonly IReferralCodeRepository _codeRepository;
     private const long _adminId = 1;
     private const string _adminEmail = "admin@homeowners.com";
@@ -23,6 +25,7 @@ public class UserServiceTests
     {
         _fixture = fixture;
         _service = _fixture.ServiceProvider.GetRequiredService<IUserService>();
+        _userRepository = _fixture.ServiceProvider.GetRequiredService<IUserRepository>();
         _codeRepository = _fixture.ServiceProvider.GetRequiredService<IReferralCodeRepository>();
     }
 
@@ -262,5 +265,95 @@ public class UserServiceTests
         Assert.NotNull(code);
         Assert.True(code.IsUsed);
         Assert.Equal(id, code.UserId);
+    }
+
+    [Fact]
+    public async Task ShouldChangePassword()
+    {
+        var model = new ChangePasswordDto()
+        {
+            Password = "pass",
+            ConfirmPassword = "pass",
+            UserId = 2
+        };
+
+        var existing = await _userRepository.GetByIdAsync(2);
+
+        Assert.NotNull(existing);
+        Assert.False(string.IsNullOrEmpty(existing.Password));
+        // The entity is updated by reference
+        var existingPass = existing.Password;
+
+        await _service.ChangePassword(model);
+
+        var updated = await _userRepository.GetByIdAsync(2);
+        Assert.NotNull(updated);
+        Assert.False(string.IsNullOrEmpty(updated.Password));
+
+        Assert.NotEqual(existingPass, updated.Password);
+    }
+
+    public static List<object[]> ShouldFailToChangePassword_Data => new()
+    {
+        new object[]
+        {
+            new ChangePasswordDto()
+            {
+                Password = ""
+            },
+            typeof(InvalidPropertyValueValidationError),
+            "Password"
+        },
+        new object[]
+        {
+            new ChangePasswordDto()
+            {
+                Password = "pass",
+                ConfirmPassword = ""
+            },
+            typeof(InvalidPropertyValueValidationError),
+            "Password"
+        },
+        new object[]
+        {
+            new ChangePasswordDto()
+            {
+                Password = "pass",
+                ConfirmPassword = "pass123"
+            },
+            typeof(PasswordsMissmatchValidationError),
+            "mismatch detected"
+        },
+        new object[]
+        {
+            new ChangePasswordDto()
+            {
+                Password = "pass",
+                ConfirmPassword = "pass",
+                UserId = null
+            },
+            typeof(UserAuthenticationValidationError),
+            "null"
+        },
+        new object[]
+        {
+            new ChangePasswordDto()
+            {
+                Password = "pass",
+                ConfirmPassword = "pass",
+                UserId = 123456
+            },
+            typeof(UserAuthenticationValidationError),
+            "exists - false"
+        }
+    };
+
+    [Theory]
+    [MemberData(nameof(ShouldFailToChangePassword_Data))]
+    public async Task ShouldFailToChangePassword(ChangePasswordDto dto, Type validationErrorType, string messageContains)
+    {
+        var ex = await Assert.ThrowsAsync(validationErrorType, async () => await _service.ChangePassword(dto));
+
+        Assert.Contains(messageContains, ex.Message, StringComparison.InvariantCultureIgnoreCase);
     }
 }

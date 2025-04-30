@@ -56,6 +56,18 @@ public static class TestsDiHelper
                     CommunityId = 1,
                     Id = 2,
                 }
+            },
+            {
+                "ChangePasswordCode01",
+                new ReferralCode()
+                {
+                    CreateDate = DateTime.Now,
+                    Code = Guid.NewGuid(),
+                    IsUsed = false,
+                    CreatorId = 1,
+                    CommunityId = 1,
+                    Id = 3,
+                }
             }
         };
 
@@ -75,6 +87,21 @@ public static class TestsDiHelper
                     Username = "LocalAdmin",
                     Password = passwordService.GetHash("password")
                 } 
+            },
+            {
+                "ChangePasswordTarget01",
+                new User()
+                {
+                    Id = 2,
+                    CreateDate = DateTime.Now,
+                    Email = "changepassword@homeowners.com",
+                    FirstName = "ChangePasswordFirstName",
+                    LastName = "ChangePasswordLastName",
+                    IsDeleted = false,
+                    Role = Role.HomeOwner,
+                    Username = "ChangePasswordUser",
+                    Password = passwordService.GetHash("password")
+                }
             }
         };
 
