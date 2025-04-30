@@ -199,6 +199,15 @@ public static class TestsDiHelper
                     Name = "Basic02",
                     PropertiesCount = 0
                 }
+            },
+            {
+                "PropertiesCreateTarget",
+                new Community()
+                {
+                    Id = 3,
+                    Name = "PropertiesCreateTarget",
+                    PropertiesCount = 0
+                }
             }
         };
 
