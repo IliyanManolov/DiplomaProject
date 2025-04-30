@@ -114,7 +114,7 @@ public static class TestsDiHelper
                     Role = Role.Administrator,
                     Username = "LocalAdmin",
                     Password = passwordService.GetHash("password")
-                } 
+                }
             },
             {
                 "ChangePasswordTarget01",
@@ -202,10 +202,66 @@ public static class TestsDiHelper
             }
         };
 
+        var messages = new Dictionary<string, CommunityMessage>()
+        {
+            {
+                "Basic01_1",
+                new CommunityMessage()
+                {
+                    Id = 1,
+                    Community = communities["Basic01"],
+                    Creator = users["admin"],
+                    Message = "Message Test 01",
+                    CreateDate = DateTime.Now.AddDays(-2),
+                }
+            },
+            {
+                "Basic01_2",
+                new CommunityMessage()
+                {
+                    Id = 2,
+                    Community = communities["Basic01"],
+                    Creator = users["admin"],
+                    Message = "Message Test 02",
+                    CreateDate = DateTime.Now.AddDays(-1)
+                }
+            }
+        };
+
+        var meetings = new Dictionary<string, CommunityMeeting>()
+        {
+            {
+                "Basic01_1",
+                new CommunityMeeting()
+                {
+                    Id = 1,
+                    Community = communities["Basic01"],
+                    Creator = users["admin"],
+                    MeetingReason = "Meeting Test 01",
+                    MeetingTime = DateTime.UtcNow.AddDays(2),
+                    CreateDate = DateTime.Now.AddDays(-2)
+                }
+            },
+            {
+                "Basic01_2",
+                new CommunityMeeting()
+                {
+                    Id = 2,
+                    Community = communities["Basic01"],
+                    Creator = users["admin"],
+                    MeetingReason = "Meeting Test 02",
+                    MeetingTime = DateTime.UtcNow.AddDays(1),
+                    CreateDate = DateTime.Now.AddDays(-2)
+                }
+            }
+        };
+
 
         context.ReferralCodes.AddRange(referralCodes.Values);
         context.Users.AddRange(users.Values);
         context.Communities.AddRange(communities.Values);
+        context.CommunityMessages.AddRange(messages.Values);
+        context.CommunityMeetings.AddRange(meetings.Values);
 
         context.SaveChanges();
     }
