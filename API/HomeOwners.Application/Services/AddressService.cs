@@ -34,7 +34,9 @@ public class AddressService : IAddressService
             BuildingNumber = model.BuildingNumber,
             FloorNumber = model.Floor,
             ApartmentNumber = model.Apartment,
-
+            State = model.State,
+            Latitude = model.Latitude,
+            Longitude = model.Longitude
         };
 
         await _addressRepository.CreateAsync(dbAddress);
@@ -70,8 +72,13 @@ public class AddressService : IAddressService
             if (model.Floor < 0)
                 errors.Add(new InvalidPropertyValueValidationError("Address 'floor' cannot have a negative value"));
 
-            if (model.Apartment < 0)
-                errors.Add(new InvalidPropertyValueValidationError("Address 'apartment' cannot have a negative value"));
+            if (model.Apartment < 1)
+                errors.Add(new InvalidPropertyValueValidationError("Address 'apartment' cannot have a negative or zero value"));
+        }
+        else
+        {
+            if ((model.Floor != null) || (model.Apartment != null))
+                errors.Add(new InvalidPropertyValueValidationError("Address 'floor' or 'apartment' cannot have values unless address is an apartment"));
         }
 
         // XOR - only 1 property has a value
@@ -94,7 +101,7 @@ public class AddressService : IAddressService
             var existingAddress = await _addressRepository.ValidateAddress(country: model.Country!, city: model.City!, street: model.StreetAddress!, building: model.BuildingNumber, apartment: model.Apartment);
             if (existingAddress != null)
             {
-                errors.Add(new IdentifierInUseValidationError("The address already exists"));
+                errors.Add(new IdentifierInUseValidationError("address"));
                 _logger.LogWarning("Attempting to create a new address and found a duplicate. New: {newAddress}. Existing: {existingAddress}", JsonSerializer.Serialize(model), SerializeAddress(existingAddress));
             }
         }

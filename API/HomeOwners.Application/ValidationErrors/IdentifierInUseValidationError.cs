@@ -4,7 +4,7 @@ namespace HomeOwners.Application.ValidationErrors;
 
 public class IdentifierInUseValidationError : BaseValidationError
 {
-    public IdentifierInUseValidationError(string property) : base($"The provided {property} is already in use", "IdentifierInUseValidationError")
+    public IdentifierInUseValidationError(string property) : base($"The provided '{property}' is already in use", "IdentifierInUseValidationError")
     {
 
     }

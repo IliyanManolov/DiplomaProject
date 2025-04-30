@@ -30,10 +30,10 @@ public class UserService : IUserService
     public async Task<UserDetailsDto> ChangePassword(ChangePasswordDto model)
     {
         if (string.IsNullOrEmpty(model.Password))
-            throw new InvalidPropertyValueValidationError("Password cannot cannot be an empty string or null");
+            throw new InvalidPropertyValueValidationError("'Password' cannot cannot be an empty string or null");
 
         if (string.IsNullOrEmpty(model.ConfirmPassword))
-            throw new InvalidPropertyValueValidationError("ConfirmPassword cannot cannot be an empty string or null");
+            throw new InvalidPropertyValueValidationError("'ConfirmPassword' cannot cannot be an empty string or null");
 
         if (model.Password != model.ConfirmPassword)
             throw new PasswordsMissmatchValidationError();
@@ -64,25 +64,18 @@ public class UserService : IUserService
     public async Task<long?> CreateUserAsync(CreateUserDto user, Role role = Role.HomeOwner)
     {
         if (string.IsNullOrEmpty(user.Password))
-            throw new InvalidPropertyValueValidationError("Password cannot cannot be an empty string or null");
+            throw new InvalidPropertyValueValidationError("'Password' cannot cannot be an empty string or null");
 
         if (string.IsNullOrEmpty(user.ConfirmPassword))
-            throw new InvalidPropertyValueValidationError("ConfirmPassword cannot cannot be an empty string or null");
+            throw new InvalidPropertyValueValidationError("'ConfirmPassword' cannot cannot be an empty string or null");
 
         if (user.Password != user.ConfirmPassword)
             throw new PasswordsMissmatchValidationError();
 
         if (string.IsNullOrEmpty(user.Username))
-            throw new InvalidPropertyValueValidationError("Username cannot cannot be an empty string or null");
+            throw new InvalidPropertyValueValidationError("'Username' cannot cannot be an empty string or null");
 
-        if (await _userRepository.IsExistingUsernameAsync(user.Username))
-            throw new IdentifierInUseValidationError("username");
-
-        if (string.IsNullOrEmpty(user.Email))
-            throw new InvalidPropertyValueValidationError("Email cannot cannot be an empty string or null");
-
-        if (await _userRepository.IsExistingEmailAsync(user.Email))
-            throw new IdentifierInUseValidationError("email");
+        // Check the code before validation existing email/username - avoids exposing data if someone is attempting to brute force
 
         // Referal codes are passed as a string from the frontend in order to allow for potential future migrations to custom text
         if (string.IsNullOrEmpty(user.ReferralCode) || !Guid.TryParse(user.ReferralCode, out var codeGuid))
@@ -92,6 +85,15 @@ public class UserService : IUserService
 
         if (code == null)
             throw new InvalidPropertyValueValidationError("Invalid referal code");
+
+        if (await _userRepository.IsExistingUsernameAsync(user.Username))
+            throw new IdentifierInUseValidationError("username");
+
+        if (string.IsNullOrEmpty(user.Email))
+            throw new InvalidPropertyValueValidationError("'Email' cannot cannot be an empty string or null");
+
+        if (await _userRepository.IsExistingEmailAsync(user.Email))
+            throw new IdentifierInUseValidationError("email");
 
         var dbUser = new User()
         {
@@ -108,6 +110,7 @@ public class UserService : IUserService
         await _userRepository.CreateAsync(dbUser);
 
         code.IsUsed = true;
+        code.UserId = dbUser.Id;
 
         await _referralCodeRepository.UpdateAsync(code);
 
