@@ -44,6 +44,18 @@ public static class TestsDiHelper
                     CommunityId = 1,
                     Id = 1,
                 }
+            },
+            {
+                "CreateUserTest01",
+                new ReferralCode()
+                {
+                    CreateDate = DateTime.Now,
+                    Code = Guid.Parse("D10DC09D-A0E0-4DF3-8134-6B9BDA05E7AF"),
+                    IsUsed = false,
+                    CreatorId = 1,
+                    CommunityId = 1,
+                    Id = 2,
+                }
             }
         };
 

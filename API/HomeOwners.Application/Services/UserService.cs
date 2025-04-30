@@ -110,6 +110,7 @@ public class UserService : IUserService
         await _userRepository.CreateAsync(dbUser);
 
         code.IsUsed = true;
+        code.UserId = dbUser.Id;
 
         await _referralCodeRepository.UpdateAsync(code);
 

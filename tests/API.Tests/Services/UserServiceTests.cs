@@ -1,4 +1,5 @@
 ﻿using API.Tests.Fixtures;
+using HomeOwners.Application.Abstractions.Repositories;
 using HomeOwners.Application.Abstractions.Services;
 using HomeOwners.Application.DTOs.User;
 using HomeOwners.Application.ValidationErrors;
@@ -14,6 +15,7 @@ public class UserServiceTests
 {
     private readonly InMemoryFixture _fixture;
     private readonly IUserService _service;
+    private readonly IReferralCodeRepository _codeRepository;
     private const long _adminId = 1;
     private const string _adminEmail = "admin@homeowners.com";
 
@@ -21,6 +23,7 @@ public class UserServiceTests
     {
         _fixture = fixture;
         _service = _fixture.ServiceProvider.GetRequiredService<IUserService>();
+        _codeRepository = _fixture.ServiceProvider.GetRequiredService<IReferralCodeRepository>();
     }
 
     [Fact]
@@ -225,5 +228,39 @@ public class UserServiceTests
         Assert.Equal("Admin", response.LastName);
         Assert.Equal(Role.Administrator, response.Role);
         Assert.Equal(_adminEmail, response.Email);
+    }
+
+    [Fact]
+    public async Task ShouldCreateUser()
+    {
+        var dto = new CreateUserDto()
+        {
+            Username = "TestCreate01",
+            Password = "password",
+            ConfirmPassword = "password",
+            Email = "testcreate01@homeowners.com",
+            FirstName = "John",
+            LastName = "Doe",
+            ReferralCode = "D10DC09D-A0E0-4DF3-8134-6B9BDA05E7AF"
+        };
+
+        var id = await _service.CreateUserAsync(dto);
+
+        Assert.NotNull(id);
+
+        var details = await _service.GetUserDetailsAsync(id);
+        Assert.NotNull(details);
+
+        Assert.Equal(dto.FirstName, details.FirstName);
+        Assert.Equal(dto.LastName, details.LastName);
+        Assert.Equal(dto.Username, details.UserName);
+        Assert.Equal(dto.Email, details.Email);
+        Assert.Equal(Role.HomeOwner, details.Role);
+        Assert.Equal(id, details.Id);
+
+        var code = await _codeRepository.GetByIdAsync(2);
+        Assert.NotNull(code);
+        Assert.True(code.IsUsed);
+        Assert.Equal(id, code.UserId);
     }
 }
