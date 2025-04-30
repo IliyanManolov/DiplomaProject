@@ -34,13 +34,12 @@ public static class TestsDiHelper
         var referralCodes = new Dictionary<string, ReferralCode>
         {
             {
-                "01",
+                "Unused01",
                 new ReferralCode()
                 {
                     CreateDate = DateTime.Now,
-                    Code = Guid.NewGuid(),
-                    IsUsed = true,
-                    UserId = 2,
+                    Code = Guid.Parse("E271A548-5C17-420C-8B56-13E96049966F"),
+                    IsUsed = false,
                     CreatorId = 1,
                     CommunityId = 1,
                     Id = 1,

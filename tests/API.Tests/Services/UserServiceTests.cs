@@ -1,0 +1,203 @@
+﻿using API.Tests.Fixtures;
+using HomeOwners.Application.Abstractions.Services;
+using HomeOwners.Application.DTOs.User;
+using HomeOwners.Application.ValidationErrors;
+using HomeOwners.Application.ValidationErrors.Base;
+using HomeOwners.Domain.Enums;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace API.Tests.Services;
+
+[Collection("BasicCollection")]
+public class UserServiceTests
+{
+    private readonly InMemoryFixture _fixture;
+    private readonly IUserService _service;
+    private const long _adminId = 1;
+
+    public UserServiceTests(InMemoryFixture fixture)
+    {
+        _fixture = fixture;
+        _service = _fixture.ServiceProvider.GetRequiredService<IUserService>();
+    }
+
+    [Fact]
+    public async Task ShouldGetBasicInformation()
+    {
+        var response = await _service.GetUserBasicsAsync(_adminId);
+
+        Assert.NotNull(response);
+        Assert.Equal(_adminId, response.Id);
+        Assert.Equal("LocalAdmin", response.UserName);
+        Assert.Equal("Test", response.FirstName);
+        Assert.Equal("Admin", response.LastName);
+    }
+
+    [Fact]
+    public async Task ShouldHandleBasicWithNullId()
+    {
+        var ex = await Assert.ThrowsAsync<InvalidPropertyValueValidationError>(async () => await _service.GetUserBasicsAsync(null));
+
+        Assert.Equal("InvalidPropertyValueValidationError", ex.Name);
+        Assert.False(string.IsNullOrEmpty(ex.Message), "Validation error message is null/empty");
+    }
+
+    [Fact]
+    public async Task ShouldGetDetailsInformation()
+    {
+        var response = await _service.GetUserDetailsAsync(_adminId);
+
+        Assert.NotNull(response);
+        Assert.Equal(_adminId, response.Id);
+        Assert.Equal("LocalAdmin", response.UserName);
+        Assert.Equal("Test", response.FirstName);
+        Assert.Equal("Admin", response.LastName);
+        Assert.Equal(Role.Administrator, response.Role);
+        Assert.Equal("admin@homeowners.com", response.Email);
+    }
+
+    [Fact]
+    public async Task ShouldHandleDetailsWithNullId()
+    {
+        var ex = await Assert.ThrowsAsync<InvalidPropertyValueValidationError>(async () => await _service.GetUserDetailsAsync(null));
+
+        Assert.Equal("InvalidPropertyValueValidationError", ex.Name);
+        Assert.False(string.IsNullOrEmpty(ex.Message), "Validation error message is null/empty");
+    }
+
+
+    public static List<object[]> ShouldFailToRegister_Data => new()
+    {
+        new object[]
+        {
+            new CreateUserDto()
+            {
+                Password = "",
+                ReferralCode = "E271A548-5C17-420C-8B56-13E96049966F"
+            },
+            typeof(InvalidPropertyValueValidationError),
+            "Password"
+        },
+        new object[]
+        {
+            new CreateUserDto()
+            {
+                Password = "pass",
+                ConfirmPassword = "",
+                ReferralCode = "E271A548-5C17-420C-8B56-13E96049966F"
+            },
+            typeof(InvalidPropertyValueValidationError),
+            "ConfirmPassword"
+        },
+        new object[]
+        {
+            new CreateUserDto()
+            {
+                Password = "pass",
+                ConfirmPassword = "pass123",
+                ReferralCode = "E271A548-5C17-420C-8B56-13E96049966F"
+            },
+            typeof(PasswordsMissmatchValidationError),
+            "mismatch detected"
+        },
+        new object[]
+        {
+            new CreateUserDto()
+            {
+                Password = "pass",
+                ConfirmPassword = "pass",
+                Username = "",
+                ReferralCode = "E271A548-5C17-420C-8B56-13E96049966F"
+            },
+            typeof(InvalidPropertyValueValidationError),
+            "Username"
+        },
+        new object[]
+        {
+            new CreateUserDto()
+            {
+                Password = "pass",
+                ConfirmPassword = "pass",
+                Username = "TestValidationCreate01",
+                Email = "",
+                ReferralCode = "E271A548-5C17-420C-8B56-13E96049966F"
+            },
+            typeof(InvalidPropertyValueValidationError),
+            "Email"
+        },
+        new object[]
+        {
+            new CreateUserDto()
+            {
+                Password = "pass",
+                ConfirmPassword = "pass",
+                Username = "TestValidationCreate02",
+                Email = "TestValidationCreate02@homeowners.com",
+                ReferralCode = ""
+            },
+            typeof(InvalidPropertyValueValidationError),
+            "referal"
+        },
+        new object[]
+        {
+            new CreateUserDto()
+            {
+                Password = "pass",
+                ConfirmPassword = "pass",
+                Username = "TestValidationCreate03",
+                Email = "TestValidationCreate03@homeowners.com",
+                ReferralCode = "MyCustomCode"
+            },
+            typeof(InvalidPropertyValueValidationError),
+            "referal"
+        },
+        new object[]
+        {
+            new CreateUserDto()
+            {
+                Password = "pass",
+                ConfirmPassword = "pass",
+                Username = "TestValidationCreate04",
+                Email = "admin@homeowners.com",
+                ReferralCode = "E271A548-5C17-420C-8B56-13E96049966F"
+            },
+            typeof(IdentifierInUseValidationError),
+            "Email"
+        },
+        new object[]
+        {
+            new CreateUserDto()
+            {
+                Password = "pass",
+                ConfirmPassword = "pass",
+                Username = "LocalAdmin",
+                Email = "TestValidationCreate05@homeowners.com",
+                ReferralCode = "E271A548-5C17-420C-8B56-13E96049966F"
+            },
+            typeof(IdentifierInUseValidationError),
+            "username"
+        },
+        new object[]
+        {
+            new CreateUserDto()
+            {
+                Password = "pass",
+                ConfirmPassword = "pass",
+                Username = "TestValidationCreate06",
+                Email = "TestValidationCreate06@homeowners.com",
+                ReferralCode = Guid.NewGuid().ToString()
+            },
+            typeof(InvalidPropertyValueValidationError),
+            "referal"
+        }
+    };
+
+    [Theory]
+    [MemberData(nameof(ShouldFailToRegister_Data))]
+    public async Task ShouldFailToRegister(CreateUserDto dto, Type validationErrorType, string messageContains)
+    {
+        var ex = await Assert.ThrowsAsync(validationErrorType, async () => await _service.CreateUserAsync(dto));
+
+        Assert.Contains(messageContains, ex.Message, StringComparison.InvariantCultureIgnoreCase);
+    }
+}
