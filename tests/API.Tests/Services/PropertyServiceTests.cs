@@ -21,6 +21,7 @@ public class PropertyServiceTests
     private readonly ICommunityRepository _communityRepository;
     private const long _adminId = 1;
     private const long _targetCommunityId = 3;
+    private const long _getTargetCommunityId = 4;
 
     public PropertyServiceTests(InMemoryFixture fixture)
     {
@@ -83,5 +84,27 @@ public class PropertyServiceTests
         Assert.NotNull(dbCommunity);
         Assert.Equal(1, dbCommunity.PropertiesCount);
         Assert.Single(dbCommunity.Properties);
+    }
+
+    [Fact]
+    public async Task ShouldGetAllForCommunity()
+    {
+        var result = await _service.GetAllForCommunityAsync(_getTargetCommunityId);
+        
+        Assert.NotNull(result);
+        Assert.NotEmpty(result);
+        Assert.True(result.Count() > 1);
+    }
+
+    [Fact]
+    public async Task ShouldGetAllForUserInCommunity()
+    {
+        var result = await _service.GetAllForUserInCommunityAsync(_getTargetCommunityId, userId: _adminId);
+        
+        Assert.NotNull(result);
+        Assert.NotEmpty(result);
+        Assert.True(result.Count() > 1);
+
+        Assert.True(result.All(x => x.OwnerEmail == "admin@homeowners.com"));
     }
 }

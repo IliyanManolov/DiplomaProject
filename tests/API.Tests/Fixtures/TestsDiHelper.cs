@@ -208,6 +208,15 @@ public static class TestsDiHelper
                     Name = "PropertiesCreateTarget",
                     PropertiesCount = 0
                 }
+            },
+            {
+                "PropertiesGetTarget",
+                new Community()
+                {
+                    Id = 4,
+                    Name = "PropertiesGetTarget",
+                    PropertiesCount = 0
+                }
             }
         };
 
@@ -265,12 +274,70 @@ public static class TestsDiHelper
             }
         };
 
+        var properties = new Dictionary<string, Property>()
+        {
+            {
+                "Basic01",
+                new Property()
+                {
+                    Community = communities["PropertiesGetTarget"],
+                    Dues = 0,
+                    MonthlyDues = 10,
+                    Occupants = 1,
+                    Owner = users["admin"],
+                    Type = PropertyType.Apartment,
+                    AddressId = 1,
+                    Address = new Address()
+                    {
+                        Id = 1,
+                        StreetAddress = "Basic01_StreetAddress",
+                        City = "Basic01_City",
+                        PostalCode = "Basic01_1000",
+                        Country = "Basic01_Country",
+                        State = "Basic01_State",
+                        ApartmentNumber = 11,
+                        FloorNumber = 11,
+                        BuildingNumber = 1,
+                        Longitude = 160,
+                        Latitude = 80
+                    }
+                }
+            },
+            {
+                "Basic02",
+                new Property()
+                {
+                    Community = communities["PropertiesGetTarget"],
+                    Dues = 0,
+                    MonthlyDues = 20,
+                    Occupants = 2,
+                    Owner = users["admin"],
+                    Type = PropertyType.Apartment,
+                    AddressId = 2,
+                    Address = new Address()
+                    {
+                        Id = 2,
+                        StreetAddress = "Basic02_StreetAddress",
+                        City = "Basic02_City",
+                        PostalCode = "Basic02_1000",
+                        Country = "Basic02_Country",
+                        State = "Basic02_State",
+                        ApartmentNumber = 11,
+                        FloorNumber = 11,
+                        BuildingNumber = 1,
+                        Longitude = 160,
+                        Latitude = 80
+                    }
+                }
+            }
+        };
 
         context.ReferralCodes.AddRange(referralCodes.Values);
         context.Users.AddRange(users.Values);
         context.Communities.AddRange(communities.Values);
         context.CommunityMessages.AddRange(messages.Values);
         context.CommunityMeetings.AddRange(meetings.Values);
+        context.Properties.AddRange(properties.Values);
 
         context.SaveChanges();
     }
