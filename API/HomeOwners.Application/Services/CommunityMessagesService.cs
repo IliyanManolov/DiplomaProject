@@ -24,6 +24,9 @@ public class CommunityMessagesService : ICommunityMessagesService
         if (string.IsNullOrEmpty(model.Message))
             throw new InvalidPropertyValueValidationError("Community message cannot be empty/null");
 
+        if (model.Message.Length > 512)
+            throw new InvalidPropertyValueValidationError("Invalid community message");
+
         var dbMessage = new CommunityMessage()
         {
             CommunityId = model.CommunityId,
