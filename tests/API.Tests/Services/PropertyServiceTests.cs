@@ -54,11 +54,11 @@ public class PropertyServiceTests
             CommunityId = _targetCommunityId,
             Address = new CreateAddressDto()
             {
-                StreetAddress = "Create01_StreetAddress",
-                City = "Create01_City",
-                PostalCode = "Create01_1000",
-                Country = "Create01_Country",
-                State = "Create01_State",
+                StreetAddress = "PropertyCreate01_StreetAddress",
+                City = "PropertyCreate01_City",
+                PostalCode = "PropertyCreate01_1000",
+                Country = "PropertyCreate01_Country",
+                State = "PropertyCreate01_State",
                 Apartment = 12,
                 Floor = 3,
                 BuildingNumber = 1,
