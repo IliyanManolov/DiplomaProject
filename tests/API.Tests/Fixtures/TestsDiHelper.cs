@@ -14,9 +14,10 @@ public static class TestsDiHelper
     {
         var services = new ServiceCollection();
 
+        // Use UUID to avoid database being seeded twice by different collections
         services.AddDbContext<DatabaseContext>(options =>
         {
-            options.UseInMemoryDatabase("ModuleTestsDatabase");
+            options.UseInMemoryDatabase($"ModuleTestsDatabase-{Guid.NewGuid()}");
         });
 
         services.AddLogging();
