@@ -66,7 +66,34 @@ public static class TestsDiHelper
                     IsUsed = false,
                     CreatorId = 1,
                     CommunityId = 1,
+                    UserId = 2,
                     Id = 3,
+                }
+            },
+            {
+                "DeletedUserCode01",
+                new ReferralCode()
+                {
+                    CreateDate = DateTime.Now,
+                    Code = Guid.NewGuid(),
+                    IsUsed = false,
+                    CreatorId = 1,
+                    CommunityId = 1,
+                    UserId = 3,
+                    Id = 4,
+                }
+            },
+            {
+                "BasicUserCode01",
+                new ReferralCode()
+                {
+                    CreateDate = DateTime.Now,
+                    Code = Guid.NewGuid(),
+                    IsUsed = false,
+                    CreatorId = 1,
+                    CommunityId = 1,
+                    UserId = 5,
+                    Id = 5,
                 }
             }
         };
@@ -100,6 +127,53 @@ public static class TestsDiHelper
                     IsDeleted = false,
                     Role = Role.HomeOwner,
                     Username = "ChangePasswordUser",
+                    Password = passwordService.GetHash("password")
+                }
+            },
+            {
+                "DeletedUser01",
+                new User()
+                {
+                    Id = 3,
+                    CreateDate = DateTime.Now,
+                    Email = "deleteduser@homeowners.com",
+                    FirstName = "DeletedFirstName",
+                    LastName = "DeletedLastName",
+                    IsDeleted = true,
+                    Role = Role.HomeOwner,
+                    ReferalCodeId = 4,
+                    Username = "DeletedUser",
+                    Password = passwordService.GetHash("password")
+                }
+            },
+            {
+                "DeletedAdmin01",
+                new User()
+                {
+                    Id = 4,
+                    CreateDate = DateTime.Now,
+                    Email = "deletedadmin@homeowners.com",
+                    FirstName = "DeletedFirstName",
+                    LastName = "DeletedLastName",
+                    IsDeleted = true,
+                    Role = Role.Administrator,
+                    Username = "DeletedAdmin",
+                    Password = passwordService.GetHash("password")
+                }
+            },
+            {
+                "BasicUser01",
+                new User()
+                {
+                    Id = 5,
+                    CreateDate = DateTime.Now,
+                    Email = "basicuser01@homeowners.com",
+                    FirstName = "BasicFirstName01",
+                    LastName = "BasicLastName01",
+                    IsDeleted = false,
+                    ReferalCodeId = 5,
+                    Role = Role.Administrator,
+                    Username = "BasicUser01",
                     Password = passwordService.GetHash("password")
                 }
             }

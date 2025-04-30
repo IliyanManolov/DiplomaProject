@@ -19,6 +19,7 @@ public class UserServiceTests
     private readonly IUserRepository _userRepository;
     private readonly IReferralCodeRepository _codeRepository;
     private const long _adminId = 1;
+    private const long _deletedAdminId = 4;
     private const string _adminEmail = "admin@homeowners.com";
 
     public UserServiceTests(InMemoryFixture fixture)
@@ -50,6 +51,15 @@ public class UserServiceTests
         Assert.False(string.IsNullOrEmpty(ex.Message), "Validation error message is null/empty");
     }
 
+    [Theory]
+    [InlineData(3)] // Deleted User
+    [InlineData(4)] // Deleted Admin
+    [InlineData(123456)] // NonExisting
+    public async Task ShouldFailToGetBasicForInvalidAccount(long id)
+    {
+        var ex = await Assert.ThrowsAsync<UserNotFoundValidationError>(async () => await _service.GetUserBasicsAsync(id));
+    }
+
     [Fact]
     public async Task ShouldGetDetailsInformation()
     {
@@ -71,6 +81,15 @@ public class UserServiceTests
 
         Assert.Equal("InvalidPropertyValueValidationError", ex.Name);
         Assert.False(string.IsNullOrEmpty(ex.Message), "Validation error message is null/empty");
+    }
+
+    [Theory]
+    [InlineData(3)] // Deleted User
+    [InlineData(4)] // Deleted Admin
+    [InlineData(123456)] // NonExisting
+    public async Task ShouldFailToGetDetailsForInvalidAccount(long id)
+    {
+        var ex = await Assert.ThrowsAsync<UserNotFoundValidationError>(async () => await _service.GetUserDetailsAsync(id));
     }
 
 
@@ -355,5 +374,23 @@ public class UserServiceTests
         var ex = await Assert.ThrowsAsync(validationErrorType, async () => await _service.ChangePassword(dto));
 
         Assert.Contains(messageContains, ex.Message, StringComparison.InvariantCultureIgnoreCase);
+    }
+
+
+    [Theory]
+    [InlineData(3)] // Deleted User
+    [InlineData(123456)] // NonExisting
+    public async Task ShouldFailToGeReferredCommunityForInvalidAccount(long id)
+    {
+        var ex = await Assert.ThrowsAsync<UserNotFoundValidationError>(async () => await _service.GetUserReferralCommunity(id));
+    }
+
+    [Theory]
+    [InlineData(5, 1)]
+    public async Task ShouldGeReferredCommunityForInvalidAccount(long id, long communityId)
+    {
+        var result = await _service.GetUserReferralCommunity(id);
+
+        Assert.Equal(communityId, result);
     }
 }
