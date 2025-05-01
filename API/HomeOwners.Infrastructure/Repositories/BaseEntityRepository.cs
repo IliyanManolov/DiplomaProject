@@ -18,7 +18,7 @@ internal abstract class BaseEntityRepository<TEntity> : IBaseEntityRepository<TE
     public async Task<IEnumerable<TEntity>> GetAllAsync()
         => await _dbContext.Set<TEntity>().ToListAsync();
 
-    public async Task<TEntity?> GetByIdAsync(long? id)
+    public virtual async Task<TEntity?> GetByIdAsync(long? id)
         => await _dbContext.Set<TEntity>().FirstOrDefaultAsync(x => x.Id == id);
 
     public async Task<TEntity> CreateAsync(TEntity entity)

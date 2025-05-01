@@ -22,7 +22,18 @@
                     }
                 </p>
                 <p>@msg.Message</p>
+
+                @if (User.IsInRole("Administrator"))
+                {
+                    <a class="btn btn-sm btn-outline-info mt-2"
+                       asp-controller="Message"
+                       asp-action="Edit"
+                       asp-route-id="@msg.Id">
+                        Change message
+                    </a>
+                }
             </div>
+
         }
     }
 </div>

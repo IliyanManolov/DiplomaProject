@@ -51,6 +51,7 @@ public class CommunityController : Controller
             {
                 CommunityMessageViewModels = messages.Select(x => new CommunityMessageViewModel()
                 {
+                    Id = x.Id,
                     CreateTimeStamp = x.CreateTimeStamp,
                     CreatorUserName = x.CreatorUserName,
                     LastUpdateTimeStamp = x.LastUpdateTimeStamp,
