@@ -1,4 +1,6 @@
-﻿using HomeOwners.Web.UI.Clients.Community;
+﻿using HomeOwners.Web.UI.Clients.Authentication;
+using HomeOwners.Web.UI.Clients.Authentication.Requests;
+using HomeOwners.Web.UI.Clients.Community;
 using HomeOwners.Web.UI.Clients.Community.Requests;
 using HomeOwners.Web.UI.Clients.Community.Responses;
 using HomeOwners.Web.UI.Clients.Property;
@@ -10,6 +12,7 @@ using HomeOwners.Web.UI.ResponseModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using OpenSearch.Client;
 using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -22,13 +25,19 @@ public class AdminPanelController : Controller
     private readonly ICommunityClient _communityClient;
     private readonly IPropertyClient _propertyClient;
     private readonly IReferralCodeClient _referralCodeClient;
+    private readonly IAuthenticationClient _authenticationClient;
     private readonly ILogger<AdminPanelController> _logger;
 
-    public AdminPanelController(ICommunityClient communityClient, IPropertyClient propertyClient, IReferralCodeClient codeClient, ILoggerFactory loggerFactory)
+    public AdminPanelController(ICommunityClient communityClient,
+        IPropertyClient propertyClient,
+        IReferralCodeClient codeClient,
+        IAuthenticationClient authenticationClient,
+        ILoggerFactory loggerFactory)
     {
         _communityClient = communityClient;
         _propertyClient = propertyClient;
         _referralCodeClient = codeClient;
+        _authenticationClient = authenticationClient;
         _logger = loggerFactory.CreateLogger<AdminPanelController>();
     }
 
@@ -58,10 +67,16 @@ public class AdminPanelController : Controller
 
         try
         {
-            var id = await _communityClient.CreateCommunityAsync(new CreateCommunityRequest()
+            var request = new CreateCommunityRequest()
             {
                 Name = model.Name,
-            });
+            };
+
+            var id = await _communityClient.CreateCommunityAsync(request);
+
+            ViewBag.SuccessMessage = $"Community with name '{request.Name}' created successfully.";
+            ModelState.Clear();
+            return View();
         }
         catch (Refit.ApiException ex)
         {
@@ -140,6 +155,10 @@ public class AdminPanelController : Controller
             };
 
             var id = await _propertyClient.CreatePropertyAsync(request);
+
+            ViewBag.SuccessMessage = $"Property created successfully for user with email '{request.OwnerEmail}'. Property id - '{id}'.";
+            ModelState.Clear();
+            return View();
         }
         catch (Refit.ApiException ex)
         {
@@ -204,6 +223,9 @@ public class AdminPanelController : Controller
 
             var codes = await _referralCodeClient.CreateBulk(request);
 
+            ViewBag.SuccessMessage = $"Created '{request.Count}' codes for community with id '{request.CommunityId}' successfully.";
+            ModelState.Clear();
+            
             foreach (var code in codes)
             {
                 model.ReturnedCodes.Add($"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}{HttpContext.Request.PathBase}/Home/Register/{code}");
@@ -230,6 +252,132 @@ public class AdminPanelController : Controller
                 default:
                     ModelState.AddModelError(string.Empty, "Unexpected error occured");
                     _logger.LogError(ex.Message);
+                    break;
+            }
+            return View(model);
+        }
+
+        return View(model);
+    }
+
+
+
+    [HttpGet]
+    [Authorize(Roles = "Administrator")]
+    public IActionResult CreateAdminAccount()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    [Authorize(Roles = "Administrator")]
+    public async Task<IActionResult> CreateAdminAccount(RegisterViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        try
+        {
+            var request = new RegisterRequest()
+            {
+                Email = model.Email,
+                Username = model.Username,
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                Password = model.Password,
+                ConfirmPassword = model.ConfirmPassword
+            };
+
+            var user = await _authenticationClient.CreateAdminAsync(request);
+
+            ViewBag.SuccessMessage = $"Account with username '{request.Username}' created successfully.";
+            ModelState.Clear();
+            return View();
+        }
+        catch (Refit.ApiException ex)
+        {
+            switch (ex.StatusCode)
+            {
+                case HttpStatusCode.BadRequest:
+                    var errorResponse = await ex.GetContentAsAsync<BadRequestResponseModel>();
+
+                    foreach (var item in errorResponse.ValidationErrors)
+                    {
+                        ModelState.AddModelError(string.Empty, item.Message);
+                    }
+
+                    break;
+
+                case HttpStatusCode.NotFound:
+                    ModelState.AddModelError(string.Empty, "Invalid username or password");
+                    break;
+
+                default:
+                    _logger.LogError(ex.Message);
+                    break;
+            }
+            return View(model);
+        }
+
+
+        return RedirectToAction(nameof(HomeController.Index));
+    }
+
+
+    [Authorize(Roles = "Administrator")]
+    public IActionResult DisableAccount()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    [Authorize(Roles = "Administrator")]
+    public async Task<IActionResult> DisableAccount(DisableAccountViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        try
+        {
+            var request = new DisableAccountRequest()
+            {
+                AccountEmail = model.AccountEmail
+            };
+
+            var success = await _authenticationClient.DisableAsync(request);
+
+            if (success)
+            {
+                ViewBag.SuccessMessage = $"Account with email '{request.AccountEmail}' disabled successfully.";
+                ModelState.Clear();
+                return View();
+            }
+        }
+        catch (Refit.ApiException ex)
+        {
+            switch (ex.StatusCode)
+            {
+                case HttpStatusCode.BadRequest:
+                    var errorResponse = await ex.GetContentAsAsync<BadRequestResponseModel>();
+
+                    foreach (var item in errorResponse.ValidationErrors)
+                    {
+                        ModelState.AddModelError(string.Empty, item.Message);
+                    }
+
+                    break;
+
+                case HttpStatusCode.NotFound:
+                    ModelState.AddModelError(string.Empty, "Unauthorized");
+                    break;
+
+                default:
+                    _logger.LogError(ex.Message);
+                    ModelState.AddModelError(string.Empty, "Unexpected error encountered");
                     break;
             }
             return View(model);

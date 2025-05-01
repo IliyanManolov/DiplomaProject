@@ -5,15 +5,17 @@
       "openSearchConfiguration": {
         "batchTime": 10,
         "batchSize": 60,
-        "index": "homeowners-web-logs",
+        "index": "homeowners-api-logs",
         "connectionUrl": "https://opensearch-node1:9200",
         "password": "Food12346%",
         "user": "admin"
       }
     }
   },
-  "backend": {
-    "address": "http://local-dev.homeowners.com:443"
+  "DatabaseSettings": {
+    "ConnectionString": "Data Source=host.docker.internal,1433;Database=***;User Id=***;Password=***;Trusted_Connection=false;TrustServerCertificate=true;Encrypt=false",
+    "MigrationTable": "changelog",
+    "EnableMigrations": true
   },
   "proxy": {
     "AllowedIPs": [

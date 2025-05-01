@@ -287,6 +287,35 @@ public class UserServiceTests
     }
 
     [Fact]
+    public async Task ShouldCreateAdmin()
+    {
+        var dto = new CreateUserDto()
+        {
+            Username = "TestCreateAdmihn01",
+            Password = "password",
+            ConfirmPassword = "password",
+            Email = "testcreateadmin01@homeowners.com",
+            FirstName = "John",
+            LastName = "Doe",
+            ReferralCode = "D10DC09D-A0E0-4DF3-8134-6B9BDA05E7AF"
+        };
+
+        var id = await _service.CreateAdminAsync(dto);
+
+        Assert.NotNull(id);
+
+        var details = await _service.GetUserDetailsAsync(id);
+        Assert.NotNull(details);
+
+        Assert.Equal(dto.FirstName, details.FirstName);
+        Assert.Equal(dto.LastName, details.LastName);
+        Assert.Equal(dto.Username, details.UserName);
+        Assert.Equal(dto.Email, details.Email);
+        Assert.Equal(Role.Administrator, details.Role);
+        Assert.Equal(id, details.Id);
+    }
+
+    [Fact]
     public async Task ShouldChangePassword()
     {
         var model = new ChangePasswordDto()

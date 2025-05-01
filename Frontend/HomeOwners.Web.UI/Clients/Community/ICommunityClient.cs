@@ -18,6 +18,9 @@ public interface ICommunityClient
     [Post("/communityMessages")]
     public Task<long> CreateMessageAsync(CreateCommunityMessageRequest requestModel);
 
+    [Patch("/communityMessages")]
+    public Task<CommunityMessagesDetailsResponse> EditMessageAsync(EditCommunityMessageRequest requestModel);
+
     [Get("/communityMeetings/{communityId}")]
     public Task<IEnumerable<CommunityMeetingDetailsResponse>> GetMeetingsAsync(long communityId);
 

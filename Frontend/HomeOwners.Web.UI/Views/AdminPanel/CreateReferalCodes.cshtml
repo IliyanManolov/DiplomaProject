@@ -10,6 +10,12 @@
             <h3 class="mb-0"><i class="bi bi-key"></i> Create Referral Codes</h3>
         </div>
         <div class="card-body p-4">
+            @if (ViewBag.SuccessMessage != null)
+            {
+                <div class="alert alert-success">
+                    @ViewBag.SuccessMessage
+                </div>
+            }
             <form asp-controller="AdminPanel" asp-action="CreateReferalCodes">
                 <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
@@ -36,9 +42,11 @@
                     <span asp-validation-for="NumberOfCodes" class="text-danger"></span>
                 </div>
 
-                <div class="d-flex justify-content-end mt-4">
-                    <button type="submit" class="btn btn-success px-4">
-                        <i class="bi bi-plus-circle"></i> Create Codes
+                <div class="d-flex justify-content-between mt-4">
+                    <a class="nav-link rounded bg-light shadow-sm text-dark mt-4" asp-area="" asp-controller="AdminPanel" asp-action="Index">Back to Admin Panel</a>
+
+                    <button type="submit" class="btn btn-success">
+                        Create Codes
                     </button>
                 </div>
             </form>
