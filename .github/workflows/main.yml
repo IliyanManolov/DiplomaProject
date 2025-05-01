@@ -56,8 +56,9 @@ jobs:
         run: dotnet build --no-restore --configuration Release
 
       - name: Run tests with coverage
+        working-directory: tests/API.Tests
         run: |
-          dotnet test tests/API.Tests/API.Tests.csproj \
+          dotnet test API.Tests.csproj \
             --no-build \
             --configuration Release \
             /p:CollectCoverage=true \
