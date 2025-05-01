@@ -61,12 +61,21 @@ jobs:
           dotnet test API.Tests.csproj \
             --no-build \
             --configuration Release \
-            /p:CollectCoverage=true \
-            /p:CoverletOutputFormat=cobertura \
-            /p:CoverletOutput=TestResults/coverage/
+            --collect:"XPlat Code Coverage" \
+            --results-directory ./TestResults
+
+      - name: Install ReportGenerator
+        run: dotnet tool install --global dotnet-reportgenerator-globaltool
+        
+      - name: Generate coverage report
+        run: |
+          reportgenerator \
+            -reports:"TestResults/**/coverage.cobertura.xml" \
+            -targetdir:"CoverageReport" \
+            -reporttypes:Cobertura
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
-          path: tests/API.Tests/TestResults/coverage/coverage.cobertura.xml
+          path: CoverageReport
