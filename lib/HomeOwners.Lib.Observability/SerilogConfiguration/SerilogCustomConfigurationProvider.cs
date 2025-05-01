@@ -47,6 +47,17 @@ public class SerilogCustomConfigurationProvider : IConfigurationProvider
             {
                 "INFORMATION" => "Warning",
                 _ => convertedSeverity
+            },
+            // Lower entity framework logs. No point in being flooded with execute logs for fetching SQLs during normal operations
+            ["Serilog:MinimumLevel:Override:Microsoft.EntityFrameworkCore.Database.Command"] = convertedSeverity.ToUpperInvariant() switch
+            {
+                "INFORMATION" => "Warning",
+                _ => convertedSeverity
+            },
+            ["Serilog:MinimumLevel:Override:Microsoft.EntityFrameworkCore.Query"] = convertedSeverity.ToUpperInvariant() switch
+            {
+                "INFORMATION" => "Error",
+                _ => convertedSeverity
             }
         };
     }

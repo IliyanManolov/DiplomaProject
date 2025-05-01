@@ -5,9 +5,9 @@
       "openSearchConfiguration": {
         "batchTime": 10,
         "batchSize": 60,
-        "index": "",
-        "connectionUrl": "",
-        "password": "",
+        "index": "homeowners-api-logs",
+        "connectionUrl": "https://opensearch-node1:9200",
+        "password": "Food12346%",
         "user": "admin"
       }
     }
