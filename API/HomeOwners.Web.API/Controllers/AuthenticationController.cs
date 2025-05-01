@@ -30,7 +30,7 @@ public class AuthenticationController : ControllerBase
     {
         try
         {
-            var userId = await _userService.CreateUserAsync(model, Role.HomeOwner);
+            var userId = await _userService.CreateUserAsync(model);
             return Ok(userId);
         }
         catch (BaseValidationError err)
