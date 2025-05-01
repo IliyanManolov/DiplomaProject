@@ -54,6 +54,17 @@ public class CommunityMessageServiceTests
         Assert.False(string.IsNullOrEmpty(target.CreatorUserName));
     }
 
+    [Fact]
+    public async Task ShouldGetById()
+    {
+        var response = await _service.GetByIdAsync(1);
+
+        Assert.NotNull(response);
+        Assert.Equal(1, response.Id);
+        Assert.False(string.IsNullOrEmpty(response.CreatorUserName));
+        Assert.False(string.IsNullOrEmpty(response.Message));
+    }
+
     [Theory]
     [InlineData(null, "empty")]
     [InlineData("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent placerat mauris non vehicula ultric" +
