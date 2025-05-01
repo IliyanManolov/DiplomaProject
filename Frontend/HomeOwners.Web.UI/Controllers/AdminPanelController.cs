@@ -308,6 +308,60 @@ public class AdminPanelController : Controller
         return RedirectToAction(nameof(HomeController.Index));
     }
 
+
+    [Authorize(Roles = "Administrator")]
+    public IActionResult DisableAccount()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    [Authorize(Roles = "Administrator")]
+    public async Task<IActionResult> DisableAccount(DisableAccountViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        try
+        {
+            var request = new DisableAccountRequest()
+            {
+                AccountEmail = model.AccountEmail
+            };
+
+            var success = await _authenticationClient.DisableAsync(request);
+        }
+        catch (Refit.ApiException ex)
+        {
+            switch (ex.StatusCode)
+            {
+                case HttpStatusCode.BadRequest:
+                    var errorResponse = await ex.GetContentAsAsync<BadRequestResponseModel>();
+
+                    foreach (var item in errorResponse.ValidationErrors)
+                    {
+                        ModelState.AddModelError(string.Empty, item.Message);
+                    }
+
+                    break;
+
+                case HttpStatusCode.NotFound:
+                    ModelState.AddModelError(string.Empty, "Unauthorized");
+                    break;
+
+                default:
+                    _logger.LogError(ex.Message);
+                    break;
+            }
+            return View(model);
+        }
+
+        return RedirectToAction(nameof(AdminPanelController.Index));
+    }
+
+
     private long GetUserId()
     {
         var idClaim = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
