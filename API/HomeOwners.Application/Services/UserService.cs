@@ -92,6 +92,31 @@ public class UserService : IUserService
         return dbUser.Id;
     }
 
+    public async Task<bool> DisableAccount(DisableAccountDto dto)
+    {
+        if (dto.AccountEmail == null)
+            throw new InvalidPropertyValueValidationError("Invalid user");
+
+        var dbUser = await _userRepository.GetUserByEmail(dto.AccountEmail);
+
+        if (dbUser == null)
+        {
+            _logger.LogInformation("User not found by provided email. Email - {email}", dto.AccountEmail);
+            throw new InvalidPropertyValueValidationError("Invalid user");
+        }
+
+        if (dbUser.IsDeleted == true)
+        {
+            _logger.LogWarning("User found but is already marked as deleted/disabled. Email - {email}", dto.AccountEmail);
+            throw new InvalidPropertyValueValidationError("Invalid user");
+        }
+
+        dbUser.IsDeleted = true;
+        await _userRepository.UpdateAsync(dbUser);
+
+        return true;
+    }
+
     public async Task<long?> CreateAdminAsync(CreateUserDto user)
     {
         ValidateCommonCreateProperties(user);

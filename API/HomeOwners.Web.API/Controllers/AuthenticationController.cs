@@ -61,6 +61,24 @@ public class AuthenticationController : ControllerBase
         }
     }
 
+    [HttpPost("disable/")]
+    public async Task<IActionResult> DisableAccountAsync([FromBody] DisableAccountDto model)
+    {
+        try
+        {
+            var isDisabled = await _userService.DisableAccount(model);
+            return Ok(isDisabled);
+        }
+        catch (BaseValidationError err)
+        {
+            return GetBadRequestResponse(err);
+        }
+        catch (BaseAggregateValidationError err)
+        {
+            return GetBadRequestResponse(err);
+        }
+    }
+
     [HttpPost("login/")]
     public async Task<IActionResult> LoginAsync([FromBody] AuthenticateDto model)
     {
