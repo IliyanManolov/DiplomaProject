@@ -1,4 +1,4 @@
-name: Execute Tests
+name: Pipeline Execution
 
 on:
   push:
@@ -7,7 +7,37 @@ on:
     branches: [ "master", "dev" ]
 
 jobs:
-  build-test-coverage:
+
+  build-api:
+    name: Build API application
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Build API project
+        run: dotnet build ./API/HomeOwners.Web.API/HomeOwners.Web.API.csproj --configuration Release
+
+  build-web:
+    name: Build WEB
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Build Web project
+        run: dotnet build ./Frontend/HomeOwners.Web.UI/HomeOwners.Web.UI.csproj --configuration Release
+
+  api-tests:
+    name: Execute API Unit Tests
     runs-on: ubuntu-latest
 
     steps:
@@ -17,7 +47,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.0.x' # Adjust to match your project
+          dotnet-version: '8.0.x'
 
       - name: Restore dependencies
         run: dotnet restore
