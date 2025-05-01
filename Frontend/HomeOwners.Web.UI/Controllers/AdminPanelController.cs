@@ -12,6 +12,7 @@ using HomeOwners.Web.UI.ResponseModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using OpenSearch.Client;
 using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -66,10 +67,16 @@ public class AdminPanelController : Controller
 
         try
         {
-            var id = await _communityClient.CreateCommunityAsync(new CreateCommunityRequest()
+            var request = new CreateCommunityRequest()
             {
                 Name = model.Name,
-            });
+            };
+
+            var id = await _communityClient.CreateCommunityAsync(request);
+
+            ViewBag.SuccessMessage = $"Community with name '{request.Name}' created successfully.";
+            ModelState.Clear();
+            return View();
         }
         catch (Refit.ApiException ex)
         {
@@ -148,6 +155,10 @@ public class AdminPanelController : Controller
             };
 
             var id = await _propertyClient.CreatePropertyAsync(request);
+
+            ViewBag.SuccessMessage = $"Property created successfully for user with email '{request.OwnerEmail}'. Property id - '{id}'.";
+            ModelState.Clear();
+            return View();
         }
         catch (Refit.ApiException ex)
         {
@@ -212,6 +223,9 @@ public class AdminPanelController : Controller
 
             var codes = await _referralCodeClient.CreateBulk(request);
 
+            ViewBag.SuccessMessage = $"Created '{request.Count}' codes for community with id '{request.CommunityId}' successfully.";
+            ModelState.Clear();
+            
             foreach (var code in codes)
             {
                 model.ReturnedCodes.Add($"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}{HttpContext.Request.PathBase}/Home/Register/{code}");
@@ -278,6 +292,9 @@ public class AdminPanelController : Controller
 
             var user = await _authenticationClient.CreateAdminAsync(request);
 
+            ViewBag.SuccessMessage = $"Account with username '{request.Username}' created successfully.";
+            ModelState.Clear();
+            return View();
         }
         catch (Refit.ApiException ex)
         {
