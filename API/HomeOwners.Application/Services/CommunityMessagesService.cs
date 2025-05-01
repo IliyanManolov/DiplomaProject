@@ -39,6 +39,30 @@ public class CommunityMessagesService : ICommunityMessagesService
         return dbMessage.Id!.Value;
     }
 
+    public async Task<CommunityMessageDetailsDto> GetByIdAsync(long? id)
+    {
+        if (id == null)
+            throw new InvalidPropertyValueValidationError("Invalid message id");
+
+        var dbMessage = await _messagesRepository.GetByIdAsync(id);
+
+        if (dbMessage == null)
+        {
+            _logger.LogInformation("Message with ID '{id}' not found ", id);
+            throw new InvalidPropertyValueValidationError("Invalid message id");
+        }
+
+        return new CommunityMessageDetailsDto()
+        {
+            Id = dbMessage.Id!.Value,
+            CommunityId = dbMessage.CommunityId!.Value,
+            Message = dbMessage.Message,
+            CreateTimeStamp = dbMessage.CreateDate!.Value,
+            CreatorUserName = dbMessage.Creator.Username!,
+            LastUpdateTimeStamp = dbMessage.UpdateDate
+        };
+    }
+
     public async Task<IEnumerable<CommunityMessageDetailsDto>> GetForCommunityAsync(long communityId)
     {
         var dbMessages = await _messagesRepository.GetAllByCommunityId(communityId);
@@ -46,6 +70,7 @@ public class CommunityMessagesService : ICommunityMessagesService
         return dbMessages.Select(x => new CommunityMessageDetailsDto()
         {
             Id = x.Id!.Value,
+            CommunityId = x.CommunityId!.Value,
             Message = x.Message,
             CreateTimeStamp = x.CreateDate!.Value,
             CreatorUserName = x.Creator.Username!,
@@ -82,6 +107,7 @@ public class CommunityMessagesService : ICommunityMessagesService
         return new CommunityMessageDetailsDto()
         {
             Id = dbMessage.Id!.Value,
+            CommunityId = dbMessage.CommunityId!.Value,
             Message = dbMessage.Message,
             CreateTimeStamp = dbMessage.CreateDate!.Value,
             CreatorUserName = dbMessage.Creator.Username!,

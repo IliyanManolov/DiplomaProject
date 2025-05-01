@@ -15,6 +15,9 @@ public interface ICommunityClient
     [Get("/communityMessages/{communityId}")]
     public Task<IEnumerable<CommunityMessagesDetailsResponse>> GetMessagesAsync(long communityId);
 
+    [Get("/communityMessages/id/{messageId}")]
+    public Task<CommunityMessagesDetailsResponse> GetMessageByIdAsync(long messageId);
+
     [Post("/communityMessages")]
     public Task<long> CreateMessageAsync(CreateCommunityMessageRequest requestModel);
 

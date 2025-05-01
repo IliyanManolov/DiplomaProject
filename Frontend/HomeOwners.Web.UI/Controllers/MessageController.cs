@@ -11,6 +11,7 @@ using System.Net;
 using System.Security.Claims;
 using HomeOwners.Web.UI.Clients.Community.Requests;
 using HomeOwners.Web.UI.ResponseModels;
+using System.Threading.Tasks;
 
 namespace HomeOwners.Web.UI.Controllers;
 
@@ -27,11 +28,16 @@ public class MessageController : Controller
 
     [Authorize(Roles = "Administrator")]
     [Route("Message/Edit/{id}")]
-    public IActionResult Edit([FromRoute] long? id)
+    public async Task<IActionResult> Edit([FromRoute] long? id)
     {
+
+        var message = await _communityClient.GetMessageByIdAsync(id.Value);
+
         var viewModel = new EditMessageViewModel()
         {
-            MessageId = id
+            MessageId = id,
+            CommunityId = message.CommunityId,
+            Message = message.Message
         };
 
         return View(viewModel);
@@ -51,6 +57,8 @@ public class MessageController : Controller
 
             var response = await _communityClient.EditMessageAsync(request);
 
+            ViewBag.SuccessMessage = "Message edited successfully";
+            return View(model);
         }
         catch (Refit.ApiException ex)
         {
@@ -77,7 +85,5 @@ public class MessageController : Controller
             }
             return View(model);
         }
-
-        return RedirectToAction("Index", "Home");
     }
 }
