@@ -4,3 +4,5 @@ Certificates/
 Certificates/*
 dev-keys/
 dev-keys/*
+OpenSearchData/*
+OpenSearchData/

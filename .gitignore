@@ -79,3 +79,4 @@ UpgradeLog*.htm
 # File-based project references
 *.vcxproj
 *.vcxproj.filters
+/dev/DockerCompose/.env
