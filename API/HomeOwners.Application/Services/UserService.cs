@@ -61,39 +61,14 @@ public class UserService : IUserService
         };
     }
 
-    public async Task<long?> CreateUserAsync(CreateUserDto user, Role role = Role.HomeOwner)
+    public async Task<long?> CreateUserAsync(CreateUserDto user)
     {
-        if (string.IsNullOrEmpty(user.Password))
-            throw new InvalidPropertyValueValidationError("'Password' cannot cannot be an empty string or null");
-
-        if (string.IsNullOrEmpty(user.ConfirmPassword))
-            throw new InvalidPropertyValueValidationError("'ConfirmPassword' cannot cannot be an empty string or null");
-
-        if (user.Password != user.ConfirmPassword)
-            throw new PasswordsMissmatchValidationError();
-
-        if (string.IsNullOrEmpty(user.Username))
-            throw new InvalidPropertyValueValidationError("'Username' cannot cannot be an empty string or null");
+        ValidateCommonCreateProperties(user);
 
         // Check the code before validation existing email/username - avoids exposing data if someone is attempting to brute force
+        var code = await ValidateReferralCode(user);
 
-        // Referal codes are passed as a string from the frontend in order to allow for potential future migrations to custom text
-        if (string.IsNullOrEmpty(user.ReferralCode) || !Guid.TryParse(user.ReferralCode, out var codeGuid))
-            throw new InvalidPropertyValueValidationError("Invalid referal code");
-
-        var code = await _referralCodeRepository.GetByCodeAsync(codeGuid);
-
-        if (code == null)
-            throw new InvalidPropertyValueValidationError("Invalid referal code");
-
-        if (await _userRepository.IsExistingUsernameAsync(user.Username))
-            throw new IdentifierInUseValidationError("username");
-
-        if (string.IsNullOrEmpty(user.Email))
-            throw new InvalidPropertyValueValidationError("'Email' cannot cannot be an empty string or null");
-
-        if (await _userRepository.IsExistingEmailAsync(user.Email))
-            throw new IdentifierInUseValidationError("email");
+        await ValidateUniqueIdentifiers(user);
 
         var dbUser = new User()
         {
@@ -102,8 +77,8 @@ public class UserService : IUserService
             LastName = user.LastName,
             IsDeleted = false,
             Username = user.Username,
-            Role = role,
-            Password = _passwordService.GetHash(user.Password),
+            Role = Role.HomeOwner,
+            Password = _passwordService.GetHash(user.Password!),
             ReferalCodeId = code.Id
         };
 
@@ -113,6 +88,53 @@ public class UserService : IUserService
         code.UserId = dbUser.Id;
 
         await _referralCodeRepository.UpdateAsync(code);
+
+        return dbUser.Id;
+    }
+
+    public async Task<bool> DisableAccount(DisableAccountDto dto)
+    {
+        if (dto.AccountEmail == null)
+            throw new InvalidPropertyValueValidationError("Invalid user");
+
+        var dbUser = await _userRepository.GetUserByEmail(dto.AccountEmail);
+
+        if (dbUser == null)
+        {
+            _logger.LogInformation("User not found by provided email. Email - {email}", dto.AccountEmail);
+            throw new InvalidPropertyValueValidationError("Invalid user");
+        }
+
+        if (dbUser.IsDeleted == true)
+        {
+            _logger.LogWarning("User found but is already marked as deleted/disabled. Email - {email}", dto.AccountEmail);
+            throw new InvalidPropertyValueValidationError("Invalid user");
+        }
+
+        dbUser.IsDeleted = true;
+        await _userRepository.UpdateAsync(dbUser);
+
+        return true;
+    }
+
+    public async Task<long?> CreateAdminAsync(CreateUserDto user)
+    {
+        ValidateCommonCreateProperties(user);
+
+        await ValidateUniqueIdentifiers(user);
+
+        var dbUser = new User()
+        {
+            Email = user.Email,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            IsDeleted = false,
+            Username = user.Username,
+            Role = Role.Administrator,
+            Password = _passwordService.GetHash(user.Password!)
+        };
+
+        await _userRepository.CreateAsync(dbUser);
 
         return dbUser.Id;
     }
@@ -191,5 +213,53 @@ public class UserService : IUserService
         }
 
         return dbUser;
+    }
+
+    private bool ValidateCommonCreateProperties(CreateUserDto user)
+    {
+        if (string.IsNullOrEmpty(user.Password))
+            throw new InvalidPropertyValueValidationError("'Password' cannot cannot be an empty string or null");
+
+        if (string.IsNullOrEmpty(user.ConfirmPassword))
+            throw new InvalidPropertyValueValidationError("'ConfirmPassword' cannot cannot be an empty string or null");
+
+        if (user.Password != user.ConfirmPassword)
+            throw new PasswordsMissmatchValidationError();
+
+        if (string.IsNullOrEmpty(user.Username))
+            throw new InvalidPropertyValueValidationError("'Username' cannot cannot be an empty string or null");
+
+        if (string.IsNullOrEmpty(user.Email))
+            throw new InvalidPropertyValueValidationError("'Email' cannot cannot be an empty string or null");
+
+        return true;
+    }
+
+
+    // Referal codes are passed as a string from the frontend in order to allow for potential future migrations to custom text
+    private async Task<ReferralCode> ValidateReferralCode(CreateUserDto user)
+    {
+        if (string.IsNullOrEmpty(user.ReferralCode) || !Guid.TryParse(user.ReferralCode, out var codeGuid))
+            throw new InvalidPropertyValueValidationError("Invalid referal code");
+
+        var code = await _referralCodeRepository.GetByCodeAsync(codeGuid);
+
+        if (code == null)
+        {
+            _logger.LogInformation("Code not returned by repository. Might be deleted or invalid. Code - {code}", codeGuid);
+            throw new InvalidPropertyValueValidationError("Invalid referal code");
+        }
+
+        return code;
+    }
+
+    private async Task<bool> ValidateUniqueIdentifiers(CreateUserDto user)
+    {
+        if (await _userRepository.IsExistingUsernameAsync(user.Username))
+            throw new IdentifierInUseValidationError("username");
+
+        if (await _userRepository.IsExistingEmailAsync(user.Email))
+            throw new IdentifierInUseValidationError("email");
+        return true;
     }
 }

@@ -5,7 +5,9 @@ namespace HomeOwners.Application.Abstractions.Services;
 
 public interface IUserService
 {
-    public Task<long?> CreateUserAsync(CreateUserDto user, Role role = Role.HomeOwner);
+    public Task<long?> CreateUserAsync(CreateUserDto user);
+    public Task<long?> CreateAdminAsync(CreateUserDto user);
+    public Task<bool> DisableAccount(DisableAccountDto dto);
     public Task<UserDetailsDto> GetUserDetailsAsync(long? userId);
     public Task<UserShortDto> GetUserBasicsAsync(long? userId);
     public Task<UserDetailsDto> GetUserByEmailAsync(string email);

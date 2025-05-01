@@ -11,7 +11,12 @@ internal class CommunityMessagesRepository : BaseEntityRepository<CommunityMessa
     {
 
     }
-
+    public override async Task<CommunityMessage?> GetByIdAsync(long? id)
+    {
+        return await Query
+            .Include(x => x.Creator)
+            .FirstOrDefaultAsync(x => x.Id == id);
+    }
     public async Task<IEnumerable<CommunityMessage>> GetAllByCommunityId(long communityId)
     {
         return await Query

@@ -62,6 +62,8 @@ internal class Program
         builder.Services.AddDataProtection()
             .PersistKeysToFileSystem(new DirectoryInfo("/keys"));
 
+        builder.Services.AddProxyConfiguration(builder.Configuration);
+
         builder.Services.AddCors(options =>
         {
             options.AddPolicy("AllowLocalProxy",

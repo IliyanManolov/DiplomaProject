@@ -57,25 +57,14 @@ public static class ObservabilityConfiguration
 
             if (options?.Logging?.OpenSearchConfiguration != null)
             {
-                // TODO: extract to helper class
-                var sink = new OpenSearchBatchingSink(options.Logging.OpenSearchConfiguration, new JsonLogFormatter());
-                var batchinOptions = new PeriodicBatchingSinkOptions()
-                {
-                    BatchSizeLimit = options.Logging.OpenSearchConfiguration.BatchSize,
-                    Period = TimeSpan.FromSeconds(options.Logging.OpenSearchConfiguration.BatchTime)
-                };
+                AddOpenSearchLogging(loggerConfig, options.Logging.OpenSearchConfiguration);
+            }
 
-
-                // Silence normal diagnostig logs since we are using custom ones
-                loggerConfig
-                    .MinimumLevel.Override("Microsoft.AspNetCore.Hosting", LogEventLevel.Warning)
-                    .MinimumLevel.Override("Microsoft.AspNetCore.Mvc", LogEventLevel.Warning) 
-                    .MinimumLevel.Override("Microsoft.AspNetCore.Routing", LogEventLevel.Warning);
-
-                // TODO: extract to helper class
-                loggerConfig
-                .WriteTo.Sink(new PeriodicBatchingSink(sink, batchinOptions));
-            };
+            // Silence normal diagnostig logs since we are using custom ones
+            loggerConfig
+                .MinimumLevel.Override("Microsoft.AspNetCore.Hosting", LogEventLevel.Warning)
+                .MinimumLevel.Override("Microsoft.AspNetCore.Mvc", LogEventLevel.Warning)
+                .MinimumLevel.Override("Microsoft.AspNetCore.Routing", LogEventLevel.Warning);
 
             loggerConfig.WriteTo.Console(formatter: new JsonLogFormatter());
 
@@ -83,5 +72,27 @@ public static class ObservabilityConfiguration
         }, preserveStaticLogger: true);
 
         return builder;
+    }
+
+    private static void AddOpenSearchLogging(LoggerConfiguration loggerConfig, OpenSearchSinkOptions options)
+    {
+        if (options == null)
+            return;
+
+        if (string.IsNullOrEmpty(options.ConnectionUrl)
+                || string.IsNullOrEmpty(options.Index)
+                || string.IsNullOrEmpty(options.Password)
+                || string.IsNullOrEmpty(options.User))
+            return;
+
+        var sink = new OpenSearchBatchingSink(options, new JsonLogFormatter());
+        var batchinOptions = new PeriodicBatchingSinkOptions()
+        {
+            BatchSizeLimit = options.BatchSize,
+            Period = TimeSpan.FromSeconds(options.BatchTime)
+        };
+
+        // No need for extension method for adding the sink itself
+        loggerConfig.WriteTo.Sink(new PeriodicBatchingSink(sink, batchinOptions));
     }
 }

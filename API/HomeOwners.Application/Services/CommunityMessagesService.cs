@@ -45,10 +45,47 @@ public class CommunityMessagesService : ICommunityMessagesService
 
         return dbMessages.Select(x => new CommunityMessageDetailsDto()
         {
+            Id = x.Id!.Value,
             Message = x.Message,
             CreateTimeStamp = x.CreateDate!.Value,
             CreatorUserName = x.Creator.Username!,
             LastUpdateTimeStamp = x.UpdateDate
         });
+    }
+
+    public async Task<CommunityMessageDetailsDto> UpdateMessage(EditCommunityMessageDto model)
+    {
+        if (string.IsNullOrEmpty(model.NewMessage))
+            throw new InvalidPropertyValueValidationError("Community message cannot be empty/null");
+
+        if (model.NewMessage.Length > 512)
+            throw new InvalidPropertyValueValidationError("Invalid community message");
+
+        if (model.Id == null)
+            throw new InvalidPropertyValueValidationError("Invalid id");
+
+        var dbMessage = await _messagesRepository.GetByIdAsync(model.Id);
+
+        if (dbMessage == null)
+        {
+            _logger.LogWarning("Message not found in database");
+            throw new InvalidPropertyValueValidationError("Invalid id");
+        }
+
+        if (model.NewMessage == dbMessage.Message)
+            throw new InvalidPropertyValueValidationError("Cannot edit with same message");
+
+        dbMessage.Message = model.NewMessage;
+
+        await _messagesRepository.UpdateAsync(dbMessage);
+
+        return new CommunityMessageDetailsDto()
+        {
+            Id = dbMessage.Id!.Value,
+            Message = dbMessage.Message,
+            CreateTimeStamp = dbMessage.CreateDate!.Value,
+            CreatorUserName = dbMessage.Creator.Username!,
+            LastUpdateTimeStamp = dbMessage.UpdateDate
+        };
     }
 }

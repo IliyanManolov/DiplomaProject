@@ -59,6 +59,29 @@ public class CommunityMessagesController : ControllerBase
         }
     }
 
+    [HttpPatch]
+    public async Task<IActionResult> EditMessageAsync([FromBody] EditCommunityMessageDto model)
+    {
+        try
+        {
+            var newMessage = await _messagesSerivce.UpdateMessage(model);
+            return Ok(newMessage);
+        }
+        catch (BaseValidationError err)
+        {
+            return GetBadRequestResponse(err);
+        }
+        catch (BaseAggregateValidationError err)
+        {
+            return GetBadRequestResponse(err);
+        }
+        catch (BaseAuthenticationError err)
+        {
+            _logger.LogInformation("Returning 404 due to auth error. Message - {errorMessage}", err.Message);
+            return NotFound(new NotFoundResponseModel(HttpContext.TraceIdentifier));
+        }
+    }
+
     [HttpGet("{communityId}")]
     public async Task<IActionResult> GetForCommunityAsync(long communityId)
     {

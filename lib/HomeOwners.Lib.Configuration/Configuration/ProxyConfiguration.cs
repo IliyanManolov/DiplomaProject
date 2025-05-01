@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Net;
 
@@ -11,6 +12,7 @@ namespace HomeOwners.Lib.Configuration.Configuration;
 // Possibly move this to a separate project once I start getting the IPs from the configuration
 public static class ProxyConfiguration
 {
+    private static string _section = "proxy";
     public static void UseProxyConfiguration(this IApplicationBuilder app, IWebHostEnvironment environment, IConfiguration configuration)
     {
         var proxyAddressList = GetProxyServerAddresses(configuration);
@@ -57,16 +59,36 @@ public static class ProxyConfiguration
         }
     }
 
+
+    public static void AddProxyConfiguration(this IServiceCollection services, IConfiguration configuration)
+    {
+        var options = new ProxyOptions();
+
+        services.AddOptions<ProxyOptions>()
+            .Bind(configuration.GetSection(_section));
+
+        configuration.Bind(_section, options);
+    }
+
     private static IEnumerable<string> GetProxyServerAddresses(IConfiguration configuration)
     {
+
+        var options = configuration.GetSection(_section).Get<ProxyOptions>();
 
         // TODO: get the options here
         var addresses = new List<string>();
 
-        addresses.Add("127.0.0.1");
+        if (options.AllowedIPs.Any())
+            addresses.AddRange(options.AllowedIPs);
+        //addresses.Add("127.0.0.1");
 
 
         return addresses;
 
     }
+}
+
+public class ProxyOptions
+{
+    public List<string> AllowedIPs { get; set; }
 }

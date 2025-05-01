@@ -1,7 +1,9 @@
-﻿using HomeOwners.Lib.Observability.Options;
+﻿using HomeOwners.Lib.Observability.Models;
+using HomeOwners.Lib.Observability.Options;
 using OpenSearch.Client;
 using OpenSearch.Net;
 using Serilog;
+using System.Text.Json;
 
 namespace HomeOwners.Lib.Observability.OpenSearch;
 
@@ -39,10 +41,25 @@ internal class OpenSearchContext
         }
     }
 
-    // IMPLEMENTME
-    // Decide on model
-    internal async Task Write(IEnumerable<string> messsages)
+    internal async Task Write(IEnumerable<string> messages)
     {
-        return;
+        try
+        {
+            var models = messages.Select(x => JsonSerializer.Deserialize<LogModel>(x));
+
+            // We are using a data stream -> IndexMany() intended for Index (Library designers)
+            var bulkIndexResponse = await _client.BulkAsync(b => b
+                .Index(_options.Index)
+                .CreateMany(models));
+
+            if (!bulkIndexResponse.IsValid)
+            {
+                Log.Logger.Warning("Open search indexing failed, {debugInformation}, {serverError}", bulkIndexResponse.DebugInformation, bulkIndexResponse.ServerError);
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.Logger.Warning("Exception caught in OpenSearch indexing, {exception} - {message}", ex.GetType(), ex.Message);
+        }
     }
 }

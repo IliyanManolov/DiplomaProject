@@ -30,8 +30,44 @@ public class AuthenticationController : ControllerBase
     {
         try
         {
-            var userId = await _userService.CreateUserAsync(model, Role.HomeOwner);
+            var userId = await _userService.CreateUserAsync(model);
             return Ok(userId);
+        }
+        catch (BaseValidationError err)
+        {
+            return GetBadRequestResponse(err);
+        }
+        catch (BaseAggregateValidationError err)
+        {
+            return GetBadRequestResponse(err);
+        }
+    }
+
+    [HttpPost("register/admin")]
+    public async Task<IActionResult> RegisterAdminAsync([FromBody] CreateUserDto model)
+    {
+        try
+        {
+            var userId = await _userService.CreateAdminAsync(model);
+            return Ok(userId);
+        }
+        catch (BaseValidationError err)
+        {
+            return GetBadRequestResponse(err);
+        }
+        catch (BaseAggregateValidationError err)
+        {
+            return GetBadRequestResponse(err);
+        }
+    }
+
+    [HttpPost("disable/")]
+    public async Task<IActionResult> DisableAccountAsync([FromBody] DisableAccountDto model)
+    {
+        try
+        {
+            var isDisabled = await _userService.DisableAccount(model);
+            return Ok(isDisabled);
         }
         catch (BaseValidationError err)
         {

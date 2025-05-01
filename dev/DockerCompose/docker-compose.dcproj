@@ -10,6 +10,7 @@
     <DockerServiceName>homeowners.web.api</DockerServiceName>
   </PropertyGroup>
   <ItemGroup>
+    <None Include=".env" />
     <None Include=".gitignore" />
     <None Include="Config\web-configuration.json" />
     <None Include="Config\api-configuration.json" />
@@ -19,11 +20,8 @@
     <None Include="docker-compose.yml" />
     <None Include=".dockerignore" />
     <None Include="proxy-config\default.conf" />
-    <None Include="Sample-Config\api-configuration.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </None>
+    <None Include="Sample-Config\api-configuration.json" />
     <None Include="Sample-Config\web-configuration.json" />
+    <None Include="sample.env" />
   </ItemGroup>
 </Project>

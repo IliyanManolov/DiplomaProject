@@ -1,7 +1,8 @@
 appsettings.json
-api-configuration*.json
 Config/*
 Certificates/
 Certificates/*
 dev-keys/
 dev-keys/*
+OpenSearchData/*
+OpenSearchData/
