@@ -43,6 +43,24 @@ public class AuthenticationController : ControllerBase
         }
     }
 
+    [HttpPost("register/admin")]
+    public async Task<IActionResult> RegisterAdminAsync([FromBody] CreateUserDto model)
+    {
+        try
+        {
+            var userId = await _userService.CreateAdminAsync(model);
+            return Ok(userId);
+        }
+        catch (BaseValidationError err)
+        {
+            return GetBadRequestResponse(err);
+        }
+        catch (BaseAggregateValidationError err)
+        {
+            return GetBadRequestResponse(err);
+        }
+    }
+
     [HttpPost("login/")]
     public async Task<IActionResult> LoginAsync([FromBody] AuthenticateDto model)
     {

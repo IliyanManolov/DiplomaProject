@@ -92,6 +92,28 @@ public class UserService : IUserService
         return dbUser.Id;
     }
 
+    public async Task<long?> CreateAdminAsync(CreateUserDto user)
+    {
+        ValidateCommonCreateProperties(user);
+
+        await ValidateUniqueIdentifiers(user);
+
+        var dbUser = new User()
+        {
+            Email = user.Email,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            IsDeleted = false,
+            Username = user.Username,
+            Role = Role.Administrator,
+            Password = _passwordService.GetHash(user.Password!)
+        };
+
+        await _userRepository.CreateAsync(dbUser);
+
+        return dbUser.Id;
+    }
+
     public async Task<UserShortDto> GetUserBasicsAsync(long? userId)
     {
         var dbUser = await GetUser(userId);
