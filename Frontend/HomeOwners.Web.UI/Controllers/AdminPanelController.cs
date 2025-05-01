@@ -332,6 +332,13 @@ public class AdminPanelController : Controller
             };
 
             var success = await _authenticationClient.DisableAsync(request);
+
+            if (success)
+            {
+                ViewBag.SuccessMessage = $"Account with email '{request.AccountEmail}' disabled successfully.";
+                ModelState.Clear();
+                return View();
+            }
         }
         catch (Refit.ApiException ex)
         {
@@ -353,12 +360,13 @@ public class AdminPanelController : Controller
 
                 default:
                     _logger.LogError(ex.Message);
+                    ModelState.AddModelError(string.Empty, "Unexpected error encountered");
                     break;
             }
             return View(model);
         }
 
-        return RedirectToAction(nameof(AdminPanelController.Index));
+        return View(model);
     }
 
 
