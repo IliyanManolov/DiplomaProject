@@ -14,5 +14,10 @@
   },
   "backend": {
     "address": "http://local-dev.homeowners.com:443"
+  },
+  "proxy": {
+    "AllowedIPs": [
+      "127.0.0.1"
+    ]
   }
 }

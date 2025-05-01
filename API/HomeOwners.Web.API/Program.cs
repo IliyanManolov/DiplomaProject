@@ -33,6 +33,8 @@ internal class Program
                 options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
             }); ;
 
+        builder.Services.AddProxyConfiguration(builder.Configuration);
+
         //builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
         //    .AddCookie(settings =>
         //    {

@@ -1,5 +1,4 @@
 appsettings.json
-api-configuration*.json
 Config/*
 Certificates/
 Certificates/*
