@@ -1,4 +1,6 @@
-﻿using HomeOwners.Web.UI.Clients.Community;
+﻿using HomeOwners.Web.UI.Clients.Authentication;
+using HomeOwners.Web.UI.Clients.Authentication.Requests;
+using HomeOwners.Web.UI.Clients.Community;
 using HomeOwners.Web.UI.Clients.Community.Requests;
 using HomeOwners.Web.UI.Clients.Community.Responses;
 using HomeOwners.Web.UI.Clients.Property;
@@ -22,13 +24,19 @@ public class AdminPanelController : Controller
     private readonly ICommunityClient _communityClient;
     private readonly IPropertyClient _propertyClient;
     private readonly IReferralCodeClient _referralCodeClient;
+    private readonly IAuthenticationClient _authenticationClient;
     private readonly ILogger<AdminPanelController> _logger;
 
-    public AdminPanelController(ICommunityClient communityClient, IPropertyClient propertyClient, IReferralCodeClient codeClient, ILoggerFactory loggerFactory)
+    public AdminPanelController(ICommunityClient communityClient,
+        IPropertyClient propertyClient,
+        IReferralCodeClient codeClient,
+        IAuthenticationClient authenticationClient,
+        ILoggerFactory loggerFactory)
     {
         _communityClient = communityClient;
         _propertyClient = propertyClient;
         _referralCodeClient = codeClient;
+        _authenticationClient = authenticationClient;
         _logger = loggerFactory.CreateLogger<AdminPanelController>();
     }
 
@@ -238,6 +246,67 @@ public class AdminPanelController : Controller
         return View(model);
     }
 
+
+
+    [HttpGet]
+    [Authorize(Roles = "Administrator")]
+    public IActionResult CreateAdminAccount()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    [Authorize(Roles = "Administrator")]
+    public async Task<IActionResult> CreateAdminAccount(RegisterViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        try
+        {
+            var request = new RegisterRequest()
+            {
+                Email = model.Email,
+                Username = model.Username,
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                Password = model.Password,
+                ConfirmPassword = model.ConfirmPassword
+            };
+
+            var user = await _authenticationClient.CreateAdminAsync(request);
+
+        }
+        catch (Refit.ApiException ex)
+        {
+            switch (ex.StatusCode)
+            {
+                case HttpStatusCode.BadRequest:
+                    var errorResponse = await ex.GetContentAsAsync<BadRequestResponseModel>();
+
+                    foreach (var item in errorResponse.ValidationErrors)
+                    {
+                        ModelState.AddModelError(string.Empty, item.Message);
+                    }
+
+                    break;
+
+                case HttpStatusCode.NotFound:
+                    ModelState.AddModelError(string.Empty, "Invalid username or password");
+                    break;
+
+                default:
+                    _logger.LogError(ex.Message);
+                    break;
+            }
+            return View(model);
+        }
+
+
+        return RedirectToAction(nameof(HomeController.Index));
+    }
 
     private long GetUserId()
     {

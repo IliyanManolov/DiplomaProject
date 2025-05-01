@@ -1,0 +1,56 @@
+﻿@model RegisterViewModel
+
+@{
+    ViewData["Title"] = "Create Admin Account";
+}
+
+<div class="container mt-5">
+    <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-header bg-primary text-white rounded-top-4">
+            <h3 class="mb-0"> Create an Administrator Account</h3>
+        </div>
+        <div class="card-body p-4">
+            <form asp-controller="AdminPanel" asp-action="CreateAdminAccount">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="form-outline mb-4">
+                    <input asp-for="Username" class="form-control form-control-lg" placeholder="Username" />
+                    <span asp-validation-for="Username" class="text-danger"></span>
+                </div>
+
+                <div class="form-outline mb-4">
+                    <input asp-for="FirstName" class="form-control form-control-lg" placeholder="First Name" />
+                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                </div>
+
+                <div class="form-outline mb-4">
+                    <input asp-for="LastName" class="form-control form-control-lg" placeholder="Last Name" />
+                    <span asp-validation-for="LastName" class="text-danger"></span>
+                </div>
+
+                <div class="form-outline mb-4">
+                    <input asp-for="Email" class="form-control form-control-lg" placeholder="Email" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+                <div class="form-outline mb-4">
+                    <input asp-for="Password" type="password" class="form-control form-control-lg" placeholder="Password" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+
+                <div class="form-outline mb-4">
+                    <input asp-for="ConfirmPassword" type="password" class="form-control form-control-lg" placeholder="Confirm Password" />
+                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                </div>
+
+                <div class="d-flex justify-content-between mt-4">
+                    <a class="nav-link rounded bg-light shadow-sm text-dark mt-4" asp-area="" asp-controller="AdminPanel" asp-action="Index">Back to Admin Panel</a>
+
+                    <button type="submit" class="btn btn-success">
+                        Create
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -11,6 +11,10 @@ public interface IAuthenticationClient
 
     [Post("/register")]
     public Task<long> RegisterAsync(RegisterRequest requestModel);
+
+    [Post("/register/admin")]
+    public Task<long> CreateAdminAsync(RegisterRequest requestModel);
+
     [Patch("/changepassword")]
     public Task<UserDetailsResponse> ChangePasswordAsync(ChangePasswordRequest requestModel);
 }
