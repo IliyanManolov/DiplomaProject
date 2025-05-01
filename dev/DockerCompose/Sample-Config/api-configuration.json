@@ -1,0 +1,25 @@
+{
+  "observability": {
+    "logging": {
+      "severity": "info",
+      "openSearchConfiguration": {
+        "batchTime": 10,
+        "batchSize": 60,
+        "index": "",
+        "connectionUrl": "",
+        "password": "",
+        "user": "admin"
+      }
+    }
+  },
+  "DatabaseSettings": {
+    "ConnectionString": "Data Source=host.docker.internal,1433;Database=***;User Id=***;Password=***;Trusted_Connection=false;TrustServerCertificate=true;Encrypt=false",
+    "MigrationTable": "changelog",
+    "EnableMigrations": true
+  },
+  "proxy": {
+    "AllowedIPs": [
+      "127.0.0.1"
+    ]
+  }
+}
