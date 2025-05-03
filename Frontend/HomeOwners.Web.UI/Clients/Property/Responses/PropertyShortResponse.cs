@@ -1,6 +1,6 @@
 ﻿using HomeOwners.Web.UI.Models;
 
-namespace HomeOwners.Web.UI.Clients.Community.Responses;
+namespace HomeOwners.Web.UI.Clients.Property.Responses;
 
 public class PropertyShortResponse
 {

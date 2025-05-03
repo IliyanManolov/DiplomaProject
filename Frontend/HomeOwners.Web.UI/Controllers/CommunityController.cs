@@ -1,5 +1,9 @@
 ﻿using HomeOwners.Web.UI.Clients.Community;
 using HomeOwners.Web.UI.Clients.Community.Requests;
+using HomeOwners.Web.UI.Clients.CommunityMeetings;
+using HomeOwners.Web.UI.Clients.CommunityMeetings.Requests;
+using HomeOwners.Web.UI.Clients.CommunityMessages;
+using HomeOwners.Web.UI.Clients.CommunityMessages.Requests;
 using HomeOwners.Web.UI.Clients.Property;
 using HomeOwners.Web.UI.Models;
 using HomeOwners.Web.UI.ResponseModels;
@@ -13,14 +17,22 @@ namespace HomeOwners.Web.UI.Controllers;
 
 public class CommunityController : Controller
 {
+    private readonly ICommunityMessageClient _messagesClient;
     private readonly ICommunityClient _communityClient;
     private readonly IPropertyClient _propertyClient;
+    private readonly ICommunityMeetingClient _meetingClient;
     private readonly ILogger<CommunityController> _logger;
 
-    public CommunityController(ICommunityClient communityClient, IPropertyClient propertyClient, ILoggerFactory loggerFactory)
+    public CommunityController(ICommunityClient communityClient,
+        ICommunityMessageClient messagesClient,
+        ICommunityMeetingClient meetingClient,
+        IPropertyClient propertyClient,
+        ILoggerFactory loggerFactory)
     {
+        _messagesClient = messagesClient;
         _communityClient = communityClient;
         _propertyClient = propertyClient;
+        _meetingClient = meetingClient;
         _logger = loggerFactory.CreateLogger<CommunityController>();
     }
 
@@ -41,17 +53,18 @@ public class CommunityController : Controller
                 UserId = GetUserId()
             };
 
-            var properties = await _communityClient.GetCommunityPropertiesAsync(requestModel);
+            var properties = await _propertyClient.GetCommunityPropertiesAsync(requestModel);
 
-            var messages = await _communityClient.GetMessagesAsync(id!.Value);
+            var messages = await _messagesClient.GetMessagesAsync(id!.Value);
 
-            var meetings = await _communityClient.GetMeetingsAsync(id!.Value);
+            var meetings = await _meetingClient.GetMeetingsAsync(id!.Value);
 
             var viewModel = new CommunityDetailsViewModel()
             {
                 CommunityMessageViewModels = messages.Select(x => new CommunityMessageViewModel()
                 {
                     Id = x.Id,
+                    CommunityId = x.CommunityId,
                     CreateTimeStamp = x.CreateTimeStamp,
                     CreatorUserName = x.CreatorUserName,
                     LastUpdateTimeStamp = x.LastUpdateTimeStamp,
@@ -67,6 +80,8 @@ public class CommunityController : Controller
                 }).ToList(),
                 CommunityMeetingViewModels = meetings.Select(x => new CommunityMeetingViewModel()
                 {
+                    Id = x.Id,
+                    CommunityId = x.CommunityId,
                     CreateTimeStamp = x.CreateTimeStamp,
                     LastUpdateTimeStamp = x.LastUpdateTimeStamp,
                     CreatorUserName = x.CreatorUserName,
@@ -137,7 +152,7 @@ public class CommunityController : Controller
                 Reason = model.Reason,
             };
 
-            var response = await _communityClient.CreateMeetingAsync(request);
+            var response = await _meetingClient.CreateMeetingAsync(request);
 
             _logger.LogInformation("Successfully created meeting. Returned id - {meetingId}", response);
         }
@@ -199,7 +214,7 @@ public class CommunityController : Controller
                 Message = model.Message,
             };
 
-            var response = await _communityClient.CreateMessageAsync(request);
+            var response = await _messagesClient.CreateMessageAsync(request);
 
             _logger.LogInformation("Successfully created community message. Returned id - {meetingId}", response);
         }

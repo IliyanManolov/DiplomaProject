@@ -82,6 +82,54 @@ public class CommunityMessagesController : ControllerBase
         }
     }
 
+    [HttpGet("id/{messageId}")]
+    public async Task<IActionResult> GetMessageByIdAsync(long messageId)
+    {
+        try
+        {
+            var message = await _messagesSerivce.GetByIdAsync(messageId);
+
+            return Ok(message);
+        }
+        catch (BaseValidationError err)
+        {
+            return GetBadRequestResponse(err);
+        }
+        catch (BaseAggregateValidationError err)
+        {
+            return GetBadRequestResponse(err);
+        }
+        catch (BaseAuthenticationError err)
+        {
+            _logger.LogInformation("Returning 404 due to auth error. Message - {errorMessage}", err.Message);
+            return NotFound(new NotFoundResponseModel(HttpContext.TraceIdentifier));
+        }
+    }
+
+    [HttpDelete("id/{messageId}")]
+    public async Task<IActionResult> DeleteMessageByIdAsync(long messageId)
+    {
+        try
+        {
+            var message = await _messagesSerivce.DeleteByIdAsync(messageId);
+
+            return Ok(message);
+        }
+        catch (BaseValidationError err)
+        {
+            return GetBadRequestResponse(err);
+        }
+        catch (BaseAggregateValidationError err)
+        {
+            return GetBadRequestResponse(err);
+        }
+        catch (BaseAuthenticationError err)
+        {
+            _logger.LogInformation("Returning 404 due to auth error. Message - {errorMessage}", err.Message);
+            return NotFound(new NotFoundResponseModel(HttpContext.TraceIdentifier));
+        }
+    }
+
     [HttpGet("{communityId}")]
     public async Task<IActionResult> GetForCommunityAsync(long communityId)
     {

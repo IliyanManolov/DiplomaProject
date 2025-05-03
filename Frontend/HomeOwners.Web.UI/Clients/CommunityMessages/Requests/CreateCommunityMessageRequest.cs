@@ -1,4 +1,4 @@
-﻿namespace HomeOwners.Web.UI.Clients.Community.Requests;
+﻿namespace HomeOwners.Web.UI.Clients.CommunityMessages.Requests;
 
 public class CreateCommunityMessageRequest
 {

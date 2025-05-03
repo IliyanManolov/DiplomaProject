@@ -4,7 +4,7 @@ The following document describes the steps for setting up your local instance of
 **NOTE**: OpenSearch is completely optional and the application is not hard-coupled to it.
 
 
-After starting the docker-compose project for the first time you will need to head to the [saved objects](http://localhost:5601/app/management/opensearch-dashboards/objects) page of OpenSearch and import the dashboard itself located in the folder with this document.
+After starting the docker-compose project for the first time you will need to head to the [saved objects](http://localhost:5601/app/management/opensearch-dashboards/objects) page of OpenSearch and import the [dashboard](./dashboardExport.ndjson) itself located in the folder with this document.
 
 If prompted to log-in - use the account `admin` and the local password in the `.env` file
 

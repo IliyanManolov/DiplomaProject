@@ -1,57 +1,60 @@
-﻿using HomeOwners.Web.UI.Clients.CommunityMessages;
+﻿using HomeOwners.Web.UI.Clients.CommunityMeetings;
 using HomeOwners.Web.UI.Clients.CommunityMessages.Requests;
-using HomeOwners.Web.UI.Clients.Property;
+using HomeOwners.Web.UI.Clients.CommunityMessages;
 using HomeOwners.Web.UI.Models;
-using HomeOwners.Web.UI.ResponseModels;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using HomeOwners.Web.UI.ResponseModels;
+using Microsoft.AspNetCore.Authorization;
+using HomeOwners.Web.UI.Clients.CommunityMeetings.Requests;
 
 namespace HomeOwners.Web.UI.Controllers;
 
-public class MessageController : Controller
+public class MeetingController : Controller
 {
-    private readonly ICommunityMessageClient _communityMessagesClient;
-    private readonly ILogger<MessageController> _logger;
+    private readonly ICommunityMeetingClient _meetingClient;
+    private readonly ILogger<MeetingController> _logger;
 
-    public MessageController(ICommunityMessageClient messagesClient, IPropertyClient propertyClient, ILoggerFactory loggerFactory)
+    public MeetingController(ICommunityMeetingClient meetingClient, ILoggerFactory loggerFactory)
     {
-        _communityMessagesClient = messagesClient;
-        _logger = loggerFactory.CreateLogger<MessageController>();
+        _meetingClient = meetingClient;
+        _logger = loggerFactory.CreateLogger<MeetingController>();
     }
 
     [Authorize(Roles = "Administrator")]
-    [Route("Message/Edit/{id}")]
+    [Route("Meeting/Edit/{id}")]
     public async Task<IActionResult> Edit([FromRoute] long? id)
     {
 
-        var message = await _communityMessagesClient.GetMessageByIdAsync(id.Value);
+        var message = await _meetingClient.GetMeetingByIdAsync(id.Value);
 
-        var viewModel = new EditMessageViewModel()
+        var viewModel = new EditMeetingViewModel()
         {
-            MessageId = id,
+            MeetingId = id,
             CommunityId = message.CommunityId,
-            Message = message.Message
+            MeetingTime = message.MeetingTime,
+            Reason = message.Reason,
         };
 
         return View(viewModel);
     }
 
     [Authorize(Roles = "Administrator")]
-    [HttpPost("Message/Edit/{id}")]
-    public async Task<IActionResult> Edit(EditMessageViewModel model)
+    [HttpPost("Meeting/Edit/{id}")]
+    public async Task<IActionResult> Edit(EditMeetingViewModel model)
     {
         try
         {
-            var request = new EditCommunityMessageRequest()
+            var request = new EditMeetingRequest()
             {
-                Id = model.MessageId,
-                NewMessage = model.Message
+                Id = model.MeetingId,
+                MeetingTime= model.MeetingTime,
+                NewReason = model.Reason
             };
 
-            var response = await _communityMessagesClient.EditMessageAsync(request);
+            var response = await _meetingClient.EditMeetingAsync(request);
 
-            ViewBag.SuccessMessage = "Message edited successfully";
+            ViewBag.SuccessMessage = "Meeting edited successfully";
             return View(model);
         }
         catch (Refit.ApiException ex)
@@ -82,13 +85,13 @@ public class MessageController : Controller
     }
 
     [Authorize(Roles = "Administrator")]
-    [HttpPost("Message/Delete/{id}")]
+    [HttpPost("Meeting/Delete/{id}")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(long id)
     {
         try
         {
-            var response = await _communityMessagesClient.DeleteMessageByIdAsync(id);
+            var response = await _meetingClient.DeleteMeetingByIdAsync(id);
 
             return RedirectToAction("Details", "Community", new { id = response.CommunityId });
         }
