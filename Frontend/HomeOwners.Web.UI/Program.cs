@@ -10,6 +10,7 @@ using System.Net;
 using System.Text.Json.Serialization;
 using System.Text.Json;
 using HomeOwners.Web.UI.Clients.ReferralCode;
+using HomeOwners.Web.UI.Clients.CommunityMessages;
 
 internal class Program
 {
@@ -36,7 +37,7 @@ internal class Program
         builder.Services.RegisterCustomClient<ICommunityClient>("/");
         builder.Services.RegisterCustomClient<IPropertyClient>("/");
         builder.Services.RegisterCustomClient<IReferralCodeClient>("/");
-
+        builder.Services.RegisterCustomClient<ICommunityMessageClient>("/");
 
         builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddCookie(settings =>

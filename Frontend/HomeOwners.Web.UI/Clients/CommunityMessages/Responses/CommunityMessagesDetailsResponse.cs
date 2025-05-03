@@ -1,4 +1,4 @@
-﻿namespace HomeOwners.Web.UI.Clients.Community.Responses;
+﻿namespace HomeOwners.Web.UI.Clients.CommunityMessages.Responses;
 
 public class CommunityMessagesDetailsResponse
 {

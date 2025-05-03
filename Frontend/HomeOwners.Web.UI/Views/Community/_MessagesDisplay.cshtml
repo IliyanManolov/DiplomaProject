@@ -31,13 +31,6 @@
                        asp-route-id="@msg.Id">
                         Change message
                     </a>
-@* 
-                    <a class="btn btn-sm btn-outline-danger mt-2"
-                       asp-controller="Message"
-                       asp-action="Delete"
-                       asp-route-id="@msg.Id">
-                        Delete
-                    </a> *@
 
                     <form asp-controller="Message" asp-action="Delete" asp-route-id="@msg.Id" method="post" class="d-inline">
                         @Html.AntiForgeryToken()
@@ -45,8 +38,6 @@
                             Delete
                         </button>
                     </form>
-
-
                 }
             </div>
 
