@@ -27,6 +27,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
 		.github\workflows\main.yml = .github\workflows\main.yml
+		setup.md = setup.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HomeOwners.Lib.Configuration", "lib\HomeOwners.Lib.Configuration\HomeOwners.Lib.Configuration.csproj", "{38379B18-B5CA-4C1D-B282-9878CA46A173}"
