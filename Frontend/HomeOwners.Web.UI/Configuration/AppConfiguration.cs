@@ -5,6 +5,7 @@ using HomeOwners.Web.UI.Clients.CommunityMessages;
 using HomeOwners.Web.UI.Clients.Property;
 using HomeOwners.Web.UI.Clients.ReferralCode;
 using HomeOwners.Web.UI.Configuration.Settings;
+using HomeOwners.Web.UI.Healthchecks;
 using Microsoft.Extensions.Options;
 using Refit;
 using System.Net;
@@ -41,5 +42,17 @@ public static class AppConfiguration
         services.RegisterCustomClient<IReferralCodeClient>("/");
         services.RegisterCustomClient<ICommunityMessageClient>("/");
         services.RegisterCustomClient<ICommunityMeetingClient>("/");
+    }
+
+    public static void AddApplicationHealthChecks(this IServiceCollection services)
+    {
+        var sp = services.BuildServiceProvider();
+
+        var options = sp.GetRequiredService<IOptions<Backend>>();
+
+        var backendHealthCheck = new BackendHealthcheck(options.Value.Address!, sp.GetRequiredService<HttpClient>());
+
+        services.AddHealthChecks()
+            .AddCheck("API", backendHealthCheck);
     }
 }

@@ -3,6 +3,7 @@ using HomeOwners.Web.UI.Configuration;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -64,6 +65,8 @@ internal class Program
             );
         });
 
+        builder.Services.AddApplicationHealthChecks();
+
         var app = builder.Build();
 
         app.UseProxyConfiguration(app.Environment, app.Configuration);
@@ -79,6 +82,25 @@ internal class Program
         app.UseStaticFiles();
 
         app.UseCors("AllowLocalProxy");
+
+        app.UseHealthChecks("/hc", new HealthCheckOptions()
+        {
+            ResponseWriter = async (context, report) =>
+            {
+                context.Response.ContentType = "application/json";
+                var result = JsonSerializer.Serialize(new
+                {
+                    status = report.Status.ToString(),
+                    checks = report.Entries.Select(entry => new
+                    {
+                        name = entry.Key,
+                        status = entry.Value.Status.ToString(),
+                        duration = entry.Value.Duration.ToString()
+                    })
+                });
+                await context.Response.WriteAsync(result);
+            }
+        });
 
         app.UseRouting();
 

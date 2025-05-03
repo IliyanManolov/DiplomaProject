@@ -29,7 +29,7 @@ internal sealed class DatabaseHealthcheck : IHealthCheck
         }
         catch (Exception ex)
         {
-            return HealthCheckResult.Unhealthy("Database connection failures", ex);
+            return HealthCheckResult.Unhealthy("Database connection failure", ex);
         }
     }
 }
