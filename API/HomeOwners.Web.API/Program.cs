@@ -1,6 +1,7 @@
 using HomeOwners.Infrastructure.Configuration;
 using HomeOwners.Infrastructure.Healthchecks;
 using HomeOwners.Lib.Configuration.Configuration;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -87,7 +88,24 @@ internal class Program
 
         //app.UseHttpsRedirection();
 
-        app.UseHealthChecks("/hc");
+        app.UseHealthChecks("/hc", new HealthCheckOptions()
+        {
+            ResponseWriter = async (context, report) =>
+            {
+                context.Response.ContentType = "application/json";
+                var result = JsonSerializer.Serialize(new
+                {
+                    status = report.Status.ToString(),
+                    checks = report.Entries.Select(entry => new
+                    {
+                        name = entry.Key,
+                        status = entry.Value.Status.ToString(),
+                        duration = entry.Value.Duration.ToString()
+                    })
+                });
+                await context.Response.WriteAsync(result);
+            }
+        });
 
         app.UseAuthentication();
 
