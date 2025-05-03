@@ -32,12 +32,7 @@ internal class Program
         builder.Services.ConfigureBackendConnection(builder.Configuration);
 
         builder.Services.AddSingleton<CookieContainer>();
-
-        builder.Services.RegisterCustomClient<IAuthenticationClient>("/");
-        builder.Services.RegisterCustomClient<ICommunityClient>("/");
-        builder.Services.RegisterCustomClient<IPropertyClient>("/");
-        builder.Services.RegisterCustomClient<IReferralCodeClient>("/");
-        builder.Services.RegisterCustomClient<ICommunityMessageClient>("/");
+        builder.Services.ConfigureClients();
 
         builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddCookie(settings =>

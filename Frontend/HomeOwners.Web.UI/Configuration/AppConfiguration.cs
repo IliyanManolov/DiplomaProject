@@ -1,4 +1,9 @@
-﻿using HomeOwners.Web.UI.Configuration.Settings;
+﻿using HomeOwners.Web.UI.Clients.Authentication;
+using HomeOwners.Web.UI.Clients.Community;
+using HomeOwners.Web.UI.Clients.CommunityMessages;
+using HomeOwners.Web.UI.Clients.Property;
+using HomeOwners.Web.UI.Clients.ReferralCode;
+using HomeOwners.Web.UI.Configuration.Settings;
 using Microsoft.Extensions.Options;
 using Refit;
 using System.Net;
@@ -35,5 +40,14 @@ public static class AppConfiguration
                     UseCookies = true
                 };
             });
+    }
+
+    public static void ConfigureClients(this IServiceCollection services)
+    {
+        services.RegisterCustomClient<IAuthenticationClient>("/");
+        services.RegisterCustomClient<ICommunityClient>("/");
+        services.RegisterCustomClient<IPropertyClient>("/");
+        services.RegisterCustomClient<IReferralCodeClient>("/");
+        services.RegisterCustomClient<ICommunityMessageClient>("/");
     }
 }
