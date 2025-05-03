@@ -46,3 +46,9 @@ Next up create a folder called `Config` copy the contents of `Sample-Config` ins
         ```
   - You need to change the `Database`, `User Id` and `Password` with account you have created as a Prerequisite
 - The configurations come ready with the Observability (OpenSearch) configurations already setup. While not mandatory it is recommended to setup the OpenSearch instance as [documented](./lib/HomeOwners.Lib.Observability/Docs/OpenSearch/LocalSetup.md)
+
+## Validating correct setup
+After completing the setup you should check the healthcheck endpoints of the application with GET requests to validate that they are working as expected.
+Endpoints:
+- http://local-dev.homeowners.com:443/app/hc
+- http://local-dev.homeowners.com:443/api/hc
