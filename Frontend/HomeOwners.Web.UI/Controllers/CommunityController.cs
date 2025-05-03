@@ -48,7 +48,7 @@ public class CommunityController : Controller
                 UserId = GetUserId()
             };
 
-            var properties = await _communityClient.GetCommunityPropertiesAsync(requestModel);
+            var properties = await _propertyClient.GetCommunityPropertiesAsync(requestModel);
 
             var messages = await _messagesClient.GetMessagesAsync(id!.Value);
 

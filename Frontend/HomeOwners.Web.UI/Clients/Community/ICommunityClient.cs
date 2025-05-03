@@ -1,7 +1,5 @@
 ﻿using HomeOwners.Web.UI.Clients.Community.Requests;
 using HomeOwners.Web.UI.Clients.Community.Responses;
-using HomeOwners.Web.UI.Clients.CommunityMessages.Requests;
-using HomeOwners.Web.UI.Clients.CommunityMessages.Responses;
 using Refit;
 
 namespace HomeOwners.Web.UI.Clients.Community;
@@ -20,6 +18,4 @@ public interface ICommunityClient
     [Post("/communityMeetings")]
     public Task<long> CreateMeetingAsync(CreateMeetingRequest requestModel);
 
-    [Post("/properties/get")]
-    public Task<IEnumerable<PropertyShortResponse>> GetCommunityPropertiesAsync(GetPropertyRequest requestModel); 
 }
