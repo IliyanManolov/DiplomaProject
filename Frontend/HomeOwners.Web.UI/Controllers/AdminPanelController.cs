@@ -2,7 +2,6 @@
 using HomeOwners.Web.UI.Clients.Authentication.Requests;
 using HomeOwners.Web.UI.Clients.Community;
 using HomeOwners.Web.UI.Clients.Community.Requests;
-using HomeOwners.Web.UI.Clients.Community.Responses;
 using HomeOwners.Web.UI.Clients.Property;
 using HomeOwners.Web.UI.Clients.Property.Requests;
 using HomeOwners.Web.UI.Clients.ReferralCode;
@@ -11,11 +10,8 @@ using HomeOwners.Web.UI.Models;
 using HomeOwners.Web.UI.ResponseModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using OpenSearch.Client;
 using System.Net;
 using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace HomeOwners.Web.UI.Controllers;
 

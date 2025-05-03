@@ -1,16 +1,10 @@
 using HomeOwners.Lib.Configuration.Configuration;
-using HomeOwners.Web.UI.Clients.Authentication;
-using HomeOwners.Web.UI.Clients.Community;
-using HomeOwners.Web.UI.Clients.Property;
 using HomeOwners.Web.UI.Configuration;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
-using System.Net;
-using System.Text.Json.Serialization;
 using System.Text.Json;
-using HomeOwners.Web.UI.Clients.ReferralCode;
-using HomeOwners.Web.UI.Clients.CommunityMessages;
+using System.Text.Json.Serialization;
 
 internal class Program
 {
@@ -31,7 +25,6 @@ internal class Program
 
         builder.Services.ConfigureBackendConnection(builder.Configuration);
 
-        builder.Services.AddSingleton<CookieContainer>();
         builder.Services.ConfigureClients();
 
         builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)

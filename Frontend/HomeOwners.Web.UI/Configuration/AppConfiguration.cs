@@ -29,16 +29,6 @@ public static class AppConfiguration
                 client.BaseAddress = settings.Value.CreateUri(route);
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(MediaTypeNames.Application.Json));
-            })
-            .ConfigurePrimaryHttpMessageHandler(provider =>
-            {
-                var cookieContainer = provider.GetRequiredService<CookieContainer>();
-
-                return new HttpClientHandler
-                {
-                    CookieContainer = cookieContainer,
-                    UseCookies = true
-                };
             });
     }
 
