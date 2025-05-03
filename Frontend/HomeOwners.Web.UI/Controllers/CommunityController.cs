@@ -1,5 +1,7 @@
 ﻿using HomeOwners.Web.UI.Clients.Community;
 using HomeOwners.Web.UI.Clients.Community.Requests;
+using HomeOwners.Web.UI.Clients.CommunityMeetings;
+using HomeOwners.Web.UI.Clients.CommunityMeetings.Requests;
 using HomeOwners.Web.UI.Clients.CommunityMessages;
 using HomeOwners.Web.UI.Clients.CommunityMessages.Requests;
 using HomeOwners.Web.UI.Clients.Property;
@@ -18,16 +20,19 @@ public class CommunityController : Controller
     private readonly ICommunityMessageClient _messagesClient;
     private readonly ICommunityClient _communityClient;
     private readonly IPropertyClient _propertyClient;
+    private readonly ICommunityMeetingClient _meetingClient;
     private readonly ILogger<CommunityController> _logger;
 
     public CommunityController(ICommunityClient communityClient,
         ICommunityMessageClient messagesClient,
+        ICommunityMeetingClient meetingClient,
         IPropertyClient propertyClient,
         ILoggerFactory loggerFactory)
     {
         _messagesClient = messagesClient;
         _communityClient = communityClient;
         _propertyClient = propertyClient;
+        _meetingClient = meetingClient;
         _logger = loggerFactory.CreateLogger<CommunityController>();
     }
 
@@ -52,7 +57,7 @@ public class CommunityController : Controller
 
             var messages = await _messagesClient.GetMessagesAsync(id!.Value);
 
-            var meetings = await _communityClient.GetMeetingsAsync(id!.Value);
+            var meetings = await _meetingClient.GetMeetingsAsync(id!.Value);
 
             var viewModel = new CommunityDetailsViewModel()
             {
@@ -75,6 +80,8 @@ public class CommunityController : Controller
                 }).ToList(),
                 CommunityMeetingViewModels = meetings.Select(x => new CommunityMeetingViewModel()
                 {
+                    Id = x.Id,
+                    CommunityId = x.CommunityId,
                     CreateTimeStamp = x.CreateTimeStamp,
                     LastUpdateTimeStamp = x.LastUpdateTimeStamp,
                     CreatorUserName = x.CreatorUserName,
@@ -145,7 +152,7 @@ public class CommunityController : Controller
                 Reason = model.Reason,
             };
 
-            var response = await _communityClient.CreateMeetingAsync(request);
+            var response = await _meetingClient.CreateMeetingAsync(request);
 
             _logger.LogInformation("Successfully created meeting. Returned id - {meetingId}", response);
         }

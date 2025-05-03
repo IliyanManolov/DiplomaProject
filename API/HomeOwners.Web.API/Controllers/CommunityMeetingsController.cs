@@ -1,6 +1,5 @@
 using HomeOwners.Application.Abstractions.Services;
 using HomeOwners.Application.DTOs.CommunityMeetings;
-using HomeOwners.Application.DTOs.CommunityMessages;
 using HomeOwners.Application.ValidationErrors.Authentication;
 using HomeOwners.Application.ValidationErrors.Base;
 using HomeOwners.Domain.Enums;
@@ -28,7 +27,7 @@ public class CommunityMeetingsController : ControllerBase
 
 
     [HttpPost]
-    public async Task<IActionResult> CreateMessageAsync([FromBody] CreateCommunityMeetingDto model)
+    public async Task<IActionResult> CreateMeetingAsync([FromBody] CreateCommunityMeetingDto model)
     {
         try
         {
@@ -71,6 +70,77 @@ public class CommunityMeetingsController : ControllerBase
             var messages = await _meetingsService.GetForCommunityAsync(communityId);
 
             return Ok(messages);
+        }
+        catch (BaseValidationError err)
+        {
+            return GetBadRequestResponse(err);
+        }
+        catch (BaseAggregateValidationError err)
+        {
+            return GetBadRequestResponse(err);
+        }
+        catch (BaseAuthenticationError err)
+        {
+            _logger.LogInformation("Returning 404 due to auth error. Message - {errorMessage}", err.Message);
+            return NotFound(new NotFoundResponseModel(HttpContext.TraceIdentifier));
+        }
+    }
+
+    [HttpGet("id/{meetingId}")]
+    public async Task<IActionResult> GetMeetingByIdAsync(long meetingId)
+    {
+        try
+        {
+            var meeting = await _meetingsService.GetByIdAsync(meetingId);
+
+            return Ok(meeting);
+        }
+        catch (BaseValidationError err)
+        {
+            return GetBadRequestResponse(err);
+        }
+        catch (BaseAggregateValidationError err)
+        {
+            return GetBadRequestResponse(err);
+        }
+        catch (BaseAuthenticationError err)
+        {
+            _logger.LogInformation("Returning 404 due to auth error. Message - {errorMessage}", err.Message);
+            return NotFound(new NotFoundResponseModel(HttpContext.TraceIdentifier));
+        }
+    }
+
+    [HttpDelete("id/{meetingId}")]
+    public async Task<IActionResult> DeleteMeetingByIdAsync(long meetingId)
+    {
+        try
+        {
+            var meeting = await _meetingsService.DeleteByIdAsync(meetingId);
+
+            return Ok(meeting);
+        }
+        catch (BaseValidationError err)
+        {
+            return GetBadRequestResponse(err);
+        }
+        catch (BaseAggregateValidationError err)
+        {
+            return GetBadRequestResponse(err);
+        }
+        catch (BaseAuthenticationError err)
+        {
+            _logger.LogInformation("Returning 404 due to auth error. Message - {errorMessage}", err.Message);
+            return NotFound(new NotFoundResponseModel(HttpContext.TraceIdentifier));
+        }
+    }
+
+    [HttpPatch]
+    public async Task<IActionResult> EditMeetingAsync([FromBody] EditCommunityMeetingDto model)
+    {
+        try
+        {
+            var newMessage = await _meetingsService.UpdateMeeting(model);
+            return Ok(newMessage);
         }
         catch (BaseValidationError err)
         {

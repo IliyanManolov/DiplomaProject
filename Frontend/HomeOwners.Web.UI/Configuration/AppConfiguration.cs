@@ -1,5 +1,6 @@
 ﻿using HomeOwners.Web.UI.Clients.Authentication;
 using HomeOwners.Web.UI.Clients.Community;
+using HomeOwners.Web.UI.Clients.CommunityMeetings;
 using HomeOwners.Web.UI.Clients.CommunityMessages;
 using HomeOwners.Web.UI.Clients.Property;
 using HomeOwners.Web.UI.Clients.ReferralCode;
@@ -39,5 +40,6 @@ public static class AppConfiguration
         services.RegisterCustomClient<IPropertyClient>("/");
         services.RegisterCustomClient<IReferralCodeClient>("/");
         services.RegisterCustomClient<ICommunityMessageClient>("/");
+        services.RegisterCustomClient<ICommunityMeetingClient>("/");
     }
 }

@@ -11,11 +11,4 @@ public interface ICommunityClient
 
     [Get("/communities/{userId}")]
     public Task<IEnumerable<CommunityDetailsResponse>> GetAllCommunities(long userId);
-
-    [Get("/communityMeetings/{communityId}")]
-    public Task<IEnumerable<CommunityMeetingDetailsResponse>> GetMeetingsAsync(long communityId);
-
-    [Post("/communityMeetings")]
-    public Task<long> CreateMeetingAsync(CreateMeetingRequest requestModel);
-
 }
