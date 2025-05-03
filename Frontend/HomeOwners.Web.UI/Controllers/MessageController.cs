@@ -12,6 +12,7 @@ using System.Security.Claims;
 using HomeOwners.Web.UI.Clients.Community.Requests;
 using HomeOwners.Web.UI.ResponseModels;
 using System.Threading.Tasks;
+using AspNetCoreGeneratedDocument;
 
 namespace HomeOwners.Web.UI.Controllers;
 
@@ -84,6 +85,44 @@ public class MessageController : Controller
                     break;
             }
             return View(model);
+        }
+    }
+
+    [Authorize(Roles = "Administrator")]
+    [HttpPost("Message/Delete/{id}")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Delete(long id)
+    {
+        try
+        {
+            var response = await _communityClient.DeleteMessageByIdAsync(id);
+
+            return RedirectToAction("Details", "Community", new { id = response.CommunityId });
+        }
+        catch (Refit.ApiException ex)
+        {
+            switch (ex.StatusCode)
+            {
+                case HttpStatusCode.BadRequest:
+                    var errorResponse = await ex.GetContentAsAsync<BadRequestResponseModel>();
+
+                    foreach (var item in errorResponse.ValidationErrors)
+                    {
+                        ModelState.AddModelError(string.Empty, item.Message);
+                    }
+
+                    break;
+
+                case HttpStatusCode.NotFound:
+                    ModelState.AddModelError(string.Empty, "Not Found");
+                    break;
+
+                default:
+                    _logger.LogError(ex.Message);
+                    ModelState.AddModelError(string.Empty, "Unexpected error occured");
+                    break;
+            }
+            return BadRequest();
         }
     }
 }

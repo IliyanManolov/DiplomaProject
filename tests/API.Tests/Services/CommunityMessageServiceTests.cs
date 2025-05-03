@@ -65,6 +65,98 @@ public class CommunityMessageServiceTests
         Assert.False(string.IsNullOrEmpty(response.Message));
     }
 
+    [Fact]
+    public async Task ShouldHandleDeleteById()
+    {
+        var message = "Delete Test 01";
+        var dto = new CreateCommunityMessageDto()
+        {
+            CommunityId = _basicCommunityId,
+            CreatorId = _adminId,
+            Message = message
+        };
+
+        var id = await _service.CreateMessageAsync(dto);
+
+        var existing = await _service.GetByIdAsync(id);
+
+        Assert.NotNull(existing);
+
+        var deleteResponse = await _service.DeleteByIdAsync(id);
+
+        Assert.NotNull(deleteResponse);
+        Assert.Equivalent(existing, deleteResponse);
+
+        var ex = await Assert.ThrowsAsync<InvalidPropertyValueValidationError>(async () => await _service.GetByIdAsync(id));
+
+        Assert.Contains("Invalid message id", ex.Message, StringComparison.InvariantCultureIgnoreCase);
+    }
+
+    [Fact]
+    public async Task ShouldHandleUpdateById()
+    {
+        var message = "Message for updating 01";
+        var updateMessage = "Updated message 01";
+        var dto = new CreateCommunityMessageDto()
+        {
+            CommunityId = _basicCommunityId,
+            CreatorId = _adminId,
+            Message = message
+        };
+
+        var id = await _service.CreateMessageAsync(dto);
+
+        var existing = await _service.GetByIdAsync(id);
+        
+        Assert.NotNull(existing);
+
+        var existingMessage = existing.Message;
+
+        var updateDto = new EditCommunityMessageDto()
+        {
+            Id = id,
+            NewMessage = updateMessage
+        };
+
+        var updateResponse = await _service.UpdateMessage(updateDto);
+
+        Assert.NotNull(updateResponse);
+        Assert.Equal(updateMessage, updateResponse.Message);
+
+        var final = await _service.GetByIdAsync(id);
+        Assert.NotNull(final);
+        Assert.Equivalent(updateResponse, final);
+        Assert.Equal(id, final.Id);
+    }
+
+    [Fact]
+    public async Task ShouldHandleUpdateWithSameMessageById()
+    {
+        var message = "Message for updating 02";
+        var dto = new CreateCommunityMessageDto()
+        {
+            CommunityId = _basicCommunityId,
+            CreatorId = _adminId,
+            Message = message
+        };
+
+        var id = await _service.CreateMessageAsync(dto);
+
+        var existing = await _service.GetByIdAsync(id);
+
+        Assert.NotNull(existing);
+
+        var updateDto = new EditCommunityMessageDto()
+        {
+            Id = id,
+            NewMessage = message
+        };
+
+        var ex = await Assert.ThrowsAsync<InvalidPropertyValueValidationError>(async () => await _service.UpdateMessage(updateDto));
+
+        Assert.Contains("same message", ex.Message, StringComparison.InvariantCultureIgnoreCase);
+    }
+
     [Theory]
     [InlineData(null, "empty")]
     [InlineData("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent placerat mauris non vehicula ultric" +

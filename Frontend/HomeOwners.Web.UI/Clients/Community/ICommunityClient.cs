@@ -18,6 +18,9 @@ public interface ICommunityClient
     [Get("/communityMessages/id/{messageId}")]
     public Task<CommunityMessagesDetailsResponse> GetMessageByIdAsync(long messageId);
 
+    [Delete("/communityMessages/id/{messageId}")]
+    public Task<CommunityMessagesDetailsResponse> DeleteMessageByIdAsync(long messageId);
+
     [Post("/communityMessages")]
     public Task<long> CreateMessageAsync(CreateCommunityMessageRequest requestModel);
 

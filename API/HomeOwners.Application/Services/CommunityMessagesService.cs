@@ -63,6 +63,34 @@ public class CommunityMessagesService : ICommunityMessagesService
         };
     }
 
+    public async Task<CommunityMessageDetailsDto> DeleteByIdAsync(long? id)
+    {
+        if (id == null)
+            throw new InvalidPropertyValueValidationError("Invalid message id");
+
+        var dbMessage = await _messagesRepository.GetByIdAsync(id);
+
+        if (dbMessage == null)
+        {
+            _logger.LogInformation("Message with ID '{id}' not found ", id);
+            throw new InvalidPropertyValueValidationError("Invalid message id");
+        }
+
+        var response = new CommunityMessageDetailsDto()
+        {
+            Id = dbMessage.Id!.Value,
+            CommunityId = dbMessage.CommunityId!.Value,
+            Message = dbMessage.Message,
+            CreateTimeStamp = dbMessage.CreateDate!.Value,
+            CreatorUserName = dbMessage.Creator.Username!,
+            LastUpdateTimeStamp = dbMessage.UpdateDate
+        };
+
+        await _messagesRepository.DeleteAsync(dbMessage);
+
+        return response;
+    }
+
     public async Task<IEnumerable<CommunityMessageDetailsDto>> GetForCommunityAsync(long communityId)
     {
         var dbMessages = await _messagesRepository.GetAllByCommunityId(communityId);
