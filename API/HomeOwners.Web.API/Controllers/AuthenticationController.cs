@@ -12,7 +12,7 @@ using HomeOwners.Application.ValidationErrors.Authentication;
 namespace HomeOwners.Web.API.Controllers;
 
 [ApiController]
-public class AuthenticationController : ControllerBase
+public class AuthenticationController : ApplicationBaseController
 {
     private readonly Application.Abstractions.Services.IAuthenticationService _authenticationService;
     private readonly IUserService _userService;
@@ -137,18 +137,5 @@ public class AuthenticationController : ControllerBase
             _logger.LogInformation("Returning 404 due to auth error. Message - {errorMessage}", err.Message);
             return NotFound(new NotFoundResponseModel(HttpContext.TraceIdentifier));
         }
-    }
-    private IActionResult GetBadRequestResponse(BaseValidationError error)
-    {
-        var model = new BadRequestResponseModel(HttpContext.TraceIdentifier);
-        model.AddError(error);
-        return BadRequest(model);
-    }
-
-    private IActionResult GetBadRequestResponse(BaseAggregateValidationError error)
-    {
-        var model = new BadRequestResponseModel(HttpContext.TraceIdentifier);
-        model.AddError(error);
-        return BadRequest(model);
     }
 }

@@ -11,7 +11,7 @@ namespace HomeOwners.Web.API.Controllers;
 
 [ApiController]
 [Route("communities")]
-public class CommunitiesController : ControllerBase
+public class CommunitiesController : ApplicationBaseController
 {
     private readonly IUserService _userSerivce;
     private readonly ICommunityService _communityService;
@@ -124,20 +124,5 @@ public class CommunitiesController : ControllerBase
             _logger.LogInformation("Returning 404 due to auth error. Message - {errorMessage}", err.Message);
             return NotFound(new NotFoundResponseModel(HttpContext.TraceIdentifier));
         }
-    }
-
-
-    private IActionResult GetBadRequestResponse(BaseValidationError error)
-    {
-        var model = new BadRequestResponseModel(HttpContext.TraceIdentifier);
-        model.AddError(error);
-        return BadRequest(model);
-    }
-
-    private IActionResult GetBadRequestResponse(BaseAggregateValidationError error)
-    {
-        var model = new BadRequestResponseModel(HttpContext.TraceIdentifier);
-        model.AddError(error);
-        return BadRequest(model);
     }
 }
