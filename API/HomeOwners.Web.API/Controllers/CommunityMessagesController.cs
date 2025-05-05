@@ -139,7 +139,7 @@ public class CommunityMessagesController : ControllerBase
 
             var messages = await _messagesSerivce.GetForCommunityAsync(communityId);
 
-            return Ok(messages);
+            return Ok(messages.ToList());
         }
         catch (BaseValidationError err)
         {
