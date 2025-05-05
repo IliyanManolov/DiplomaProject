@@ -21,7 +21,7 @@ internal abstract class BaseEntityRepository<TEntity> : IBaseEntityRepository<TE
     public virtual async Task<TEntity?> GetByIdAsync(long? id)
         => await _dbContext.Set<TEntity>().FirstOrDefaultAsync(x => x.Id == id);
 
-    public async Task<TEntity> CreateAsync(TEntity entity)
+    public virtual async Task<TEntity> CreateAsync(TEntity entity)
     {
         entity.CreateDate = DateTime.UtcNow;
         await _dbContext.Set<TEntity>().AddAsync(entity);
