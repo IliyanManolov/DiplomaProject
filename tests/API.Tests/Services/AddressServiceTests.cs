@@ -12,6 +12,34 @@ using System.Diagnostics.Metrics;
 namespace API.Tests.Services;
 
 [Collection("BasicCollection")]
+public class DuesCalculationServiceTests
+{
+    private readonly InMemoryFixture _fixture;
+    private readonly IDuesCalculationService _service;
+    private readonly IDuesCalculationRepository _repository;
+
+    public DuesCalculationServiceTests(InMemoryFixture fixture)
+    {
+        _fixture = fixture;
+        _service = _fixture.ServiceProvider.GetRequiredService<IDuesCalculationService>();
+        _repository = _fixture.ServiceProvider.GetRequiredService<IDuesCalculationRepository>();
+    }
+
+    [Fact]
+    public async Task ShouldNotAllowMultipleCalculations()
+    {
+
+        Assert.Empty(await _repository.GetAllAsync());
+
+        Assert.True(await _service.Calculate());
+        Assert.Single(await _repository.GetAllAsync());
+
+        Assert.False(await _service.Calculate());
+        Assert.Single(await _repository.GetAllAsync());
+    }
+}
+
+    [Collection("BasicCollection")]
 public class AddressServiceTests
 {
     private readonly InMemoryFixture _fixture;

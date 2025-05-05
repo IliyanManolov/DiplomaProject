@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\API\HomeOwners.Infrastructure\HomeOwners.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\API\HomeOwners.Web.API\HomeOwners.Web.API.csproj" />
   </ItemGroup>
 
   <ItemGroup>

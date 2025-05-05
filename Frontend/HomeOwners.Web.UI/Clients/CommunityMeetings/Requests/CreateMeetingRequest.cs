@@ -1,4 +1,4 @@
-﻿namespace HomeOwners.Web.UI.Clients.Community.Requests;
+﻿namespace HomeOwners.Web.UI.Clients.CommunityMeetings.Requests;
 
 public class CreateMeetingRequest
 {

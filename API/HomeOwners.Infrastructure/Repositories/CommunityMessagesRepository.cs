@@ -17,6 +17,7 @@ internal class CommunityMessagesRepository : BaseEntityRepository<CommunityMessa
             .Include(x => x.Creator)
             .FirstOrDefaultAsync(x => x.Id == id);
     }
+
     public async Task<IEnumerable<CommunityMessage>> GetAllByCommunityId(long communityId)
     {
         return await Query

@@ -11,7 +11,7 @@ namespace HomeOwners.Web.API.Controllers;
 
 [ApiController]
 [Route("communities")]
-public class CommunitiesController : ControllerBase
+public class CommunitiesController : ApplicationBaseController
 {
     private readonly IUserService _userSerivce;
     private readonly ICommunityService _communityService;
@@ -60,7 +60,10 @@ public class CommunitiesController : ControllerBase
             var user = await _userSerivce.GetUserDetailsAsync(userId);
 
             if (user.Role is Domain.Enums.Role.Administrator)
-                return Ok(await _communityService.GetAllCommunities());
+            {
+                var result = await _communityService.GetAllCommunities();
+                return Ok(result.ToList());
+            }
             else
             {
                 var result = await _communityService.GetAllForUser(user.Id!.Value);
@@ -79,11 +82,13 @@ public class CommunitiesController : ControllerBase
         }
         catch (BaseValidationError err)
         {
-            return GetBadRequestResponse(err);
+            _logger.LogInformation("Returning 404 due to validation error. Message - {errorMessage}", err.Message);
+            return NotFound(new NotFoundResponseModel(HttpContext.TraceIdentifier));
         }
         catch (BaseAggregateValidationError err)
         {
-            return GetBadRequestResponse(err);
+            _logger.LogInformation("Returning 404 due to validation error. Message - {errorMessage}", err.Message);
+            return NotFound(new NotFoundResponseModel(HttpContext.TraceIdentifier));
         }
         catch (BaseAuthenticationError err)
         {
@@ -106,12 +111,12 @@ public class CommunitiesController : ControllerBase
         }
         catch (BaseValidationError err)
         {
-            _logger.LogInformation("Returning 404 due to auth error. Message - {errorMessage}", err.Message);
+            _logger.LogInformation("Returning 404 due to validation error. Message - {errorMessage}", err.Message);
             return NotFound(new NotFoundResponseModel(HttpContext.TraceIdentifier));
         }
         catch (BaseAggregateValidationError err)
         {
-            _logger.LogInformation("Returning 404 due to auth error. Message - {errorMessage}", err.Message);
+            _logger.LogInformation("Returning 404 due to validation error. Message - {errorMessage}", err.Message);
             return NotFound(new NotFoundResponseModel(HttpContext.TraceIdentifier));
         }
         catch (BaseAuthenticationError err)
@@ -119,20 +124,5 @@ public class CommunitiesController : ControllerBase
             _logger.LogInformation("Returning 404 due to auth error. Message - {errorMessage}", err.Message);
             return NotFound(new NotFoundResponseModel(HttpContext.TraceIdentifier));
         }
-    }
-
-
-    private IActionResult GetBadRequestResponse(BaseValidationError error)
-    {
-        var model = new BadRequestResponseModel(HttpContext.TraceIdentifier);
-        model.AddError(error);
-        return BadRequest(model);
-    }
-
-    private IActionResult GetBadRequestResponse(BaseAggregateValidationError error)
-    {
-        var model = new BadRequestResponseModel(HttpContext.TraceIdentifier);
-        model.AddError(error);
-        return BadRequest(model);
     }
 }

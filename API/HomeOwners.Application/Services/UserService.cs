@@ -199,7 +199,10 @@ public class UserService : IUserService
     private async Task<User> GetUser(long? userId)
     {
         if (userId == null)
-            throw new InvalidPropertyValueValidationError("Invalid userId");
+        {
+            _logger.LogInformation("Received NULL userid");
+            throw new UserNotFoundValidationError();
+        }
 
         var dbUser = await _userRepository.GetByIdAsync(userId);
 

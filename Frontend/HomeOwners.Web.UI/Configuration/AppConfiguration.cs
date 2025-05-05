@@ -1,4 +1,11 @@
-﻿using HomeOwners.Web.UI.Configuration.Settings;
+﻿using HomeOwners.Web.UI.Clients.Authentication;
+using HomeOwners.Web.UI.Clients.Community;
+using HomeOwners.Web.UI.Clients.CommunityMeetings;
+using HomeOwners.Web.UI.Clients.CommunityMessages;
+using HomeOwners.Web.UI.Clients.Property;
+using HomeOwners.Web.UI.Clients.ReferralCode;
+using HomeOwners.Web.UI.Configuration.Settings;
+using HomeOwners.Web.UI.Healthchecks;
 using Microsoft.Extensions.Options;
 using Refit;
 using System.Net;
@@ -24,16 +31,28 @@ public static class AppConfiguration
                 client.BaseAddress = settings.Value.CreateUri(route);
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(MediaTypeNames.Application.Json));
-            })
-            .ConfigurePrimaryHttpMessageHandler(provider =>
-            {
-                var cookieContainer = provider.GetRequiredService<CookieContainer>();
-
-                return new HttpClientHandler
-                {
-                    CookieContainer = cookieContainer,
-                    UseCookies = true
-                };
             });
+    }
+
+    public static void ConfigureClients(this IServiceCollection services)
+    {
+        services.RegisterCustomClient<IAuthenticationClient>("/");
+        services.RegisterCustomClient<ICommunityClient>("/");
+        services.RegisterCustomClient<IPropertyClient>("/");
+        services.RegisterCustomClient<IReferralCodeClient>("/");
+        services.RegisterCustomClient<ICommunityMessageClient>("/");
+        services.RegisterCustomClient<ICommunityMeetingClient>("/");
+    }
+
+    public static void AddApplicationHealthChecks(this IServiceCollection services)
+    {
+        var sp = services.BuildServiceProvider();
+
+        var options = sp.GetRequiredService<IOptions<Backend>>();
+
+        var backendHealthCheck = new BackendHealthcheck(options.Value.Address!, sp.GetRequiredService<HttpClient>());
+
+        services.AddHealthChecks()
+            .AddCheck("API", backendHealthCheck);
     }
 }

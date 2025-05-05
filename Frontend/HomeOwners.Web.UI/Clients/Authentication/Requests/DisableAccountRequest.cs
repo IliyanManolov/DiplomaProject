@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace HomeOwners.Web.UI.Clients.Community.Requests;
+namespace HomeOwners.Web.UI.Clients.Authentication.Requests;
 
 public class DisableAccountRequest
 {

@@ -10,7 +10,7 @@ namespace HomeOwners.Web.API.Controllers;
 
 [ApiController]
 [Route("communityMessages")]
-public class CommunityMessagesController : ControllerBase
+public class CommunityMessagesController : ApplicationBaseController
 {
     private readonly ICommunityService _communityService;
     private readonly IUserService _userService;
@@ -82,16 +82,14 @@ public class CommunityMessagesController : ControllerBase
         }
     }
 
-    [HttpGet("{communityId}")]
-    public async Task<IActionResult> GetForCommunityAsync(long communityId)
+    [HttpGet("id/{messageId}")]
+    public async Task<IActionResult> GetMessageByIdAsync(long messageId)
     {
         try
         {
-            var community = await _communityService.GetCommunityDetailsAsync(communityId);
+            var message = await _messagesSerivce.GetByIdAsync(messageId);
 
-            var messages = await _messagesSerivce.GetForCommunityAsync(communityId);
-
-            return Ok(messages);
+            return Ok(message);
         }
         catch (BaseValidationError err)
         {
@@ -108,17 +106,53 @@ public class CommunityMessagesController : ControllerBase
         }
     }
 
-    private IActionResult GetBadRequestResponse(BaseValidationError error)
+    [HttpDelete("id/{messageId}")]
+    public async Task<IActionResult> DeleteMessageByIdAsync(long messageId)
     {
-        var model = new BadRequestResponseModel(HttpContext.TraceIdentifier);
-        model.AddError(error);
-        return BadRequest(model);
+        try
+        {
+            var message = await _messagesSerivce.DeleteByIdAsync(messageId);
+
+            return Ok(message);
+        }
+        catch (BaseValidationError err)
+        {
+            return GetBadRequestResponse(err);
+        }
+        catch (BaseAggregateValidationError err)
+        {
+            return GetBadRequestResponse(err);
+        }
+        catch (BaseAuthenticationError err)
+        {
+            _logger.LogInformation("Returning 404 due to auth error. Message - {errorMessage}", err.Message);
+            return NotFound(new NotFoundResponseModel(HttpContext.TraceIdentifier));
+        }
     }
 
-    private IActionResult GetBadRequestResponse(BaseAggregateValidationError error)
+    [HttpGet("{communityId}")]
+    public async Task<IActionResult> GetForCommunityAsync(long communityId)
     {
-        var model = new BadRequestResponseModel(HttpContext.TraceIdentifier);
-        model.AddError(error);
-        return BadRequest(model);
+        try
+        {
+            var community = await _communityService.GetCommunityDetailsAsync(communityId);
+
+            var messages = await _messagesSerivce.GetForCommunityAsync(communityId);
+
+            return Ok(messages.ToList());
+        }
+        catch (BaseValidationError err)
+        {
+            return GetBadRequestResponse(err);
+        }
+        catch (BaseAggregateValidationError err)
+        {
+            return GetBadRequestResponse(err);
+        }
+        catch (BaseAuthenticationError err)
+        {
+            _logger.LogInformation("Returning 404 due to auth error. Message - {errorMessage}", err.Message);
+            return NotFound(new NotFoundResponseModel(HttpContext.TraceIdentifier));
+        }
     }
 }

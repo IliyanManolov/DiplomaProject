@@ -1,6 +1,5 @@
 ﻿using HomeOwners.Web.UI.Clients.Authentication.Requests;
 using HomeOwners.Web.UI.Clients.Authentication.Responses;
-using HomeOwners.Web.UI.Clients.Community.Requests;
 using Refit;
 
 namespace HomeOwners.Web.UI.Clients.Authentication;

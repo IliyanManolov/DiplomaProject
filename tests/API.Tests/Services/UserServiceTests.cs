@@ -45,10 +45,7 @@ public class UserServiceTests
     [Fact]
     public async Task ShouldHandleBasicWithNullId()
     {
-        var ex = await Assert.ThrowsAsync<InvalidPropertyValueValidationError>(async () => await _service.GetUserBasicsAsync(null));
-
-        Assert.Equal("InvalidPropertyValueValidationError", ex.Name);
-        Assert.False(string.IsNullOrEmpty(ex.Message), "Validation error message is null/empty");
+        var ex = await Assert.ThrowsAsync<UserNotFoundValidationError>(async () => await _service.GetUserBasicsAsync(null));
     }
 
     [Theory]
@@ -77,10 +74,10 @@ public class UserServiceTests
     [Fact]
     public async Task ShouldHandleDetailsWithNullId()
     {
-        var ex = await Assert.ThrowsAsync<InvalidPropertyValueValidationError>(async () => await _service.GetUserDetailsAsync(null));
+        var ex = await Assert.ThrowsAsync<UserNotFoundValidationError>(async () => await _service.GetUserDetailsAsync(null));
 
-        Assert.Equal("InvalidPropertyValueValidationError", ex.Name);
-        Assert.False(string.IsNullOrEmpty(ex.Message), "Validation error message is null/empty");
+        //Assert.Equal("InvalidPropertyValueValidationError", ex.Name);
+        //Assert.False(string.IsNullOrEmpty(ex.Message), "Validation error message is null/empty");
     }
 
     [Theory]

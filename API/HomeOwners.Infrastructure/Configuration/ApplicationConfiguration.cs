@@ -2,6 +2,7 @@
 using HomeOwners.Application.Abstractions.Services;
 using HomeOwners.Application.Services;
 using HomeOwners.Infrastructure.Database;
+using HomeOwners.Infrastructure.Healthchecks;
 using HomeOwners.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -21,8 +22,6 @@ public static class ApplicationConfiguration
         var section = configuration.GetSection(nameof(DatabaseSettings));
 
         services.Configure<DatabaseSettings>(section);
-
-        services.Configure<DatabaseSettings>(configuration.GetSection(nameof(DatabaseSettings)));
 
 
         services.AddDbContext<DatabaseContext>((provider, options) =>
@@ -90,5 +89,17 @@ public static class ApplicationConfiguration
     public static void AddSecurityLayer(this IServiceCollection services)
     {
         services.AddScoped<IPasswordService, PasswordService>();
+    }
+
+    public static void AddApplicationHealthChecks(this IServiceCollection services)
+    {
+        var sp = services.BuildServiceProvider();
+
+        var options = sp.GetRequiredService<IOptions<DatabaseSettings>>();
+
+        var dbHealthcheck = new DatabaseHealthcheck(options.Value.ConnectionString!);
+
+        services.AddHealthChecks()
+            .AddCheck("database", dbHealthcheck);
     }
 }

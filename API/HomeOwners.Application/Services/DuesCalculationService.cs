@@ -19,7 +19,10 @@ public class DuesCalculationService : IDuesCalculationService
     {
         var dbCalculation = new DuesCalculation();
 
-        await _repository.CreateAsync(dbCalculation);
+        var newCalculation = await _repository.CreateAsync(dbCalculation);
+
+        if (newCalculation == null)
+            return false;
 
         var dbProperties = await _propertyRepository.GetAllAsync();
 
