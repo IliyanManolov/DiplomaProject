@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
 
-namespace API.Tests.Controllers;
+namespace API.Tests.Module;
 
 [Collection("ControllerCollection")]
 public class CommunityMeetingControllerTests : BaseControllerTest

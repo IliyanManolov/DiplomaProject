@@ -1,11 +1,8 @@
-﻿using HomeOwners.Application.Abstractions.Repositories;
-using HomeOwners.Application.DTOs.Community;
-using HomeOwners.Web.API.ResponseModels;
+﻿using HomeOwners.Web.API.ResponseModels;
 using Microsoft.AspNetCore.Mvc;
-using OpenSearch.Client;
 using static HomeOwners.Web.API.ResponseModels.BadRequestResponseModel;
 
-namespace API.Tests.Controllers;
+namespace API.Tests.Module;
 
 public class BaseControllerTest
 {

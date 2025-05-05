@@ -1,14 +1,13 @@
 ﻿using API.Tests.Fixtures;
 using HomeOwners.Application.Abstractions.Services;
 using HomeOwners.Application.DTOs.Property;
-using HomeOwners.Domain.Models;
 using HomeOwners.Web.API.Controllers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
 
-namespace API.Tests.Controllers;
+namespace API.Tests.Module;
 
 [Collection("ControllerCollection")]
 public class PropertiesControllerTests : BaseControllerTest
