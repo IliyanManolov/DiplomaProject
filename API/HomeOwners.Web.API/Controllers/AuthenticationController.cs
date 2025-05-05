@@ -132,6 +132,11 @@ public class AuthenticationController : ControllerBase
         {
             return GetBadRequestResponse(err);
         }
+        catch (BaseAuthenticationError err)
+        {
+            _logger.LogInformation("Returning 404 due to auth error. Message - {errorMessage}", err.Message);
+            return NotFound(new NotFoundResponseModel(HttpContext.TraceIdentifier));
+        }
     }
     private IActionResult GetBadRequestResponse(BaseValidationError error)
     {
