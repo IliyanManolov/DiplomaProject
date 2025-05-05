@@ -1,5 +1,6 @@
 using HomeOwners.Application.Abstractions.Services;
 using HomeOwners.Application.DTOs.ReferralCodes;
+using HomeOwners.Application.ValidationErrors;
 using HomeOwners.Application.ValidationErrors.Authentication;
 using HomeOwners.Application.ValidationErrors.Base;
 using HomeOwners.Domain.Enums;
@@ -10,7 +11,7 @@ namespace HomeOwners.Web.API.Controllers;
 
 [ApiController]
 [Route("referralcodes")]
-public class ReferralCodesController : ControllerBase
+public class ReferralCodesController : ApplicationBaseController
 {
     private readonly ICommunityService _communityService;
     private readonly IReferralCodeService _referralCodeService;
@@ -26,14 +27,10 @@ public class ReferralCodesController : ControllerBase
     }
 
     [HttpPost("bulk/")]
-    //[Authorize(Roles = "Administrator")]
     public async Task<IActionResult> CreateBulkAsync([FromBody] CreateReferralCodesDto model)
     {
         try
         {
-            //// Will result in Internal Server Error if we somehow do NOT have the claim but are allowed to go inside
-            //var userId = GetUserId();
-
             var user = await _userService.GetUserDetailsAsync(model.CreatorId);
 
             if (user.Role is not Role.Administrator)
@@ -44,6 +41,11 @@ public class ReferralCodesController : ControllerBase
 
             var codes = await _referralCodeService.CreateBulk(model, user.Id!.Value);
             return Ok(codes);
+        }
+        catch (UserNotFoundValidationError err)
+        {
+            _logger.LogInformation("Returning 404 due to user not found error. Message - {errorMessage}", err.Message);
+            return NotFound(new NotFoundResponseModel(HttpContext.TraceIdentifier));
         }
         catch (BaseValidationError err)
         {
@@ -59,28 +61,4 @@ public class ReferralCodesController : ControllerBase
             return NotFound(new NotFoundResponseModel(HttpContext.TraceIdentifier));
         }
     }
-
-    private IActionResult GetBadRequestResponse(BaseValidationError error)
-    {
-        var model = new BadRequestResponseModel(HttpContext.TraceIdentifier);
-        model.AddError(error);
-        return BadRequest(model);
-    }
-
-    private IActionResult GetBadRequestResponse(BaseAggregateValidationError error)
-    {
-        var model = new BadRequestResponseModel(HttpContext.TraceIdentifier);
-        model.AddError(error);
-        return BadRequest(model);
-    }
-
-    //private long GetUserId()
-    //{
-    //    var idClaim = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
-
-    //    if (idClaim == null)
-    //        throw new ArgumentException("Failed to get IdClaim from within Authorize-only endpoint");
-
-    //    return long.Parse(idClaim.Value);
-    //}
 }

@@ -10,7 +10,7 @@ namespace HomeOwners.Web.API.Controllers;
 
 [ApiController]
 [Route("properties")]
-public class PropertiesController : ControllerBase
+public class PropertiesController : ApplicationBaseController
 {
     private readonly ICommunityService _communityService;
     private readonly IPropertyService _propertiesService;
@@ -85,31 +85,18 @@ public class PropertiesController : ControllerBase
         }
         catch (BaseValidationError err)
         {
-            return GetBadRequestResponse(err);
+            _logger.LogInformation("Returning 404 due to validation error. Message - {errorMessage}", err.Message);
+            return NotFound(new NotFoundResponseModel(HttpContext.TraceIdentifier));
         }
         catch (BaseAggregateValidationError err)
         {
-            return GetBadRequestResponse(err);
+            _logger.LogInformation("Returning 404 due to validation error. Message - {errorMessage}", err.Message);
+            return NotFound(new NotFoundResponseModel(HttpContext.TraceIdentifier));
         }
         catch (BaseAuthenticationError err)
         {
             _logger.LogInformation("Returning 404 due to auth error. Message - {errorMessage}", err.Message);
             return NotFound(new NotFoundResponseModel(HttpContext.TraceIdentifier));
         }
-    }
-
-
-    private IActionResult GetBadRequestResponse(BaseValidationError error)
-    {
-        var model = new BadRequestResponseModel(HttpContext.TraceIdentifier);
-        model.AddError(error);
-        return BadRequest(model);
-    }
-
-    private IActionResult GetBadRequestResponse(BaseAggregateValidationError error)
-    {
-        var model = new BadRequestResponseModel(HttpContext.TraceIdentifier);
-        model.AddError(error);
-        return BadRequest(model);
     }
 }

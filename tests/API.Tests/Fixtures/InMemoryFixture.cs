@@ -38,3 +38,9 @@ public class ReferralCodeCollection : ICollectionFixture<InMemoryFixture>
 {
 
 }
+
+[CollectionDefinition("ControllerCollection")]
+public class ControllerCollection : ICollectionFixture<InMemoryFixture>
+{
+
+}

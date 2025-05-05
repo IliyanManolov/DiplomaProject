@@ -10,7 +10,7 @@ namespace HomeOwners.Web.API.Controllers;
 
 [ApiController]
 [Route("communityMeetings")]
-public class CommunityMeetingsController : ControllerBase
+public class CommunityMeetingsController : ApplicationBaseController
 {
     private readonly ICommunityService _communityService;
     private readonly IUserService _userService;
@@ -69,7 +69,7 @@ public class CommunityMeetingsController : ControllerBase
 
             var messages = await _meetingsService.GetForCommunityAsync(communityId);
 
-            return Ok(messages);
+            return Ok(messages.ToList());
         }
         catch (BaseValidationError err)
         {
@@ -155,19 +155,5 @@ public class CommunityMeetingsController : ControllerBase
             _logger.LogInformation("Returning 404 due to auth error. Message - {errorMessage}", err.Message);
             return NotFound(new NotFoundResponseModel(HttpContext.TraceIdentifier));
         }
-    }
-
-    private IActionResult GetBadRequestResponse(BaseValidationError error)
-    {
-        var model = new BadRequestResponseModel(HttpContext.TraceIdentifier);
-        model.AddError(error);
-        return BadRequest(model);
-    }
-
-    private IActionResult GetBadRequestResponse(BaseAggregateValidationError error)
-    {
-        var model = new BadRequestResponseModel(HttpContext.TraceIdentifier);
-        model.AddError(error);
-        return BadRequest(model);
     }
 }
