@@ -85,11 +85,13 @@ public class PropertiesController : ControllerBase
         }
         catch (BaseValidationError err)
         {
-            return GetBadRequestResponse(err);
+            _logger.LogInformation("Returning 404 due to validation error. Message - {errorMessage}", err.Message);
+            return NotFound(new NotFoundResponseModel(HttpContext.TraceIdentifier));
         }
         catch (BaseAggregateValidationError err)
         {
-            return GetBadRequestResponse(err);
+            _logger.LogInformation("Returning 404 due to validation error. Message - {errorMessage}", err.Message);
+            return NotFound(new NotFoundResponseModel(HttpContext.TraceIdentifier));
         }
         catch (BaseAuthenticationError err)
         {
