@@ -64,7 +64,6 @@ public class CommunityControllerTests : BaseControllerTest
 
     [Theory]
     [InlineData(_deletedUserId)]
-    //[InlineData((long)2)] // Normal user, NOT admin
     [InlineData((long)123456)] // Nonexisting user
     public async Task ShouldFailToGetUserCommunities(long userId)
     {
