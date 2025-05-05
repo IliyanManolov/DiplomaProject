@@ -1,5 +1,6 @@
 using HomeOwners.Application.Abstractions.Services;
 using HomeOwners.Application.DTOs.ReferralCodes;
+using HomeOwners.Application.ValidationErrors;
 using HomeOwners.Application.ValidationErrors.Authentication;
 using HomeOwners.Application.ValidationErrors.Base;
 using HomeOwners.Domain.Enums;
@@ -44,6 +45,11 @@ public class ReferralCodesController : ControllerBase
 
             var codes = await _referralCodeService.CreateBulk(model, user.Id!.Value);
             return Ok(codes);
+        }
+        catch (UserNotFoundValidationError err)
+        {
+            _logger.LogInformation("Returning 404 due to user not found error. Message - {errorMessage}", err.Message);
+            return NotFound(new NotFoundResponseModel(HttpContext.TraceIdentifier));
         }
         catch (BaseValidationError err)
         {
