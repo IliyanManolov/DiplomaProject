@@ -52,3 +52,26 @@ After completing the setup you should check the healthcheck endpoints of the app
 Endpoints:
 - http://local-dev.homeowners.com:443/app/hc
 - http://local-dev.homeowners.com:443/api/hc
+
+## Initial Account setup
+In order to have access to the application you need to manually insert a temporary administrator account in the database. Afterwards you can change its password to what you desire.
+
+The default password provided in the SQL is "password"
+
+```sql
+DECLARE @Username NVARCHAR(MAX) = 'Admin';
+DECLARE @FirstName NVARCHAR(MAX) = '...';
+DECLARE @LastName NVARCHAR(MAX) = '...';
+DECLARE @Email NVARCHAR(MAX) = 'myemail@email.com';
+
+INSERT INTO homeowners.users ([username], [first_name], [last_name], [email], [password], [role], [is_deleted])
+VALUES (
+    @Username,
+    @FirstName,
+    @LastName,
+    @Email,
+    N'5E-88-48-98-DA-28-04-71-51-D0-E5-6F-8D-C6-29-27-73-60-3D-0D-6A-AB-BD-D6-2A-11-EF-72-1D-15-42-D8',
+    'Administrator',
+    0
+);
+```
