@@ -154,7 +154,7 @@ public class AdminPanelController : Controller
 
             ViewBag.SuccessMessage = $"Property created successfully for user with email '{request.OwnerEmail}'. Property id - '{id}'.";
             ModelState.Clear();
-            return View();
+            return View(model);
         }
         catch (Refit.ApiException ex)
         {
