@@ -15,20 +15,20 @@ internal class PropertyRepository : BaseEntityRepository<Property>, IPropertyRep
     public async Task<IEnumerable<Property>> GetAllPropertiesByEmailAsync(string email)
     {
         return await Query
-            .Where(x => x.Owner.Email!.CompareTo(email) == 0)
+            .Where(x => x.Owner.Email! == email)
             .ToListAsync();
     }
     public async Task<IEnumerable<Property>> GetAllCommunityPropertiesByEmailAsync(string email, long? communityId)
     {
         return await Query
-            .Where(x => x.Owner.Email!.CompareTo(email) == 0 && x.CommunityId == communityId)
+            .Where(x => x.Owner.Email! == email && x.CommunityId == communityId)
             .ToListAsync();
     }
 
     public async Task<IEnumerable<Property>> GetAllPropertiesByUserIdAsync(long? userId)
     {
         return await Query
-            .Where(x => x.OwnerId!.Value.CompareTo(userId) == 0)
+            .Where(x => x.OwnerId!.Value == userId)
             .ToListAsync();
     }
 
@@ -36,7 +36,7 @@ internal class PropertyRepository : BaseEntityRepository<Property>, IPropertyRep
     {
         return await Query
             .Include(x => x.Owner)
-            .Where(x => x.OwnerId!.Value.CompareTo(userId) == 0 && x.CommunityId == communityId)
+            .Where(x => x.OwnerId!.Value == userId && x.CommunityId == communityId)
             .ToListAsync();
     }
 

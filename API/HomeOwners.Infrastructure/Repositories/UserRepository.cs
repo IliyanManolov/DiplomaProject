@@ -12,6 +12,12 @@ internal class UserRepository : BaseEntityRepository<User>, IUserRepository
     {
     }
 
+    public override async Task<User?> GetByIdAsync(long? id)
+    {
+        return await Query
+            .Include(x => x.ReferalCode)
+            .FirstOrDefaultAsync(x => x.Id == id);
+    }
     public async Task<User?> GetByUsernameAsync(string username)
     {
         return await Query
